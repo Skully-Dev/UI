@@ -20,14 +20,14 @@ public class PlayerController : MonoBehaviour
     public float mouseSensitivity = 100f; //A public variable to adjust sensitivity in the inspector 
     private float xRotation = 0f;
 
-    private Camera camera;
+    private Camera cam;//cam instead of camera, because it clashed with another thing in Unity called camera
     #endregion
 
     void Start()//Executed when script instance is enabled, before any Update
     {
         controller = GetComponent<CharacterController>(); //reference Character Controller of the Game Object the script is attached to.
 
-        camera = Camera.main; //refernce the main camera, its child to player
+        cam = Camera.main; //refernce the main camera, its child to player
 
         Cursor.lockState = CursorLockMode.Locked; //Locks cursor position to middle of screen
     }
@@ -48,7 +48,7 @@ public class PlayerController : MonoBehaviour
 
         xRotation -= mouseY; //Cameras rotation x is up/down and inverted, so this converts to those values.
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);//clamps rotation values to between -90 and 90 (straight down/up)
-        camera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);//Since local rotation is a Quarternion, applies up/down rotation by Euler
+        cam.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);//Since local rotation is a Quarternion, applies up/down rotation by Euler
         transform.Rotate(Vector3.up * mouseX);//GameObject y rotation (look left/right) is y * MouseX (left/right), applies left/right rotation
     }
 

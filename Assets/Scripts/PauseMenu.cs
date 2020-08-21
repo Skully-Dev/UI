@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class PauseMenu : MonoBehaviour
@@ -41,7 +42,15 @@ public class PauseMenu : MonoBehaviour
         gameIsPaused = true;
         Cursor.lockState = CursorLockMode.None; //unlocks the cursor to use
     }
+
+    public void QuitGame() //called with exit button
+    {
+        Debug.Log("Quitting Game");
+
+#if UNITY_EDITOR
+        EditorApplication.ExitPlaymode(); //If using unity, run this code, exit play mode
+#endif
+        Application.Quit(); //if not unity editor, run the quit application/exe
+                            //quit exe game, i.e. once published, this will quit
+    }
 }
-
-
-//so methods should be private??
