@@ -1,5 +1,6 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using UnityEngine.Audio;//controlling audio in script
 using UnityEngine.SceneManagement; //useful namespace, allows use of common code relating to Scene Management
 using UnityEngine.UI; //allows the use of common code relating to UI
 //Above are namespaces this script accesses, each contain various classes, methods and other handy code relating to specific functionality.
@@ -13,11 +14,19 @@ public class MainMenu : MonoBehaviour //a Main Menu Class derived from base clas
 
     public Dropdown qualityDropdown;//allows reference of a dropdown component, quality dropdown referenced 
     public Toggle fullscreenToggle; //allows to reference a Toggle component, fullscreen referenced
+    public AudioMixer mixer;
+    public Slider musicSlider;
+    public Slider SFXSlider;
     #endregion
 
+    //
+    public void Awake()//connecting to other things, loading things, so when we run start, everything is already set up for us
+    {
+    }
 
     public void Start() //called once when a script is enabled before any Update methods are called
     {
+        LoadPlayerPrefs();
         Debug.Log("Starting Game Main Menu"); //Plays at start of the game
     }
 
@@ -80,11 +89,23 @@ public class MainMenu : MonoBehaviour //a Main Menu Class derived from base clas
                             //quit exe game, i.e. once published, this will quit
     }
 
+    public void SetMusicVolume(float value)
+    {
+        mixer.SetFloat("MusicVol", value);//same name as exposed parameters
+    }
+    public void SetSFXVolume(float value)
+    {
+        mixer.SetFloat("SFXVol", value);//same name as exposed parameters
+    }
+
+
     #region Save and Load Player Prefs
     public void SavePlayerPrefs() //called when exiting Options Menu, back button on click
     {
+        //save quality
         PlayerPrefs.SetInt("quality", QualitySettings.GetQualityLevel()); //Get value of current Quality Level and set value as player pref quality
 
+        //save fullscreen
         if(fullscreenToggle.isOn) //the toggle ui, if full screen set as fullscreen, otherwise set as windowed
         {
             PlayerPrefs.SetInt("fullscreen", 1);
@@ -94,24 +115,68 @@ public class MainMenu : MonoBehaviour //a Main Menu Class derived from base clas
             PlayerPrefs.SetInt("fullscreen", 0);
         }
 
+        //save audio sliders
+        float musicVol;
+        if (mixer.GetFloat("MusicVol", out musicVol)) //out lets changes to external variables, typically we would use return, only use out if you have a REALLY GOOD REASON, the method we are calling must request an out
+        {
+            PlayerPrefs.SetFloat("MusicVol", musicVol); //when you pass a var as a parameter, 
+        }
+
+        float SFXVol;
+        if (mixer.GetFloat("SFXVol", out SFXVol)) //out lets changes to external variables, typically we would use return, only use 'out' if you have a REALLY GOOD REASON, i.e. the method we are calling requests an out
+        {
+            PlayerPrefs.SetFloat("SFXVol", SFXVol);
+        }
+
         PlayerPrefs.Save();//above makes/sets changes, this line saves those changes
         //PlayerPrefs.SetInt("somevalue", 60); //a key of 'somevalue' stores a value of 60, saves to a file for us, similar to a hashtable, we use this key to call value too, cant save bools, no custom classes either
     }
 
     public void LoadPlayerPrefs()//reads player prefs and applies its values, option button on click
     {
-        qualityDropdown.value = PlayerPrefs.GetInt("quality"); //get/access player prefs quality value
+        //Load and set quality from player prefs
+        if (PlayerPrefs.HasKey("quality"))//checks to see if there is a key called quality before trying to assign values, to avoid errors
+        {
+            int quality = PlayerPrefs.GetInt("quality");
+            qualityDropdown.value = quality;
 
-        if(PlayerPrefs.GetInt("fullscreen") == 0) //if player pref fullscreen value is 0 (like false)
-        {
-            //Set GUI toggle off
-            fullscreenToggle.isOn = false;
+            if (QualitySettings.GetQualityLevel() != quality)
+            {
+                ChangeQuality(quality);
+            }
         }
-        else
+
+        if (PlayerPrefs.HasKey("fullscreen"))//checks to see if there is a key called quality before trying to assign values, to avoid errors
         {
-            //set GUI toggle on
-            fullscreenToggle.isOn = true;
+            if (PlayerPrefs.GetInt("fullscreen") == 0) //if player pref fullscreen value is 0 (like false)
+            {
+                //Set GUI toggle off
+                fullscreenToggle.isOn = false;
+            }
+            else
+            {
+                //set GUI toggle on
+                fullscreenToggle.isOn = true;
+            }
         }
+
+
+        //load audio Slider
+        if (PlayerPrefs.HasKey("MusicVol"))
+        {
+            float musicVol = PlayerPrefs.GetFloat("MusicVol");
+            musicSlider.value = musicVol;
+            mixer.SetFloat("MusicVol", musicVol);
+        }
+
+        if (PlayerPrefs.HasKey("SFXVol"))
+        {
+            float SFXVol = PlayerPrefs.GetFloat("SFXVol");
+            SFXSlider.value = SFXVol;
+            mixer.SetFloat("SFXVol", SFXVol);
+        }
+
+
     }
     #endregion
 
