@@ -46,3 +46,6 @@ MonoBehaviour:
   LoadScene: GameScene
   qualityDropdown: {fileID: 0}
   fullscreenToggle: {fileID: 0}
+  mixer: {fileID: 24100000, guid: 69aa1e9df056c774290af3ed9e6ea508, type: 2}
+  musicSlider: {fileID: 0}
+  SFXSlider: {fileID: 0}
