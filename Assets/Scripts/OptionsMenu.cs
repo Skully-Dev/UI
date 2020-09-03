@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;//for lists
+﻿using System.Collections.Generic;//for lists
 using UnityEngine;
 using UnityEngine.UI;
 
