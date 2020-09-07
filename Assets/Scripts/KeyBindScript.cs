@@ -21,13 +21,17 @@ public class KeyBindScript : MonoBehaviour
     {
         //Initialises the dictonary Keys by adding the typical elements below
         //the string/Key returns the KeyCode./Value
-        keys.Add("Up", KeyCode.W);
-        //keys.Add("Up", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Up", "W"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to W
-        keys.Add("Down", KeyCode.S);
-        keys.Add("Left", KeyCode.A);
-        keys.Add("Right", KeyCode.D);
-        keys.Add("Jump", KeyCode.Space);
-
+        //keys.Add("Up", KeyCode.W);
+        keys.Add("Up", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Up", "W"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to W
+        //keys.Add("Down", KeyCode.S);
+        keys.Add("Down", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Down", "S"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to W
+        //keys.Add("Left", KeyCode.A);
+        keys.Add("Left", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Left", "A"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to W
+        //keys.Add("Right", KeyCode.D);
+        keys.Add("Right", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Right", "D"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to W
+        //keys.Add("Jump", KeyCode.Space);
+        keys.Add("Jump", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Jump", "Space"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to W
+        //So at start, add listings to the keys dictionary with the values Up,Down,Left,Right,Jump and of keys of the same names string values which are converted to data type KeyCode, and if they DONT have a value yet, default to sting W,S,A,D,Space.
 
         //keys["Up"] = KeyCode.W; // to have a deafault/reset keys option
 
@@ -136,6 +140,11 @@ public class KeyBindScript : MonoBehaviour
         {
             PlayerPrefs.SetString(key.Key, key.Value.ToString());
         }
+
+    }
+
+    public void ResetKeys()
+    {
 
     }
 
