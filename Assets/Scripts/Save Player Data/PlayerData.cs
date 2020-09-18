@@ -7,6 +7,7 @@ public class PlayerData//load up PlayerData class with Data from our scene
     // Start is called before the first frame update
     public PlayerData(Player player) // when method is same name as class, it is a constructor, shorthand ctor + TAB + TAB
     {
+        /*
         level = player.level;
         health = player.health;
 
@@ -14,6 +15,6 @@ public class PlayerData//load up PlayerData class with Data from our scene
         position[0] = player.transform.position.x;
         position[1] = player.transform.position.y;
         position[2] = player.transform.position.z;
-
+        */
     }
 }
