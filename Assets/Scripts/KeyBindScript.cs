@@ -10,37 +10,23 @@ public class KeyBindScript : MonoBehaviour
     //can be found on Keybinds menu with referrence variables matching the names below
     public Text up, down, left, right, jump; //creates a bunch of text variables, up is one, down is another one etc, SAME AS CREATING 5 DIFFIRENT VARIABLES
 
+    [Tooltip("Reference Buttons to reset colors to white")]
+    public Image[] buttons;
+
     private GameObject currentKey; //Used to store clicked key clickKey
     //values between 0-255
     public Color32 changedKey = new Color32(39,171,249,255);//This one by default is blue
     public Color32 selectedKey = new Color32(239, 116, 36, 255);//this one by default is orange
     public Color32 unassignedKey = new Color32(255, 0, 0, 255); //This sis red by default
 
-
     private void Start()
     {
-        //Initialises the dictonary Keys by adding the typical elements below
-        //the string/Key returns the KeyCode./Value
-        //keys.Add("Up", KeyCode.W);
-        keys.Add("Up", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Up", "W"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to W
-        //keys.Add("Down", KeyCode.S);
-        keys.Add("Down", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Down", "S"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to W
-        //keys.Add("Left", KeyCode.A);
-        keys.Add("Left", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Left", "A"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to W
-        //keys.Add("Right", KeyCode.D);
-        keys.Add("Right", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Right", "D"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to W
-        //keys.Add("Jump", KeyCode.Space);
-        keys.Add("Jump", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Jump", "Space"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to W
-        //So at start, add listings to the keys dictionary with the values Up,Down,Left,Right,Jump and of keys of the same names string values which are converted to data type KeyCode, and if they DONT have a value yet, default to sting W,S,A,D,Space.
+        if (!keys.ContainsKey("Up"))//if dictonary isnt created
+        {
+            InitializeDictionary();
+        }
 
-        //keys["Up"] = KeyCode.W; // to have a deafault/reset keys option
-
-        //using the keys.Add("Key", Value/KeyCode);'s above we put the default dictonaries values into the text values of the buttons
-        up.text = keys["Up"].ToString(); //I.E. the up button text now equals the Keys dictonary of Up which is a value of KeyCode.W, which converted to string is simply "W".
-        down.text = keys["Down"].ToString();
-        left.text = keys["Left"].ToString();
-        right.text = keys["Right"].ToString();
-        jump.text = keys["Jump"].ToString();
+        UpdateButtonsText();
     }
 
     private void Update()
@@ -123,6 +109,34 @@ public class KeyBindScript : MonoBehaviour
             }
         }
     }
+
+    private void InitializeDictionary()
+    {
+        //Initializes the dictonary Keys by adding the typical elements below
+        //the string/Key returns the KeyCode./Value
+        //keys.Add("Up", KeyCode.W);
+        keys.Add("Up", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Up", "W"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to W
+        //keys.Add("Down", KeyCode.S);
+        keys.Add("Down", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Down", "S"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to W
+        //keys.Add("Left", KeyCode.A);
+        keys.Add("Left", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Left", "A"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to W
+        //keys.Add("Right", KeyCode.D);
+        keys.Add("Right", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Right", "D"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to W
+        //keys.Add("Jump", KeyCode.Space);
+        keys.Add("Jump", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Jump", "Space"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to W
+        //So at start, add listings to the keys dictionary with the values Up,Down,Left,Right,Jump and of keys of the same names string values which are converted to data type KeyCode, and if they DONT have a value yet, default to sting W,S,A,D,Space.
+    }
+
+    private void UpdateButtonsText()
+    {
+        //using the keys.Add("Key", Value/KeyCode);'s above we put the default dictonaries values into the text values of the buttons
+        up.text = keys["Up"].ToString(); //I.E. the up button text now equals the Keys dictonary of Up which is a value of KeyCode.W, which converted to string is simply "W".
+        down.text = keys["Down"].ToString();
+        left.text = keys["Left"].ToString();
+        right.text = keys["Right"].ToString();
+        jump.text = keys["Jump"].ToString();
+    }
+
     public void ChangeKey(GameObject clickKey) // used as an onclick method, clickKey is the button we clicked in GUI, method is connected to the UI button, so works on press
     {
         currentKey = clickKey; //current button
@@ -145,19 +159,18 @@ public class KeyBindScript : MonoBehaviour
 
     public void ResetKeys()
     {
+        //What are generally considered good default values
+        keys["Up"] = KeyCode.W;
+        keys["Down"] = KeyCode.S;
+        keys["Left"] = KeyCode.A;
+        keys["Right"] = KeyCode.D;
+        keys["Jump"] = KeyCode.Space;
 
-    }
+        UpdateButtonsText();
 
-    /*public string CheckClashWithBinds(string currentKey, string newKey)
-    {
-        foreach(var key in keys) //var
+        foreach (Image image in buttons)//sets the buttons colors back to white
         {
-            if(key.Value.ToString() == newKey && currentKey != newKey)
-            {
-                Debug.LogError("That key is already assigned");
-                newKey = "";
-            }
+            image.color = Color.white;
         }
-        return newKey;
-    }*/
+    }
 }

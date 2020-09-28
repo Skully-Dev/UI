@@ -3,7 +3,7 @@
 public class AnyKeyScreen : MonoBehaviour
 {
     public GameObject anyKeyScreen;
-    public GameObject mainMenu;
+    public GameObject[] mainMenuItems;
 
     private void OnGUI()
     {
@@ -13,7 +13,10 @@ public class AnyKeyScreen : MonoBehaviour
         {
             //if any key or mouse is pressed
             anyKeyScreen.SetActive(false);
-            mainMenu.SetActive(true);
+            foreach (GameObject item in mainMenuItems)
+            {
+                item.SetActive(true);
+            }
         }
     }
 }

@@ -8,15 +8,9 @@ public class LevelLoader : MonoBehaviour
 {
     public Image progressBar;
     public Text progressBarText;
-
-    public bool fakeProgress = false;
-    public float speed;
     public void LoadLevel(int sceneIndex)
     {
-        if (!fakeProgress)
-        {
             StartCoroutine(LoadAsynchronously(sceneIndex));
-        }
     }
 
     IEnumerator LoadAsynchronously(int sceneIndex)
