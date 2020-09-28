@@ -3,15 +3,16 @@ using UnityEngine;
 
 public class PauseMenu : MonoBehaviour
 {
-    //Don't tattach to the pause menu UI itself, this would end up with the script being inactive and no longer able to detect user input
+    //Don't attach to the pause menu UI itself, this would end up with the script being inactive and no longer able to detect user input
 
     public bool gameIsPaused = false;
+    private bool isOptions = false; //Dont want player resuming from options
     public GameObject pauseMenuUI;
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && !isOptions)
         {
             if (gameIsPaused)
             {
@@ -22,6 +23,11 @@ public class PauseMenu : MonoBehaviour
                 Pause();
             }
         }
+    }
+
+    public void IsOptions(bool isActive)
+    {
+        isOptions = isActive;
     }
 
     public void Resume()
