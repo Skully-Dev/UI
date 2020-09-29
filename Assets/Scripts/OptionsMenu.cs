@@ -18,6 +18,8 @@ public class OptionsMenu : MonoBehaviour //a Main Menu Class derived from base c
     public Slider SFXSlider;//reference the options slider UI for Sound Effects, to allow user to adjust volume in game
     #endregion
 
+    private bool newScreen = false;
+
     private void Start()
     {
         LoadPlayerPrefs(); //loads the player prefs that have values, check method for detail
@@ -29,6 +31,13 @@ public class OptionsMenu : MonoBehaviour //a Main Menu Class derived from base c
     public void PopulateResolutions()
     {
         resolutions = Screen.resolutions; //fills array with all resolutions possible on current monitor
+
+        if (resolutions.Length != PlayerPrefs.GetInt("ResolutionsLength")) //checks to see if new screen
+        {
+            PlayerPrefs.SetInt("ResolutionsLength", resolutions.Length);
+            newScreen = true;
+        }
+
         resolution.ClearOptions();//clears out original dropdown options
         List<string> options = new List<string>(); //more powerful than arrays but less efficient
 
@@ -38,7 +47,8 @@ public class OptionsMenu : MonoBehaviour //a Main Menu Class derived from base c
             //Build a string for displaying the resolution
             string option = resolutions[i].width + "x" + resolutions[i].height + " " + resolutions[i].refreshRate + "Hz"; //Generates the names of the resolutions like 1920x1080 60Hz
             options.Add(option);//adds them to the options list
-            if (resolutions[i].width == Screen.currentResolution.width &&
+            if (!newScreen &&
+                resolutions[i].width == Screen.currentResolution.width &&
                 resolutions[i].height == Screen.currentResolution.height &&
                 resolutions[i].refreshRate == Screen.currentResolution.refreshRate)//checks to see if this option is the same as the screens current resolution and refresh rate
             {
@@ -46,9 +56,20 @@ public class OptionsMenu : MonoBehaviour //a Main Menu Class derived from base c
                 currentResolutionIndex = i;//sets current resolution index value to the true current resolution setting
             }
         }
+
         //sets up our dropdown
         resolution.AddOptions(options);
-        resolution.value = currentResolutionIndex;
+        //sets selected dropdown value
+        if (PlayerPrefs.HasKey("ResolutionIndex") && !newScreen) //if not a new screen and there is a player pref
+        {
+            resolution.value = PlayerPrefs.GetInt("ResolutionIndex"); //set to player pref
+        }
+        else
+        {
+            resolution.value = currentResolutionIndex; //otherwise set as current resolution
+            PlayerPrefs.SetInt("ResolutionIndex", currentResolutionIndex); 
+            newScreen = false; //no longer new screen
+        }
         resolution.RefreshShownValue();
     }
 
@@ -111,6 +132,8 @@ public class OptionsMenu : MonoBehaviour //a Main Menu Class derived from base c
         {
             PlayerPrefs.SetFloat("SFXVol", SFXVol); //if true, SFXVol value is applied to PlayerPrefs SFXVol
         }
+
+        PlayerPrefs.SetInt("ResolutionIndex", resolution.value);
 
         PlayerPrefs.Save();//above sets changes, this line saves those changes to PlayerPrefs on device.
     }

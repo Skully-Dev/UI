@@ -10,7 +10,7 @@ public class LevelLoader : MonoBehaviour
     public Text progressBarText;
     public void LoadLevel(int sceneIndex)
     {
-            StartCoroutine(LoadAsynchronously(sceneIndex));
+        StartCoroutine(LoadAsynchronously(sceneIndex));
     }
 
     IEnumerator LoadAsynchronously(int sceneIndex)
@@ -19,14 +19,10 @@ public class LevelLoader : MonoBehaviour
 
         while (!operation.isDone)
         {
-            Debug.Log(operation.progress);
-
             float progress = Mathf.Clamp01(operation.progress / 0.9f); //will fill the bar as it never typically reaches full since at that point its loaded
 
-
             progressBar.fillAmount = progress;
-            progressBarText.text = Mathf.Round(progress) * 100 + "%"; //round instead of convert actually rounds up so 10.5, 'toInt' rounds to 10, where as 'Round' rounds to 11
-
+            progressBarText.text = progress.ToString("P0"); //converts to string as P percentage and 0 as number of decimals. E.G. "17%"
             yield return null;
         }
     }
