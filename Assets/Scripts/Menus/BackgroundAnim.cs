@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Background : MonoBehaviour
+public class BackgroundAnim : MonoBehaviour
 {
     private Animator anim;
     private void Start()
     {
         anim = GetComponent<Animator>();
     }
-    public void BrownToGreen()
+    public void OptionsEnter()
     {
         anim.SetBool("Options", true);
     }
-    public void GreenToBrown()
+    public void OptionsExit()
     {
         anim.SetBool("Options", false);
     }
