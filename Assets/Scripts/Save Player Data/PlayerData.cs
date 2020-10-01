@@ -8,6 +8,11 @@ public class PlayerData//load up PlayerData class with Data from our scene
 
     public int level;
     public float currentHealth;
+    public float maxHealth;
+    public float currentMana;
+    public float maxMana;
+    public float currentStamina;
+    public float maxStamina;
     public float[] position;//doesnt save vector 3's so we write our own position array to save vector3's(UNITY SPECIFIC) as float[](C# friendly)
     /// <summary>
     /// Contructor(Set up for our class), in here we are telling the class how to get the data from the player
@@ -18,6 +23,11 @@ public class PlayerData//load up PlayerData class with Data from our scene
     {
         level = player.playerStats.level;
         currentHealth = player.playerStats.currentHealth;
+        maxHealth = player.playerStats.maxHealth;
+        currentMana = player.playerStats.currentMana;
+        maxMana = player.playerStats.maxMana;
+        currentStamina = player.playerStats.currentStamina;
+        maxStamina = player.playerStats.maxStamina;
 
         position = new float[3]; // 3 floats instanced, so basically a vector 3
         position[0] = player.transform.position.x;
