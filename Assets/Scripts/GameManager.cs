@@ -6,7 +6,12 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField]
     private Player player;
+    private CharacterController controller;
 
+    private void Start()
+    {
+        controller = player.GetComponent<CharacterController>();
+    }
     //for testing
     public void Save()
     {
@@ -26,6 +31,9 @@ public class GameManager : MonoBehaviour
         player.playerStats.maxStamina = data.maxStamina;
 
         Vector3 pos = new Vector3(data.position[0], data.position[1], data.position[2]); //transfers float array into Vector3(for unity)
+        //controller.enabled = false;
         player.gameObject.transform.position = pos;
+        Physics.SyncTransforms();
+        //controller.enabled = true;
     }
 }

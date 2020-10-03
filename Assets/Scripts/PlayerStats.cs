@@ -26,16 +26,15 @@ public class PlayerStats
     public float maxStamina = 100f;
 
     //field and property
-    private float _currentHealth = 100;//field
     public float CurrentHealth //property
     {
         get
         {
-            return _currentHealth;
+            return currentHealth;
         }
         set
         {
-            _currentHealth = value;
+            currentHealth = value;
             if (healthHearts != null)
             {
                 healthHearts.UpdateHearts(value, maxHealth);

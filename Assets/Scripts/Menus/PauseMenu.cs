@@ -1,5 +1,6 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PauseMenu : MonoBehaviour
 {
@@ -45,6 +46,12 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 0f;//Make game time stand still
         gameIsPaused = true;
         Cursor.lockState = CursorLockMode.None; //unlocks the cursor to use
+    }
+
+    public void GoMainMenu()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("MainMenu");
     }
 
     public void QuitGame() //called with exit button
