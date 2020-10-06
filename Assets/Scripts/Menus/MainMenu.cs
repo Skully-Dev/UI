@@ -1,12 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement; //useful namespace, allows use of common code relating to Scene Management
 
 public class MainMenu : MonoBehaviour
 {
-    public string LoadScene = "GameScene";//sets a default scene to be loaded, as GameScene, value also settable in inspector.
+    [Tooltip("The name of the scene to load. The GameScene.")]
+    private string LoadScene = "GameScene";//sets a default scene to be loaded, as GameScene.
 
     public void Awake()//connecting to other things, loading things, so when we run start, everything is already set up for us
     {
@@ -15,11 +14,6 @@ public class MainMenu : MonoBehaviour
     public void Start() //called once when a script is enabled before any Update methods are called
     {
         Debug.Log("Starting Game Main Menu"); //Plays at start of the game
-    }
-
-    public void StartGame() //The Method called when New or Continue button is clicked in main menu GUI
-    {
-        SceneManager.LoadScene(LoadScene); //Loads the game scene
 
         if (!PlayerPrefs.HasKey("fullscreen"))//to see if player prefs has a value for fullscreen saved yet
         {
@@ -50,6 +44,17 @@ public class MainMenu : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Loads the gamescene, Method called when play button is clicked in main menu GUI
+    /// </summary>
+    public void StartGame()
+    { 
+        SceneManager.LoadScene(LoadScene); //Loads the game scene
+    }
+
+    /// <summary>
+    /// Quits Application, or if using Unity Editor, Exits Playmode
+    /// </summary>
     public void QuitGame() //called with on click of UI exit button
     {
         Debug.Log("Quitting Game"); //console line
@@ -64,7 +69,7 @@ public class MainMenu : MonoBehaviour
     public void OnGUI() //A less customizable button, but one we can add using code.
     {
         GUI.Box(new Rect(10, 10, 180, 120), "Testing Box"); //A box around the button
-        //if press me button is pressed
+        //if pressed returns true
         if (GUI.Button(new Rect(20, 40, 80, 20), "Button 1")) //Creates a usable button, that appears in top left corner during play mode // 20 x position, 40 y position, 80 width, 20 height
         {
             Debug.Log("Button 1 got pressed");

@@ -2,8 +2,12 @@
 
 public class AnyKeyScreen : MonoBehaviour
 {
-    public GameObject anyKeyScreen;
-    public GameObject[] mainMenuItems;
+    [SerializeField]
+    [Tooltip("Reference the 'Any Key Screen' game objects")]
+    private GameObject anyKeyScreen;
+    [SerializeField]
+    [Tooltip("Reference any 'Main Menu' Game Objects")]
+    private GameObject[] mainMenuItems;
 
     private void OnGUI()
     {
@@ -11,11 +15,10 @@ public class AnyKeyScreen : MonoBehaviour
 
         if (e.isKey || e.isMouse) //if what happened is a key was pressed or mouse was clicked
         {
-            //if any key or mouse is pressed
-            anyKeyScreen.SetActive(false);
-            foreach (GameObject item in mainMenuItems)
+            anyKeyScreen.SetActive(false); //deactivate AnyKey reference
+            foreach (GameObject item in mainMenuItems) //goes through the array of Main Menu references
             {
-                item.SetActive(true);
+                item.SetActive(true); //activate all Main Menu references
             }
         }
     }

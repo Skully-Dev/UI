@@ -4,20 +4,29 @@ using UnityEngine.UI;
 
 public class KeyBindScript : MonoBehaviour
 {
-    public static Dictionary<string, KeyCode> keys = new Dictionary<string, KeyCode>(); //where a key(string) returns a value(KeyCode)
+    private static Dictionary<string, KeyCode> keys = new Dictionary<string, KeyCode>(); //where a key(string) returns a value(KeyCode)
 
     //we store keycodes as strings in these Text variables, then use these as the text in the buttons, therefore buttons show keycode for action.
     //can be found on Keybinds menu with referrence variables matching the names below
-    public Text up, down, left, right, jump; //creates a bunch of text variables, up is one, down is another one etc, SAME AS CREATING 5 DIFFIRENT VARIABLES
+    [SerializeField]
+    [Tooltip("To store keycodes as stings in them, this sets the text in the UI buttons. Therefore the buttons show the KeyCode to use their action.")]
+    private Text up, down, left, right, jump; //creates a bunch of text variables, up is one, down is another one etc, SAME AS CREATING 5 DIFFIRENT VARIABLES
 
+    [SerializeField]
     [Tooltip("Reference Buttons to reset colors to white")]
-    public Image[] buttons;
+    private Image[] buttons;
 
-    private GameObject currentKey; //Used to store clicked key clickKey
+    private GameObject currentKey; //Used to store clicked key clickKey, the key the user wants to change button to.
     //values between 0-255
-    public Color32 changedKey = new Color32(39,171,249,255);//This one by default is blue
-    public Color32 selectedKey = new Color32(239, 116, 36, 255);//this one by default is orange
-    public Color32 unassignedKey = new Color32(255, 0, 0, 255); //This sis red by default
+    [SerializeField]
+    [Tooltip("The color the button changes when value is changed.")]
+    private Color32 changedKey = new Color32(39,171,249,255);//This one by default is blue
+    [SerializeField]
+    [Tooltip("The color the button changes when it is selected.")]
+    private Color32 selectedKey = new Color32(239, 116, 36, 255);//this one by default is orange
+    [SerializeField]
+    [Tooltip("The color the button changes when value fails to change.")]
+    private Color32 unassignedKey = new Color32(255, 0, 0, 255); //This is red by default
 
     private void Start()
     {
@@ -58,15 +67,14 @@ public class KeyBindScript : MonoBehaviour
 
     private void OnGUI() //allows us to run Events
     {
-        string newKey = "";
+        string newKey = ""; //a variable to store key pressed
         Event e = Event.current; //e is now the current GUI event
 
         if (currentKey != null)//only when we are trying to reassign a key, so when we click a button, currentKey will NOT equal null
         {
             if (e.isKey) //if what happened is a key was pressed
             {
-                //this is any key right now
-                newKey = e.keyCode.ToString();
+                newKey = e.keyCode.ToString(); //stores the keycode in newKey as a string
                 //e.keycode DOESNT store SHIFT KEYS
             }
 
@@ -110,6 +118,10 @@ public class KeyBindScript : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Initializes the dictonary Keys Up, Down, Left, Right, Jump and thier corresponding PlayerPref values.
+    /// If there aren't preferences, defaults to WSAD and Space Bar.
+    /// </summary>
     private void InitializeDictionary()
     {
         //Initializes the dictonary Keys by adding the typical elements below
@@ -127,16 +139,25 @@ public class KeyBindScript : MonoBehaviour
         //So at start, add listings to the keys dictionary with the values Up,Down,Left,Right,Jump and of keys of the same names string values which are converted to data type KeyCode, and if they DONT have a value yet, default to sting W,S,A,D,Space.
     }
 
+    /// <summary>
+    /// Makes the text of the buttons match the KeyCode of their actions.
+    /// </summary>
     private void UpdateButtonsText()
     {
-        //using the keys.Add("Key", Value/KeyCode);'s above we put the default dictonaries values into the text values of the buttons
-        up.text = keys["Up"].ToString(); //I.E. the up button text now equals the Keys dictonary of Up which is a value of KeyCode.W, which converted to string is simply "W".
+        //using the keys.Add("Key", Value/KeyCode);'s above we put the dictonaries values into the text values of the buttons
+        up.text = keys["Up"].ToString(); //I.E. the up button text now equals the Keys dictonary of Up which initally would be a default value of KeyCode.W, which converted to string is simply "W".
         down.text = keys["Down"].ToString();
         left.text = keys["Left"].ToString();
         right.text = keys["Right"].ToString();
         jump.text = keys["Jump"].ToString();
     }
 
+    /// <summary>
+    /// Used as an onclick method for Keybind buttons
+    /// clickKey is the button we clicked in GU.
+    /// Method is connected to the UI button, so works on press.
+    /// </summary>
+    /// <param name="clickKey">clickKey is the button we clicked in GUI.</param>
     public void ChangeKey(GameObject clickKey) // used as an onclick method, clickKey is the button we clicked in GUI, method is connected to the UI button, so works on press
     {
         currentKey = clickKey; //current button
@@ -147,16 +168,20 @@ public class KeyBindScript : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Creates player prefs on current keyCode settings
+    /// </summary>
     public void SaveKeys()
     {
-
         foreach(var key in keys) //var because keys are a complex data type.
         {
             PlayerPrefs.SetString(key.Key, key.Value.ToString());
         }
-
     }
 
+    /// <summary>
+    /// Resets Actions Keycodes to typical settings
+    /// </summary>
     public void ResetKeys()
     {
         //What are generally considered good default values

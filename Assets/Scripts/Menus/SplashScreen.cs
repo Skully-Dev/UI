@@ -2,14 +2,16 @@
 
 public class SplashScreen : MonoBehaviour //attached to Manual Splash Screen Game Object
 {
-    public float disableTime = 0.5f; //a float variable named disableTime, default value of 0.5f, settable from inspector
+    [SerializeField]
+    [Tooltip("How long you want the manual splash screen to be visable")]
+    private float disableTime = 0.5f;
 
     // Update is called once per frame
     void Update()
     {
-        if(Time.time > disableTime)
+        if(Time.time > disableTime) //once its been that long.
         {
-            gameObject.SetActive(false);
+            gameObject.SetActive(false); //disable splash screen.
         }
     }
 }
