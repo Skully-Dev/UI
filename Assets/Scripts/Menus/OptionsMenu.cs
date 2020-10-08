@@ -8,6 +8,7 @@ public class OptionsMenu : MonoBehaviour //a Main Menu Class derived from base c
 {
     //Be sure to attach script to game
     #region Reference Variables
+    [Header("References")]
     //variables that you can assign vales in the inspector
     [SerializeField]
     [Tooltip("Reference Resolutions Dropdown to be filled with available resolution options, is dynamic.")]
@@ -27,17 +28,24 @@ public class OptionsMenu : MonoBehaviour //a Main Menu Class derived from base c
     [SerializeField]
     [Tooltip("Reference the SFX Slider, so it can modify the Mixers value for Sound Effects, is dynamic.")]
     private Slider SFXSlider;//reference the options slider UI for Sound Effects, to allow user to adjust volume in game
+    [SerializeField]
+    [Tooltip("Turns on button audio, off at start so options can set preset values without SoundFX")]
+    private GameObject buttonSound;
     #endregion
+    [Header("Other")]
     [Tooltip("Stores the array of possible resolutions of the screen")]
     private Resolution[] resolutions;
     
     [Tooltip("Has the sceen changed since the last time Resolutions dropdown was populated")]
     private bool newScreen = false;
 
+
+
     private void Start()
     {
         LoadPlayerPrefs(); //loads the player prefs that have values, check method for detail
         PopulateResolutions();
+        buttonSound.SetActive(true);
     }
 
 

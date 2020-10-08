@@ -5,13 +5,16 @@ using UnityEngine.SceneManagement;
 
 public class LevelLoader : MonoBehaviour
 {
+    #region References
+    [Header("References")]
     [SerializeField]
     [Tooltip("Reference an Image with Image Type: Filled and Fill Method: Horizontal for visual loading progress")]
     private Image progressBar;
     [SerializeField]
     [Tooltip("Reference a Text to display load percentage as e.g. 35%")]
     private Text progressBarText;
-
+    #endregion
+    #region Load Level Method + Coroutine
     /// <summary>
     /// Calls stack to load level Asynchronously, what scene do you want to load?
     /// </summary>
@@ -38,5 +41,10 @@ public class LevelLoader : MonoBehaviour
             progressBarText.text = progress.ToString("P0"); //converts to string as P percentage and 0 as number of decimals. E.G. "17%"
             yield return null;
         }
+    }
+    #endregion 
+    public void LoadOnLoad()
+    {
+        PlayerPrefs.SetInt("LoadOnLoad", 1); //1 = true, 0 = false
     }
 }

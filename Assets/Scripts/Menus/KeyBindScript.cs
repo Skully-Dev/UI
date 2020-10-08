@@ -4,8 +4,9 @@ using UnityEngine.UI;
 
 public class KeyBindScript : MonoBehaviour
 {
-    private static Dictionary<string, KeyCode> keys = new Dictionary<string, KeyCode>(); //where a key(string) returns a value(KeyCode)
 
+    private static Dictionary<string, KeyCode> keys = new Dictionary<string, KeyCode>(); //where a key(string) returns a value(KeyCode)
+    #region References
     //we store keycodes as strings in these Text variables, then use these as the text in the buttons, therefore buttons show keycode for action.
     //can be found on Keybinds menu with referrence variables matching the names below
     [SerializeField]
@@ -17,6 +18,9 @@ public class KeyBindScript : MonoBehaviour
     private Image[] buttons;
 
     private GameObject currentKey; //Used to store clicked key clickKey, the key the user wants to change button to.
+    #endregion
+    #region Colors
+    [Header("Button Colors")]
     //values between 0-255
     [SerializeField]
     [Tooltip("The color the button changes when value is changed.")]
@@ -27,6 +31,7 @@ public class KeyBindScript : MonoBehaviour
     [SerializeField]
     [Tooltip("The color the button changes when value fails to change.")]
     private Color32 unassignedKey = new Color32(255, 0, 0, 255); //This is red by default
+    #endregion
 
     private void Start()
     {
@@ -40,6 +45,7 @@ public class KeyBindScript : MonoBehaviour
 
     private void Update()
     {
+        #region User Input Controls
         //instead of Input.GetKeyDown(KeyCode.W), we use the dictonary 'keys' with value "Up" to call what KeyCode is required to be pressed for said action
         //Although the KeyBindScript. part on the line is not required in this example, as we are in that script already, we have coded it this way so if we copy the code to run characterController in the game scene, it will still work.
         if (Input.GetKeyDown(KeyBindScript.keys["Up"]))//(Keycode.W)
@@ -63,10 +69,12 @@ public class KeyBindScript : MonoBehaviour
             //Make the character jump
             Debug.Log("Jump");
         }
+        #endregion
     }
 
     private void OnGUI() //allows us to run Events
     {
+        #region Get key change information
         string newKey = ""; //a variable to store key pressed
         Event e = Event.current; //e is now the current GUI event
 
@@ -87,7 +95,7 @@ public class KeyBindScript : MonoBehaviour
             {
                 newKey = "RightShift"; //set key as right shift
             }
-
+            #endregion
             #region My Double Assignment Code
             if (newKey != "") //this is done twice, first is to test if its an assigned key, 
             {
@@ -103,7 +111,7 @@ public class KeyBindScript : MonoBehaviour
                 }
             }
             #endregion
-
+            #region Applies valid key change
             if (newKey != "") //if we have a set key
             {
                 //we change our dictionary (that means our keybind changes too)
@@ -115,9 +123,10 @@ public class KeyBindScript : MonoBehaviour
                 currentKey.GetComponent<Image>().color = changedKey; //gives a color to notify user key has been changed
                 currentKey = null; //sets currentKey back to null to reset conditionals
             }
+            #endregion
         }
     }
-
+    #region Initialize Dictionary and Update Text Methods
     /// <summary>
     /// Initializes the dictonary Keys Up, Down, Left, Right, Jump and thier corresponding PlayerPref values.
     /// If there aren't preferences, defaults to WSAD and Space Bar.
@@ -151,7 +160,9 @@ public class KeyBindScript : MonoBehaviour
         right.text = keys["Right"].ToString();
         jump.text = keys["Jump"].ToString();
     }
+    #endregion
 
+    #region Change Key Method
     /// <summary>
     /// Used as an onclick method for Keybind buttons
     /// clickKey is the button we clicked in GU.
@@ -167,7 +178,8 @@ public class KeyBindScript : MonoBehaviour
             currentKey.GetComponent<Image>().color = selectedKey;//gives us a visual update (changes the button color) that this key is currently selected for changing
         }
     }
-
+    #endregion
+    #region Save/Reset Keys Methods
     /// <summary>
     /// Creates player prefs on current keyCode settings
     /// </summary>
@@ -198,4 +210,5 @@ public class KeyBindScript : MonoBehaviour
             image.color = Color.white;
         }
     }
+    #endregion
 }

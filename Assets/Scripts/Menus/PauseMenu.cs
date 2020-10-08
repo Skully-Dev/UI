@@ -4,19 +4,23 @@ using UnityEngine.SceneManagement;
 
 public class PauseMenu : MonoBehaviour
 {
+    #region References and bools
     //Don't attach to the pause menu UI itself, this would end up with the script being inactive and no longer able to detect user input
     [SerializeField]
     [Tooltip("Reference Pause Menu Game Object, to toggle active on/off")]
-    private GameObject pauseMenuUI;
+    private GameObject[] pauseMenuUI;
 
+    [Header("Bool Conditionals")]
     [Tooltip("is the game currently paused.")]
     private bool gameIsPaused = false;
     [Tooltip("is options currently open.")]
     private bool isOptions = false; //Dont want player resuming from options
+    #endregion
 
     // Update is called once per frame
     void Update()
     {
+        #region Resume/Pause on Esc
         if (Input.GetKeyDown(KeyCode.Escape) && !isOptions) //if ESC key is pressed and options isnt open.
         {
             if (gameIsPaused) //if game is paused
@@ -28,8 +32,10 @@ public class PauseMenu : MonoBehaviour
                 Pause();
             }
         }
+        #endregion
     }
 
+    #region Pause Menu Methods
     /// <summary>
     /// To toggle options bool for conditionals
     /// </summary>
@@ -39,12 +45,16 @@ public class PauseMenu : MonoBehaviour
         isOptions = isActive;
     }
 
+    #region Resume/Pause Methods
     /// <summary>
     /// Hides Pause Menu, returns game time to normal, locks and hides cursor.
     /// </summary>
     public void Resume()
     {
-        pauseMenuUI.SetActive(false); //hide pause menu UI
+        foreach (GameObject element in pauseMenuUI)
+        {
+            element.SetActive(false); //hide pause menu UI
+        }
         Time.timeScale = 1f;//time resumes normal game time
         gameIsPaused = false; //sets bool for conditionals
 
@@ -57,14 +67,18 @@ public class PauseMenu : MonoBehaviour
     /// </summary>
     public void Pause()
     {
-        pauseMenuUI.SetActive(true); //reveals Pause Menu UI
+        foreach (GameObject element in pauseMenuUI)
+        {
+            element.SetActive(true); //reveals Pause Menu UI
+        }
         Time.timeScale = 0f;//Make game time stand still
         gameIsPaused = true; //sets bool for conditionals
 
         Cursor.lockState = CursorLockMode.None; //unlocks the cursor to use
         Cursor.visible = true; //makes cursor visable for use.
     }
-
+    #endregion
+    
     /// <summary>
     /// Returns Time Scale to normal and loads the Main Menu
     /// </summary>
@@ -87,4 +101,5 @@ public class PauseMenu : MonoBehaviour
         Application.Quit(); //if not unity editor, run the quit application/exe
                             //quit exe game, i.e. once published, this will quit
     }
+    #endregion
 }

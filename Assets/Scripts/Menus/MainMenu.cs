@@ -4,6 +4,10 @@ using UnityEngine.SceneManagement; //useful namespace, allows use of common code
 
 public class MainMenu : MonoBehaviour
 {
+    [SerializeField]
+    [Tooltip("Reference Continue button, if save exists, activate")]
+    private GameObject continueButton;
+
     [Tooltip("The name of the scene to load. The GameScene.")]
     private string LoadScene = "GameScene";//sets a default scene to be loaded, as GameScene.
 
@@ -14,36 +18,9 @@ public class MainMenu : MonoBehaviour
     public void Start() //called once when a script is enabled before any Update methods are called
     {
         Debug.Log("Starting Game Main Menu"); //Plays at start of the game
-
-        if (!PlayerPrefs.HasKey("fullscreen"))//to see if player prefs has a value for fullscreen saved yet
-        {
-            PlayerPrefs.SetInt("fullscreen", 0); //if it doesnt, set prefs to windowed, where fullscreen value is 0 i.e. not fullscreen
-            Screen.fullScreen = false;  //makes it windowed
-        }
-        else
-        {
-            if (PlayerPrefs.GetInt("fullscreen") == 0) //otherwise, if player prefs fullscreen is set to 0
-            {
-                Screen.fullScreen = false; //make it windowed
-            }
-            else
-            {
-                Screen.fullScreen = true; //otherwise, fullscreen must equal 1, so set to fullscreen
-            }
-        }
-
-        if (!PlayerPrefs.HasKey("quality"))//to see if player pref quality has a value saved yet
-        {
-            PlayerPrefs.SetInt("quality", 5); //if it doesnt, set player pref quality to 5 i.e. Ultra(highest) quality, 5 = number of quality levels available minus one. 0 is lowest quality.
-            QualitySettings.SetQualityLevel(5); //applies highest quality setting
-            //dont have magic numbers in the future, like where does this number come from, what does it mean, it isnt a previously defined variable. 
-        }
-        else
-        {
-            QualitySettings.SetQualityLevel(PlayerPrefs.GetInt("quality"));//otherwise, set actual quality to player pref i.e. last saved value.
-        }
+        continueButton.SetActive(SaveSystem.SaveExists()); //Active status depends on existence of save file
     }
-
+    #region Start Game and Quit Game Methods
     /// <summary>
     /// Loads the gamescene, Method called when play button is clicked in main menu GUI
     /// </summary>
@@ -65,7 +42,9 @@ public class MainMenu : MonoBehaviour
         Application.Quit(); //if not unity editor, run the quit application/exe
                             //quit exe game, i.e. once published, this will quit
     }
+    #endregion
 
+    #region IMGUI buttons
     public void OnGUI() //A less customizable button, but one we can add using code.
     {
         GUI.Box(new Rect(10, 10, 180, 120), "Testing Box"); //A box around the button
@@ -92,4 +71,5 @@ public class MainMenu : MonoBehaviour
             QuitGame();
         }
     }
+    #endregion
 }

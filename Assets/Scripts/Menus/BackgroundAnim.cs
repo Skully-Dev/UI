@@ -2,12 +2,15 @@
 
 public class BackgroundAnim : MonoBehaviour
 {
+    #region Reference
     [Tooltip("Reference to Background Animator")]
     private Animator anim;
     private void Start()
     {
         anim = GetComponent<Animator>(); //get reference
     }
+    #endregion
+    #region Animator Methods
     /// <summary>
     /// on click event for opening options menu.
     /// Sets options bool to true.
@@ -28,4 +31,5 @@ public class BackgroundAnim : MonoBehaviour
     {
         anim.SetBool("Options", false);
     }
+    #endregion
 }

@@ -2,13 +2,16 @@
 
 public class AnyKeyScreen : MonoBehaviour
 {
+    #region References
+    [Header("References")]
     [SerializeField]
     [Tooltip("Reference the 'Any Key Screen' game objects")]
     private GameObject anyKeyScreen;
     [SerializeField]
     [Tooltip("Reference any 'Main Menu' Game Objects")]
     private GameObject[] mainMenuItems;
-
+    #endregion
+    #region Any Key Event
     private void OnGUI()
     {
         Event e = Event.current; //e is now the current GUI event
@@ -22,4 +25,5 @@ public class AnyKeyScreen : MonoBehaviour
             }
         }
     }
+    #endregion
 }

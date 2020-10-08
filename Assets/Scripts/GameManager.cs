@@ -1,23 +1,33 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    #region  Player Reference and Load On Load Conditional
     [SerializeField]
+    [Tooltip("Reference Player so player values can be saved.")]
     private Player player;
-    private CharacterController controller;
 
     private void Start()
     {
-        controller = player.GetComponent<CharacterController>();
+        if (PlayerPrefs.GetInt("LoadOnLoad") == 1) //1=true, 0=false
+        {
+            Load();
+            PlayerPrefs.SetInt("LoadOnLoad", 0);
+        }
     }
-    //for testing
+    #endregion
+    #region Save and Load Methods
+    /// <summary>
+    /// Sends player to be converted into PlayerData to be converted into binary and saved off in a file.
+    /// </summary>
     public void Save()
     {
         SaveSystem.SavePlayer(player); //you need to pass it a reference of player to save
     }
 
+    /// <summary>
+    /// Loads save file converts it from binary into PlayerData then is applied to player.
+    /// </summary>
     public void Load()
     {
         PlayerData data = SaveSystem.LoadPlayer();
@@ -36,4 +46,5 @@ public class GameManager : MonoBehaviour
         Physics.SyncTransforms();
         //controller.enabled = true;
     }
+    #endregion
 }

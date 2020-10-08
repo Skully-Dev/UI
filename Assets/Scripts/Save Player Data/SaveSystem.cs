@@ -4,6 +4,7 @@ using System.Runtime.Serialization.Formatters.Binary; //C# thing, this is why we
 
 public class SaveSystem : MonoBehaviour
 {
+    #region SAVE/LOAD
     //Can be used when and how you want, save at end of level/every 10 mins/ on exit / on events like buttons
     public static void SavePlayer(Player player) //static allows saving from any point in our game without needing an instance
     {
@@ -42,6 +43,24 @@ public class SaveSystem : MonoBehaviour
             return null;
         }
     }
+    #endregion
+    #region Other Methods
+    /// <summary>
+    /// Checks to see if 
+    /// </summary>
+    /// <returns></returns>
+    public static bool SaveExists()
+    {
+        string path = Path();
+        if (File.Exists(path)) //if the file exists
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
     /// <summary>
     /// A string of the path we want, where to save, currently unity assets folder
@@ -55,4 +74,5 @@ public class SaveSystem : MonoBehaviour
         return Application.dataPath + "/player.skully"; // saves to unity assets folder // A string of the path we want, where to save
 
     }
+    #endregion
 }

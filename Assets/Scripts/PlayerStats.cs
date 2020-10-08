@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [System.Serializable]
 public class PlayerStats
 {
+    #region Float Variables
     /// <summary>
     /// Stores the player stats
     /// </summary>
@@ -24,6 +23,8 @@ public class PlayerStats
     public float maxMana = 100f;
     public float currentStamina = 100f;
     public float maxStamina = 100f;
+    #endregion
+    #region Property and QuaterHearts
 
     //field and property
     public float CurrentHealth //property
@@ -42,4 +43,5 @@ public class PlayerStats
         }
     }
     public QuarterHearts healthHearts;
+    #endregion
 }
