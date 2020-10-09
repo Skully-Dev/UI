@@ -17,6 +17,12 @@ public class PauseMenu : MonoBehaviour
     private bool isOptions = false; //Dont want player resuming from options
     #endregion
 
+    private void Awake()
+    {
+        Cursor.lockState = CursorLockMode.Locked; //lockes cursor to center screen to avoid user moving pointer off game.
+        Cursor.visible = false;  //hides the cursor from view
+    }
+
     // Update is called once per frame
     void Update()
     {

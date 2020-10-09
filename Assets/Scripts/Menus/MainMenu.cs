@@ -13,6 +13,12 @@ public class MainMenu : MonoBehaviour
 
     public void Awake()//connecting to other things, loading things, so when we run start, everything is already set up for us
     {
+        //turns off debug logs if not in Unity Editor
+#if UNITY_EDITOR
+        Debug.unityLogger.logEnabled = true;
+#else   
+        Debug.unityLogger.logEnabled = false;      
+#endif
     }
 
     public void Start() //called once when a script is enabled before any Update methods are called
@@ -45,6 +51,7 @@ public class MainMenu : MonoBehaviour
     #endregion
 
     #region IMGUI buttons
+    /*
     public void OnGUI() //A less customizable button, but one we can add using code.
     {
         GUI.Box(new Rect(10, 10, 180, 120), "Testing Box"); //A box around the button
@@ -71,5 +78,6 @@ public class MainMenu : MonoBehaviour
             QuitGame();
         }
     }
+    */
     #endregion
 }

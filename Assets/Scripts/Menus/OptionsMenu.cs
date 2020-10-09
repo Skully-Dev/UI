@@ -205,6 +205,13 @@ public class OptionsMenu : MonoBehaviour //a Main Menu Class derived from base c
                 ChangeQuality(quality); //set its quality setting to the last chosen value
             }
         }
+        else
+        {
+            PlayerPrefs.SetInt("quality", 5); //if it doesnt, set player pref quality to 5 i.e. Ultra(highest) quality, 5 = number of quality levels available minus one. 0 is lowest quality.
+            QualitySettings.SetQualityLevel(5); //applies highest quality setting
+            //dont have magic numbers in the future, like where does this number come from, what does it mean, it isnt a previously defined variable. 
+            qualityDropdown.value = 5; //set quality dropdown to select quality the same.
+        }
 
         if (PlayerPrefs.HasKey("fullscreen"))//checks to see if there is a key called fullscreen before trying to assign values, to avoid errors
         {

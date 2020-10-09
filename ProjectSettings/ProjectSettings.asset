@@ -13,7 +13,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: Epic Menu Systems Inc.
-  productName: GUI
+  productName: MenuSystemsGUI
   defaultCursor: {fileID: 2800000, guid: 083b337604cbb804ea11f620733d36df, type: 3}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 1, g: 1, b: 1, a: 1}
@@ -42,7 +42,9 @@ PlayerSettings:
   m_SplashScreenLogos:
   - logo: {fileID: 10404, guid: 0000000000000000e000000000000000, type: 0}
     duration: 2
-  - logo: {fileID: 21300000, guid: c58fd2f1b6702cb4eb595ddc5706ebc1, type: 3}
+  - logo: {fileID: 21300000, guid: cb0b22524b458e94d9a48b644776912e, type: 3}
+    duration: 2
+  - logo: {fileID: 21300000, guid: a6e82402c8a858c4293b0298c40f3f7a, type: 3}
     duration: 3
   m_VirtualRealitySplashScreen: {fileID: 0}
   m_HolographicTrackingLossScreen: {fileID: 0}
