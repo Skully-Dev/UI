@@ -17,6 +17,7 @@ public class ThirdPersonMovement : MonoBehaviour
     private Vector3 playerVelocity;
 
     private bool isGrounded;
+
     private void FixedUpdate()
     {
         isGrounded = IsGrounded();
@@ -25,14 +26,44 @@ public class ThirdPersonMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        #region User Input Controls
+        
+
+        #endregion
         Jump();
         Movement();
     }
 
     private void Movement()
     {
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
+        #region Input Axis Horizontal and Vertical
+        //float horizontal = Input.GetAxisRaw("Horizontal");
+        //float vertical = Input.GetAxisRaw("Vertical");
+        #endregion
+
+        #region Input Keybinds Horisontal and Vertical
+        //Direction based on user input of KeyBinds
+        float vertical = 0;
+        float horizontal = 0;
+        //instead of Input.GetKeyDown(KeyCode.W), we use the dictonary 'keys' with value "Up" to call what KeyCode is required to be pressed for said action
+        if (Input.GetKey(KeyBindScript.keys["Up"]))//default (Keycode.W)
+        {
+            vertical = 1;
+        }
+        if (Input.GetKey(KeyBindScript.keys["Down"]))//default (Keycode.S)
+        {
+            vertical += -1;
+        }
+        if (Input.GetKey(KeyBindScript.keys["Left"]))//default (Keycode.A)
+        {
+            horizontal = -1;
+        }
+        if (Input.GetKey(KeyBindScript.keys["Right"]))//default (Keycode.D)
+        {
+            horizontal += 1;
+        }
+        #endregion
+
         Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
 
         if (direction.magnitude >= 0.1f)
@@ -43,14 +74,16 @@ public class ThirdPersonMovement : MonoBehaviour
 
             Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward; //direction in relation to the forward vector
 
-            float movementSpeed = player.playerStats.speed;
-            if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+            float movementSpeed = player.playerStats.stats.speed;
+            if (player.playerStats.stats.currentStamina > 0 && Input.GetKey(KeyBindScript.keys["Sprint"])/*Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)*/)
             {
-                movementSpeed = player.playerStats.sprintSpeed;
+                player.disableStaminaRegenTime = Time.time;
+                player.playerStats.stats.currentStamina -= player.StaminaDegen * Time.deltaTime;
+                movementSpeed = player.playerStats.stats.sprintSpeed;
             }
-            else if (Input.GetKey(KeyCode.C))
+            else if (Input.GetKey(KeyBindScript.keys["Crouch"])/*Input.GetKey(KeyCode.C)*/)
             {
-                movementSpeed = player.playerStats.crouchSpeed;
+                movementSpeed = player.playerStats.stats.crouchSpeed;
             }
             controller.Move(moveDir * movementSpeed * Time.deltaTime);
         }
@@ -63,9 +96,9 @@ public class ThirdPersonMovement : MonoBehaviour
             playerVelocity.y = 0f;
         }
 
-        if (Input.GetButtonDown("Jump") && isGrounded) //&& groundedPlayer
+        if (Input.GetKeyDown(KeyBindScript.keys["Jump"])/*Input.GetButtonDown("Jump")*/ && isGrounded) //if jump is pressed and character is grounded
         {
-            playerVelocity.y += Mathf.Sqrt(player.playerStats.jumpHeight * -3.0f * gravity);
+            playerVelocity.y += Mathf.Sqrt(player.playerStats.stats.jumpHeight * -3.0f * gravity);
         }
 
         playerVelocity.y += gravity * Time.deltaTime;

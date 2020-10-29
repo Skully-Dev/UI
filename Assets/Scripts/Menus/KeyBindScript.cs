@@ -4,14 +4,13 @@ using UnityEngine.UI;
 
 public class KeyBindScript : MonoBehaviour
 {
-
-    private static Dictionary<string, KeyCode> keys = new Dictionary<string, KeyCode>(); //where a key(string) returns a value(KeyCode)
-    #region References
+    public static Dictionary<string, KeyCode> keys = new Dictionary<string, KeyCode>(); //where a key(string) returns a value(KeyCode), MUST BE PUBLIC for TPMovement
+    #region Reference Variables
     //we store keycodes as strings in these Text variables, then use these as the text in the buttons, therefore buttons show keycode for action.
     //can be found on Keybinds menu with referrence variables matching the names below
     [SerializeField]
     [Tooltip("To store keycodes as stings in them, this sets the text in the UI buttons. Therefore the buttons show the KeyCode to use their action.")]
-    private Text up, down, left, right, jump; //creates a bunch of text variables, up is one, down is another one etc, SAME AS CREATING 5 DIFFIRENT VARIABLES
+    private Text up, down, left, right, jump, sprint, crouch; //creates a bunch of text variables, up is one, down is another one etc, SAME AS CREATING 5 DIFFIRENT VARIABLES
 
     [SerializeField]
     [Tooltip("Reference Buttons to reset colors to white")]
@@ -19,7 +18,7 @@ public class KeyBindScript : MonoBehaviour
 
     private GameObject currentKey; //Used to store clicked key clickKey, the key the user wants to change button to.
     #endregion
-    #region Colors
+    #region Colors Variables
     [Header("Button Colors")]
     //values between 0-255
     [SerializeField]
@@ -43,8 +42,9 @@ public class KeyBindScript : MonoBehaviour
         UpdateButtonsText();
     }
 
-    private void Update()
+    /*private void Update()
     {
+        
         #region User Input Controls
         //instead of Input.GetKeyDown(KeyCode.W), we use the dictonary 'keys' with value "Up" to call what KeyCode is required to be pressed for said action
         //Although the KeyBindScript. part on the line is not required in this example, as we are in that script already, we have coded it this way so if we copy the code to run characterController in the game scene, it will still work.
@@ -69,8 +69,17 @@ public class KeyBindScript : MonoBehaviour
             //Make the character jump
             Debug.Log("Jump");
         }
+        if (Input.GetKeyDown(KeyBindScript.keys["Sprint"]))
+        {
+            Debug.Log("Character is running");
+        }
+        if (Input.GetKeyDown(KeyBindScript.keys["Crouch"]))
+        {
+            Debug.Log("Character is crouching");
+        }
         #endregion
-    }
+
+    }*/
 
     private void OnGUI() //allows us to run Events
     {
@@ -138,14 +147,19 @@ public class KeyBindScript : MonoBehaviour
         //keys.Add("Up", KeyCode.W);
         keys.Add("Up", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Up", "W"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to W
         //keys.Add("Down", KeyCode.S);
-        keys.Add("Down", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Down", "S"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to W
+        keys.Add("Down", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Down", "S"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to S
         //keys.Add("Left", KeyCode.A);
-        keys.Add("Left", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Left", "A"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to W
+        keys.Add("Left", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Left", "A"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to A
         //keys.Add("Right", KeyCode.D);
-        keys.Add("Right", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Right", "D"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to W
+        keys.Add("Right", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Right", "D"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to D
         //keys.Add("Jump", KeyCode.Space);
-        keys.Add("Jump", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Jump", "Space"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to W
-        //So at start, add listings to the keys dictionary with the values Up,Down,Left,Right,Jump and of keys of the same names string values which are converted to data type KeyCode, and if they DONT have a value yet, default to sting W,S,A,D,Space.
+        keys.Add("Jump", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Jump", "Space"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to Space
+
+        keys.Add("Sprint", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Sprint", "LeftShift"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to Left Shift
+
+        keys.Add("Crouch", (KeyCode)System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("Crouch", "C"))); //creating a keycode, by setting up a keycode value by converting Up value to string, if the value of Up doesn't exist, default to C
+
+        //So e.g. at start, add listings to the keys dictionary with the values Up,Down,Left,Right,Jump and of keys of the same names string values which are converted to data type KeyCode, and if they DONT have a value yet, default to sting W,S,A,D,Space.
     }
 
     /// <summary>
@@ -159,6 +173,8 @@ public class KeyBindScript : MonoBehaviour
         left.text = keys["Left"].ToString();
         right.text = keys["Right"].ToString();
         jump.text = keys["Jump"].ToString();
+        sprint.text = keys["Sprint"].ToString();
+        crouch.text = keys["Crouch"].ToString();
     }
     #endregion
 
@@ -202,6 +218,8 @@ public class KeyBindScript : MonoBehaviour
         keys["Left"] = KeyCode.A;
         keys["Right"] = KeyCode.D;
         keys["Jump"] = KeyCode.Space;
+        keys["Sprint"] = KeyCode.LeftShift;
+        keys["Crouch"] = KeyCode.C;
 
         UpdateButtonsText();
 

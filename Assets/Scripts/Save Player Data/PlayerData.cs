@@ -2,18 +2,12 @@
 public class PlayerData//load up PlayerData class with Data from our scene
 {
     #region Variables
-    /// <summary>
     /// These are all the variables that will be saved, this is also where unity specific variables
     /// are converted into C# standard variables so they may be translated into binary
-    /// </summary>
+    public Stats stats;
+    public PlayerProfession profession;
+    public int[] customisationTextureIndex;
 
-    public int level;
-    public float currentHealth;
-    public float maxHealth;
-    public float currentMana;
-    public float maxMana;
-    public float currentStamina;
-    public float maxStamina;
     public float[] position;//doesnt save vector 3's so we write our own position array to save vector3's(UNITY SPECIFIC) as float[](C# friendly)
     #endregion
     #region PlayerData Constructor
@@ -24,13 +18,9 @@ public class PlayerData//load up PlayerData class with Data from our scene
     /// <param name="player">Takes in data from our player, using the Player script</param>
     public PlayerData(Player player) // when method is same name as class, it is a constructor, shorthand ctor + TAB + TAB
     {
-        level = player.playerStats.level;
-        currentHealth = player.playerStats.currentHealth;
-        maxHealth = player.playerStats.maxHealth;
-        currentMana = player.playerStats.currentMana;
-        maxMana = player.playerStats.maxMana;
-        currentStamina = player.playerStats.currentStamina;
-        maxStamina = player.playerStats.maxStamina;
+        stats = player.playerStats.stats;
+        profession = player.Profession; //May need to change to profession not Profession
+        customisationTextureIndex = player.customisationTextureIndex;
 
         position = new float[3]; // 3 floats instanced, so basically a vector 3
         position[0] = player.transform.position.x;
@@ -38,4 +28,15 @@ public class PlayerData//load up PlayerData class with Data from our scene
         position[2] = player.transform.position.z;
     }
     #endregion
+    /*
+    public Player GetPlayer()
+    {
+        Player player = new Player();
+
+        player.playerStats.stats = stats;
+        player.Profession = profession;
+
+        return player;
+    }
+    */
 }

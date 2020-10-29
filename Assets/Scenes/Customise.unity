@@ -721,8 +721,155 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58d774b8e414e6e4d8299a30fff92c30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  showOnGUI: 1
+  player: {fileID: 662170882}
+  characterName: {fileID: 0}
+  sceneToPlay: GameScene
   TextureLocation: Character/
-  characterRenderer: {fileID: 1450362275}
+  playerProfessions:
+  - ProfessionName: Barbarian
+    AbilityName: Rage
+    AbilityDescription: Goes into a rage and deals more damage
+    defaultStats:
+    - baseStatName: Strength
+      defaultStat: 18
+      levelUpStat: 0
+      additionalStat: 0
+    - baseStatName: Dexterity
+      defaultStat: 14
+      levelUpStat: 0
+      additionalStat: 0
+    - baseStatName: Constitution
+      defaultStat: 14
+      levelUpStat: 0
+      additionalStat: 0
+    - baseStatName: Intelligence
+      defaultStat: 8
+      levelUpStat: 0
+      additionalStat: 0
+    - baseStatName: Wisdom
+      defaultStat: 10
+      levelUpStat: 0
+      additionalStat: 0
+    - baseStatName: Charisma
+      defaultStat: 10
+      levelUpStat: 0
+      additionalStat: 0
+  - ProfessionName: Cleric
+    AbilityName: 
+    AbilityDescription: 
+    defaultStats:
+    - baseStatName: Strength
+      defaultStat: 10
+      levelUpStat: 0
+      additionalStat: 0
+    - baseStatName: Dexterity
+      defaultStat: 8
+      levelUpStat: 0
+      additionalStat: 0
+    - baseStatName: Constitution
+      defaultStat: 10
+      levelUpStat: 0
+      additionalStat: 0
+    - baseStatName: Intelligence
+      defaultStat: 15
+      levelUpStat: 0
+      additionalStat: 0
+    - baseStatName: Wisdom
+      defaultStat: 18
+      levelUpStat: 0
+      additionalStat: 0
+    - baseStatName: Charisma
+      defaultStat: 13
+      levelUpStat: 0
+      additionalStat: 0
+  - ProfessionName: Ranger
+    AbilityName: 
+    AbilityDescription: 
+    defaultStats:
+    - baseStatName: Strength
+      defaultStat: 16
+      levelUpStat: 0
+      additionalStat: 0
+    - baseStatName: Dexterity
+      defaultStat: 16
+      levelUpStat: 0
+      additionalStat: 0
+    - baseStatName: Constitution
+      defaultStat: 12
+      levelUpStat: 0
+      additionalStat: 0
+    - baseStatName: Intelligence
+      defaultStat: 10
+      levelUpStat: 0
+      additionalStat: 0
+    - baseStatName: Wisdom
+      defaultStat: 8
+      levelUpStat: 0
+      additionalStat: 0
+    - baseStatName: Charisma
+      defaultStat: 12
+      levelUpStat: 0
+      additionalStat: 0
+  - ProfessionName: Rogue
+    AbilityName: 
+    AbilityDescription: 
+    defaultStats:
+    - baseStatName: Strength
+      defaultStat: 13
+      levelUpStat: 0
+      additionalStat: 0
+    - baseStatName: Dexterity
+      defaultStat: 18
+      levelUpStat: 0
+      additionalStat: 0
+    - baseStatName: Constitution
+      defaultStat: 13
+      levelUpStat: 0
+      additionalStat: 0
+    - baseStatName: Intelligence
+      defaultStat: 8
+      levelUpStat: 0
+      additionalStat: 0
+    - baseStatName: Wisdom
+      defaultStat: 10
+      levelUpStat: 0
+      additionalStat: 0
+    - baseStatName: Charisma
+      defaultStat: 12
+      levelUpStat: 0
+      additionalStat: 0
+  - ProfessionName: Wizard
+    AbilityName: 
+    AbilityDescription: 
+    defaultStats:
+    - baseStatName: Strength
+      defaultStat: 8
+      levelUpStat: 0
+      additionalStat: 0
+    - baseStatName: Dexterity
+      defaultStat: 12
+      levelUpStat: 0
+      additionalStat: 0
+    - baseStatName: Constitution
+      defaultStat: 10
+      levelUpStat: 0
+      additionalStat: 0
+    - baseStatName: Intelligence
+      defaultStat: 18
+      levelUpStat: 0
+      additionalStat: 0
+    - baseStatName: Wisdom
+      defaultStat: 14
+      levelUpStat: 0
+      additionalStat: 0
+    - baseStatName: Charisma
+      defaultStat: 12
+      levelUpStat: 0
+      additionalStat: 0
+  characterRenderer: {fileID: 4381454791845676754}
+  currentPartsTextureIndex: 000000000000000000000000000000000000000000000000
+  scrollPosition: {x: 0, y: 0}
 --- !u!4 &184386864
 Transform:
   m_ObjectHideFlags: 0
@@ -1336,7 +1483,7 @@ MonoBehaviour:
     m_Options:
     - m_Text: Barbarian
       m_Image: {fileID: 0}
-    - m_Text: Bard
+    - m_Text: Cleric
       m_Image: {fileID: 0}
     - m_Text: Ranger
       m_Image: {fileID: 0}
@@ -1829,6 +1976,140 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 342232701}
   m_CullTransparentMesh: 0
+--- !u!1001 &365556922
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 6619308517170188715, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6619308517335584904, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6619308517943770581, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6619308518281503211, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: playerStats.stats.baseStats.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6619308518281503211, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: playerStats.stats.baseStats.Array.data[0].baseStatName
+      value: Strength
+      objectReference: {fileID: 0}
+    - target: {fileID: 6619308518281503211, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: playerStats.stats.baseStats.Array.data[1].baseStatName
+      value: Dexterity
+      objectReference: {fileID: 0}
+    - target: {fileID: 6619308518281503211, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: playerStats.stats.baseStats.Array.data[2].baseStatName
+      value: Constitution
+      objectReference: {fileID: 0}
+    - target: {fileID: 6619308518281503211, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: playerStats.stats.baseStats.Array.data[3].baseStatName
+      value: Intelligence
+      objectReference: {fileID: 0}
+    - target: {fileID: 6619308518281503211, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: playerStats.stats.baseStats.Array.data[4].baseStatName
+      value: Wisdom
+      objectReference: {fileID: 0}
+    - target: {fileID: 6619308518281503211, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: playerStats.stats.baseStats.Array.data[5].baseStatName
+      value: Charisma
+      objectReference: {fileID: 0}
+    - target: {fileID: 6619308518281503220, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6619308518281503221, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6619308518281503222, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 425.854
+      objectReference: {fileID: 0}
+    - target: {fileID: 6619308518281503222, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6619308518281503222, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 464.575
+      objectReference: {fileID: 0}
+    - target: {fileID: 6619308518281503222, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6619308518281503222, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6619308518281503222, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6619308518281503222, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6619308518281503222, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6619308518281503222, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6619308518281503222, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6619308518281503222, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6619308518281503223, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: m_Name
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 6619308518670463182, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 5386e0427fce3684abe890b86c7386e7, type: 3}
 --- !u!1 &376062239
 GameObject:
   m_ObjectHideFlags: 0
@@ -2842,135 +3123,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 547574175}
   m_CullTransparentMesh: 0
---- !u!1001 &571528021
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: -4216859302048453862, guid: aa2c7d523934c034e8665c6a63e1cd5a,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.032212745
-      objectReference: {fileID: 0}
-    - target: {fileID: -4216859302048453862, guid: aa2c7d523934c034e8665c6a63e1cd5a,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -4216859302048453862, guid: aa2c7d523934c034e8665c6a63e1cd5a,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.005070843
-      objectReference: {fileID: 0}
-    - target: {fileID: -4216859302048453862, guid: aa2c7d523934c034e8665c6a63e1cd5a,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: -4216859302048453862, guid: aa2c7d523934c034e8665c6a63e1cd5a,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0.98725563
-      objectReference: {fileID: 0}
-    - target: {fileID: -4216859302048453862, guid: aa2c7d523934c034e8665c6a63e1cd5a,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: -4216859302048453862, guid: aa2c7d523934c034e8665c6a63e1cd5a,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.15914288
-      objectReference: {fileID: 0}
-    - target: {fileID: -4216859302048453862, guid: aa2c7d523934c034e8665c6a63e1cd5a,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: -4216859302048453862, guid: aa2c7d523934c034e8665c6a63e1cd5a,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -4216859302048453862, guid: aa2c7d523934c034e8665c6a63e1cd5a,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -161.686
-      objectReference: {fileID: 0}
-    - target: {fileID: -4216859302048453862, guid: aa2c7d523934c034e8665c6a63e1cd5a,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -4216859302048453862, guid: aa2c7d523934c034e8665c6a63e1cd5a,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: -4216859302048453862, guid: aa2c7d523934c034e8665c6a63e1cd5a,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: -4216859302048453862, guid: aa2c7d523934c034e8665c6a63e1cd5a,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: -1671727974146666381, guid: aa2c7d523934c034e8665c6a63e1cd5a,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: -927199367670048503, guid: aa2c7d523934c034e8665c6a63e1cd5a,
-        type: 3}
-      propertyPath: m_Name
-      value: Warrior
-      objectReference: {fileID: 0}
-    - target: {fileID: 4381454792350094727, guid: aa2c7d523934c034e8665c6a63e1cd5a,
-        type: 3}
-      propertyPath: m_Materials.Array.size
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 4381454792350094727, guid: aa2c7d523934c034e8665c6a63e1cd5a,
-        type: 3}
-      propertyPath: m_Materials.Array.data[1]
-      value: 
-      objectReference: {fileID: 2100000, guid: 2a8a82e9774c65c4b8c1098ae0f86469, type: 2}
-    - target: {fileID: 4381454792350094727, guid: aa2c7d523934c034e8665c6a63e1cd5a,
-        type: 3}
-      propertyPath: m_Materials.Array.data[2]
-      value: 
-      objectReference: {fileID: 2100000, guid: 1a84f319e07a6a242a4ea46abb6884db, type: 2}
-    - target: {fileID: 4381454792350094727, guid: aa2c7d523934c034e8665c6a63e1cd5a,
-        type: 3}
-      propertyPath: m_Materials.Array.data[3]
-      value: 
-      objectReference: {fileID: 2100000, guid: 6f8b7c6156de61a41a5fac5742e3d219, type: 2}
-    - target: {fileID: 4381454792350094727, guid: aa2c7d523934c034e8665c6a63e1cd5a,
-        type: 3}
-      propertyPath: m_Materials.Array.data[4]
-      value: 
-      objectReference: {fileID: 2100000, guid: 48ca7fe1db2e2894ab6f686b52d5425c, type: 2}
-    - target: {fileID: 4381454792350094727, guid: aa2c7d523934c034e8665c6a63e1cd5a,
-        type: 3}
-      propertyPath: m_Materials.Array.data[5]
-      value: 
-      objectReference: {fileID: 2100000, guid: 7bf02c789524d8a48832b22d5ce82ef1, type: 2}
-    - target: {fileID: 4381454792350094727, guid: aa2c7d523934c034e8665c6a63e1cd5a,
-        type: 3}
-      propertyPath: m_Materials.Array.data[6]
-      value: 
-      objectReference: {fileID: 2100000, guid: 7bf02c789524d8a48832b22d5ce82ef1, type: 2}
-    - target: {fileID: 4381454792350094727, guid: aa2c7d523934c034e8665c6a63e1cd5a,
-        type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: cd5085c4ed57935489858f4ebf85b960, type: 2}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: aa2c7d523934c034e8665c6a63e1cd5a, type: 3}
 --- !u!1 &583775181
 GameObject:
   m_ObjectHideFlags: 0
@@ -3830,6 +3982,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 650841071}
   m_CullTransparentMesh: 0
+--- !u!114 &662170882 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6619308518281503211, guid: 5386e0427fce3684abe890b86c7386e7,
+    type: 3}
+  m_PrefabInstance: {fileID: 365556922}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72201e87d90dc774ba5dcb156946d655, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &715861861
 GameObject:
   m_ObjectHideFlags: 0
@@ -7831,12 +7995,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1449106936}
   m_CullTransparentMesh: 0
---- !u!137 &1450362275 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 4381454792350094727, guid: aa2c7d523934c034e8665c6a63e1cd5a,
-    type: 3}
-  m_PrefabInstance: {fileID: 571528021}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1473158766
 GameObject:
   m_ObjectHideFlags: 0
@@ -10571,3 +10729,78 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2146320787}
   m_CullTransparentMesh: 0
+--- !u!137 &4381454791845676754 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7520175671377174786, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
+    type: 3}
+  m_PrefabInstance: {fileID: 6094225744460621776}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &6094225744460621776
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1290772534489571231, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.032212745
+      objectReference: {fileID: 0}
+    - target: {fileID: 1290772534489571231, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1290772534489571231, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.005070843
+      objectReference: {fileID: 0}
+    - target: {fileID: 1290772534489571231, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1290772534489571231, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.98725563
+      objectReference: {fileID: 0}
+    - target: {fileID: 1290772534489571231, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1290772534489571231, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.15914288
+      objectReference: {fileID: 0}
+    - target: {fileID: 1290772534489571231, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1290772534489571231, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1290772534489571231, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -161.686
+      objectReference: {fileID: 0}
+    - target: {fileID: 1290772534489571231, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2860602773190356364, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
+        type: 3}
+      propertyPath: m_Name
+      value: Warrior
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 5d22bc25c6ff0bb4b9af6a0020c22575, type: 3}
