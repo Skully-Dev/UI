@@ -2486,6 +2486,71 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 699661215}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &493656783
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 493656785}
+  - component: {fileID: 493656784}
+  m_Layer: 0
+  m_Name: Shop
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &493656784
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 493656783}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6923bccd6c9e2541a6e4a1311f009c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shopInventory:
+  - name: Meat
+    description: heals
+    value: 50
+    amount: 10
+    icon: {fileID: 2800000, guid: b021cdb5329fd904a8fa3b39119ab423, type: 3}
+    mesh: {fileID: 0}
+    type: 0
+    damage: 0
+    armour: 0
+    heal: 15
+  - name: HP Potion
+    description: heals
+    value: 20
+    amount: 5
+    icon: {fileID: 2800000, guid: b6498b5bec05d7840b10aaa871809286, type: 3}
+    mesh: {fileID: 0}
+    type: 0
+    damage: 0
+    armour: 0
+    heal: 100
+  showShop: 1
+--- !u!4 &493656785
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 493656783}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 17
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &516365948
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3700,6 +3765,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f1c78ea82d82cc442a38b07c94c9199a, type: 3}
+--- !u!4 &696763434 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3571760696509064575, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
+    type: 3}
+  m_PrefabInstance: {fileID: 2012609640}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &699661215
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11654,6 +11725,227 @@ MonoBehaviour:
   - {fileID: 8124259339964715380, guid: 3861f6bc57ef24c4484727588f8c951f, type: 3}
   - {fileID: 7685371531485235544, guid: 3861f6bc57ef24c4484727588f8c951f, type: 3}
   - {fileID: 4160753575623616581, guid: 3861f6bc57ef24c4484727588f8c951f, type: 3}
+--- !u!1 &1796612487
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1796612489}
+  - component: {fileID: 1796612488}
+  m_Layer: 0
+  m_Name: Inventory
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1796612488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1796612487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4454994527ab6e4798b4bc6b7245218, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inventory:
+  - name: Apple
+    description: Can eat, may be poison...
+    value: 2
+    amount: 3
+    icon: {fileID: 2800000, guid: b7a0552e94ecc25438f43e89b2ea9a48, type: 3}
+    mesh: {fileID: 0}
+    type: 0
+    damage: 0
+    armour: 0
+    heal: 100
+  - name: Axe
+    description: Ouchie Stick
+    value: 25
+    amount: 1
+    icon: {fileID: 2800000, guid: e526ac5d56af0544fa5e8e5ef6ef2f61, type: 3}
+    mesh: {fileID: 5900932157476603860, guid: cceb47d549e95424ebdbb75b00e8f1e4, type: 3}
+    type: 1
+    damage: 20
+    armour: 0
+    heal: 0
+  - name: Armor
+    description: It Protec
+    value: 35
+    amount: 1
+    icon: {fileID: 2800000, guid: dc277a2c78fb19b4abe8ba051260633f, type: 3}
+    mesh: {fileID: 0}
+    type: 2
+    damage: 0
+    armour: 0
+    heal: 0
+  - name: Book
+    description: Ahh yes! Words.
+    value: 5
+    amount: 1
+    icon: {fileID: 2800000, guid: ba34b1dbcb60ef74c9bf9d68c88d5dfd, type: 3}
+    mesh: {fileID: 0}
+    type: 3
+    damage: 0
+    armour: 0
+    heal: 0
+  - name: Ingots
+    description: Used to create a protec and/or ouchie
+    value: 10
+    amount: 2
+    icon: {fileID: 2800000, guid: 966cc9c4c1c194445b999387e2fca458, type: 3}
+    mesh: {fileID: 0}
+    type: 4
+    damage: 0
+    armour: 0
+    heal: 0
+  - name: HP Potion
+    description: Bought from Mr Pirelli. Tastes like piss.
+    value: 15
+    amount: 3
+    icon: {fileID: 2800000, guid: b6498b5bec05d7840b10aaa871809286, type: 3}
+    mesh: {fileID: 0}
+    type: 5
+    damage: 0
+    armour: 0
+    heal: 0
+  - name: Scroll
+    description: Less words. More important?!
+    value: 1
+    amount: 3
+    icon: {fileID: 2800000, guid: 6f2a9dc642f4c1e4ea706bcf5851d516, type: 3}
+    mesh: {fileID: 0}
+    type: 6
+    damage: 0
+    armour: 0
+    heal: 0
+  - name: Ring
+    description: 'Must drop precious in lava mountain.. '
+    value: 1
+    amount: 666
+    icon: {fileID: 2800000, guid: fcdb53a8bacd61b43aa27b9ab9bfbb9e, type: 3}
+    mesh: {fileID: 0}
+    type: 7
+    damage: 0
+    armour: 0
+    heal: 0
+  - name: Money
+    description: Buy the things.
+    value: 1
+    amount: 55
+    icon: {fileID: 2800000, guid: 7ad62efd801839f4ca742e58dd7a17f7, type: 3}
+    mesh: {fileID: 0}
+    type: 8
+    damage: 0
+    armour: 0
+    heal: 0
+  - name: Cube Weapon
+    description: vertex make pointy!
+    value: 5
+    amount: 1
+    icon: {fileID: 2800000, guid: 966cc9c4c1c194445b999387e2fca458, type: 3}
+    mesh: {fileID: 7517096572075684710, guid: d3f10ac9efa80e84395aea8e0b53ba4a, type: 3}
+    type: 1
+    damage: 50
+    armour: 0
+    heal: 0
+  player: {fileID: 465187088}
+  money: 100
+  showInventory: 1
+  equipmentSlots:
+  - slotName: Head
+    equipLocation: {fileID: 2029056503}
+  - slotName: Chest
+    equipLocation: {fileID: 696763434}
+  - slotName: Weapon
+    equipLocation: {fileID: 1909518202}
+  Styles:
+  - m_Name: 
+    m_Normal:
+      m_Background: {fileID: 0}
+      m_ScaledBackgrounds: []
+      m_TextColor: {r: 0, g: 0, b: 0, a: 0}
+    m_Hover:
+      m_Background: {fileID: 0}
+      m_ScaledBackgrounds: []
+      m_TextColor: {r: 0, g: 0, b: 0, a: 0}
+    m_Active:
+      m_Background: {fileID: 0}
+      m_ScaledBackgrounds: []
+      m_TextColor: {r: 0, g: 0, b: 0, a: 0}
+    m_Focused:
+      m_Background: {fileID: 0}
+      m_ScaledBackgrounds: []
+      m_TextColor: {r: 0, g: 0, b: 0, a: 0}
+    m_OnNormal:
+      m_Background: {fileID: 0}
+      m_ScaledBackgrounds: []
+      m_TextColor: {r: 0, g: 0, b: 0, a: 0}
+    m_OnHover:
+      m_Background: {fileID: 0}
+      m_ScaledBackgrounds: []
+      m_TextColor: {r: 0, g: 0, b: 0, a: 0}
+    m_OnActive:
+      m_Background: {fileID: 0}
+      m_ScaledBackgrounds: []
+      m_TextColor: {r: 0, g: 0, b: 0, a: 0}
+    m_OnFocused:
+      m_Background: {fileID: 0}
+      m_ScaledBackgrounds: []
+      m_TextColor: {r: 0, g: 0, b: 0, a: 0}
+    m_Border:
+      m_Left: 0
+      m_Right: 0
+      m_Top: 0
+      m_Bottom: 0
+    m_Margin:
+      m_Left: 0
+      m_Right: 0
+      m_Top: 0
+      m_Bottom: 0
+    m_Padding:
+      m_Left: 0
+      m_Right: 0
+      m_Top: 0
+      m_Bottom: 0
+    m_Overflow:
+      m_Left: 0
+      m_Right: 0
+      m_Top: 0
+      m_Bottom: 0
+    m_Font: {fileID: 0}
+    m_FontSize: 0
+    m_FontStyle: 0
+    m_Alignment: 0
+    m_WordWrap: 0
+    m_RichText: 0
+    m_TextClipping: 0
+    m_ImagePosition: 0
+    m_ContentOffset: {x: 0, y: 0}
+    m_FixedWidth: 0
+    m_FixedHeight: 0
+    m_StretchWidth: 0
+    m_StretchHeight: 0
+--- !u!4 &1796612489
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1796612487}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -425.854, y: -1, z: -464.575}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 465187087}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1797312782
 GameObject:
   m_ObjectHideFlags: 0
@@ -12460,6 +12752,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1902669753}
   m_CullTransparentMesh: 0
+--- !u!4 &1909518202 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2924050484639240027, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
+    type: 3}
+  m_PrefabInstance: {fileID: 2012609640}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1911319971
 GameObject:
   m_ObjectHideFlags: 0
@@ -13544,6 +13842,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 6740448059747518355, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7485276227981752252, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
         type: 3}
       propertyPath: m_Layer
@@ -13773,6 +14076,12 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!4 &2029056503 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1062076824047764902, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
+    type: 3}
+  m_PrefabInstance: {fileID: 2012609640}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2035691941
 GameObject:
   m_ObjectHideFlags: 0
@@ -14652,17 +14961,91 @@ PrefabInstance:
     - target: {fileID: 6619308518330455103, guid: 5386e0427fce3684abe890b86c7386e7,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.11397613
+      value: 0.113976166
       objectReference: {fileID: 0}
     - target: {fileID: 6619308518330455103, guid: 5386e0427fce3684abe890b86c7386e7,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.35761708
+      value: 0.3576171
       objectReference: {fileID: 0}
     - target: {fileID: 6619308518330455103, guid: 5386e0427fce3684abe890b86c7386e7,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.044024643
+      value: -0.044024654
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5386e0427fce3684abe890b86c7386e7, type: 3}
+--- !u!1001 &7517096571889413813
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 1909518202}
+    m_Modifications:
+    - target: {fileID: 7517096572075684705, guid: d3f10ac9efa80e84395aea8e0b53ba4a,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7517096572075684705, guid: d3f10ac9efa80e84395aea8e0b53ba4a,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7517096572075684705, guid: d3f10ac9efa80e84395aea8e0b53ba4a,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.00421
+      objectReference: {fileID: 0}
+    - target: {fileID: 7517096572075684705, guid: d3f10ac9efa80e84395aea8e0b53ba4a,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7517096572075684705, guid: d3f10ac9efa80e84395aea8e0b53ba4a,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7517096572075684705, guid: d3f10ac9efa80e84395aea8e0b53ba4a,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7517096572075684705, guid: d3f10ac9efa80e84395aea8e0b53ba4a,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7517096572075684705, guid: d3f10ac9efa80e84395aea8e0b53ba4a,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7517096572075684705, guid: d3f10ac9efa80e84395aea8e0b53ba4a,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7517096572075684705, guid: d3f10ac9efa80e84395aea8e0b53ba4a,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7517096572075684705, guid: d3f10ac9efa80e84395aea8e0b53ba4a,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7517096572075684710, guid: d3f10ac9efa80e84395aea8e0b53ba4a,
+        type: 3}
+      propertyPath: m_Name
+      value: CubeWeapon
+      objectReference: {fileID: 0}
+    - target: {fileID: 7517096572075684710, guid: d3f10ac9efa80e84395aea8e0b53ba4a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d3f10ac9efa80e84395aea8e0b53ba4a, type: 3}
