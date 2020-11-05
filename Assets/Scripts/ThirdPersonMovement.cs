@@ -1,39 +1,39 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-/// <summary>
-/// Third person movement
-/// </summary>
+﻿using UnityEngine;
 
 public class ThirdPersonMovement : MonoBehaviour
 {
-    [SerializeField] private Player player;
-    [SerializeField] private CharacterController controller;
-    [SerializeField] private Transform cam;
-    [SerializeField] private float turnSmoothTime = 0.1f;
-    [SerializeField] private float gravity = -9.81f;
+    [Header("References")]
+    [SerializeField, Tooltip("Reference to player")] private Player player;
+    [SerializeField, Tooltip("Reference to Character Controller on Player")] private CharacterController controller;
+    [SerializeField, Tooltip("Reference to camera")] private Transform cam;
+    [Header("Variables")]
+    [SerializeField, Tooltip("How fast smoothing attempts to meet target")] private float turnSmoothTime = 0.1f;
+    [SerializeField, Tooltip("Simulate gravity for player velocity")] private float gravity = -9.81f;
+    [Tooltip("The current velocity of the function, auto updated")]
     private float turnSmoothVelocity;
+    [Tooltip("Completely taken care of in script, this is the players velocity")]
     private Vector3 playerVelocity;
 
+    [Tooltip("Is the player currently grounded. bool var")]
     private bool isGrounded;
 
     private void FixedUpdate()
     {
+        //update isGrounded value every physics update.
         isGrounded = IsGrounded();
     }
 
     // Update is called once per frame
     void Update()
     {
-        #region User Input Controls
-        
-
-        #endregion
         Jump();
         Movement();
     }
 
+
+    /// <summary>
+    /// Player directional movement.
+    /// </summary>
     private void Movement()
     {
         #region Input Axis Horizontal and Vertical
@@ -41,7 +41,7 @@ public class ThirdPersonMovement : MonoBehaviour
         //float vertical = Input.GetAxisRaw("Vertical");
         #endregion
 
-        #region Input Keybinds Horisontal and Vertical
+        #region Input Keybinds Horizontal and Vertical
         //Direction based on user input of KeyBinds
         float vertical = 0;
         float horizontal = 0;
@@ -54,6 +54,7 @@ public class ThirdPersonMovement : MonoBehaviour
         {
             vertical += -1;
         }
+
         if (Input.GetKey(KeyBindScript.keys["Left"]))//default (Keycode.A)
         {
             horizontal = -1;
@@ -62,33 +63,53 @@ public class ThirdPersonMovement : MonoBehaviour
         {
             horizontal += 1;
         }
+
+        #region Controller input
+        if (vertical == 0)
+        {
+            if ((Input.GetAxis("Vertical") != 0))
+            {
+                vertical = Input.GetAxis("Vertical");
+            }
+        }
+        if (horizontal == 0)
+        {
+            if ((Input.GetAxis("Horizontal") != 0))
+            {
+                horizontal = Input.GetAxis("Horizontal");
+            }
+        }
+        #endregion
         #endregion
 
-        Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
+        Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized; //brings the combined direction value to a magnitude/length of 1.
 
-        if (direction.magnitude >= 0.1f)
+        if (direction.magnitude >= 0.1f) //if any directional movement
         {
-            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y; //finds the angle we need, gives us angle of stinck in relation to the camera
+            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y; //finds the angle we need, gives us angle of stick in relation to the camera
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime); //smooths out current to target angle movement over time, slows down and smooths angle change
             transform.rotation = Quaternion.Euler(0f, angle, 0f); //sets rotation to that angle
 
             Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward; //direction in relation to the forward vector
 
             float movementSpeed = player.playerStats.stats.speed;
-            if (player.playerStats.stats.currentStamina > 0 && Input.GetKey(KeyBindScript.keys["Sprint"])/*Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)*/)
+            if (player.playerStats.stats.currentStamina > 0 && (Input.GetKey(KeyBindScript.keys["Sprint"]) || Input.GetButton("Sprint") /*LStick button*/)/*Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)*/)
             {
                 player.disableStaminaRegenTime = Time.time;
-                player.playerStats.stats.currentStamina -= player.StaminaDegen * Time.deltaTime;
+                player.playerStats.CurrrentStamina -= player.StaminaDegen * Time.deltaTime; //set property to clamp and update ui etc.
                 movementSpeed = player.playerStats.stats.sprintSpeed;
             }
-            else if (Input.GetKey(KeyBindScript.keys["Crouch"])/*Input.GetKey(KeyCode.C)*/)
+            else if (Input.GetKey(KeyBindScript.keys["Crouch"]) || Input.GetButton("Crouch")/*B button*/)
             {
                 movementSpeed = player.playerStats.stats.crouchSpeed;
             }
-            controller.Move(moveDir * movementSpeed * Time.deltaTime);
+            controller.Move(moveDir * movementSpeed * Time.deltaTime); //applies the movement.
         }
     }
 
+    /// <summary>
+    /// Applies gravity and if player jumps, applies jump too.
+    /// </summary>
     void Jump()
     {
         if (isGrounded && playerVelocity.y <0)
@@ -96,15 +117,20 @@ public class ThirdPersonMovement : MonoBehaviour
             playerVelocity.y = 0f;
         }
 
-        if (Input.GetKeyDown(KeyBindScript.keys["Jump"])/*Input.GetButtonDown("Jump")*/ && isGrounded) //if jump is pressed and character is grounded
+        if ((Input.GetKeyDown(KeyBindScript.keys["Jump"]) || Input.GetButtonDown("Jump")/*Y button*/) && isGrounded) //if jump is pressed and character is grounded
         {
-            playerVelocity.y += Mathf.Sqrt(player.playerStats.stats.jumpHeight * -3.0f * gravity);
+            playerVelocity.y += Mathf.Sqrt(player.playerStats.stats.jumpHeight * -3.0f * gravity); //calculate jump
         }
 
-        playerVelocity.y += gravity * Time.deltaTime;
-        controller.Move(playerVelocity * Time.deltaTime);
+        playerVelocity.y += gravity * Time.deltaTime; //calculate gravity
+        controller.Move(playerVelocity * Time.deltaTime); //applies the movement.
     }
 
+
+    /// <summary>
+    /// Determine if player is touching ground.
+    /// </summary>
+    /// <returns></returns>
     bool IsGrounded()
     {
         Debug.DrawRay(transform.position, -Vector3.up * ((controller.height * 0.5f) * 1.1f), Color.red);
@@ -136,6 +162,9 @@ public class ThirdPersonMovement : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// visualize the IsGrounded SphereCast
+    /// </summary>
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.blue;

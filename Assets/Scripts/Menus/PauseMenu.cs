@@ -9,6 +9,8 @@ public class PauseMenu : MonoBehaviour
     [SerializeField]
     [Tooltip("Reference Pause Menu Game Object, to toggle active on/off")]
     private GameObject[] pauseMenuUI;
+    [SerializeField, Tooltip("Reference to player to see if alive")]
+    private Player player;
 
     [Header("Bool Conditionals")]
     [Tooltip("is the game currently paused.")]
@@ -26,7 +28,7 @@ public class PauseMenu : MonoBehaviour
     void Update()
     {
         #region Resume/Pause on Esc
-        if (Input.GetKeyDown(KeyCode.Escape) && !isOptions) //if ESC key is pressed and options isnt open.
+        if (Input.GetKeyDown(KeyCode.Escape) && !isOptions && !player.isDead) //if ESC key is pressed and options isnt open and isnt dead.
         {
             if (gameIsPaused) //if game is paused
             {

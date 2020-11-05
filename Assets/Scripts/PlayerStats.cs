@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 [System.Serializable]
-public struct BaseStats //like a class, but only stores variables, Vecotr 3 and color are structs
+public struct BaseStats //like a class, but only stores variables, e.g. Vecotr 3 and color are structs
 {
     public string baseStatName;
     public int defaultStat; //stat from the class
@@ -53,7 +54,6 @@ public class Stats
     [Header("Base Stats")]
     public int baseStatPoints = 10;
     public BaseStats[] baseStats;
-
 }
 
 [System.Serializable]
@@ -61,9 +61,35 @@ public class PlayerStats
 {
     public Stats stats; //all the stats in the class above
 
-    #region Property and QuaterHearts
+    #region Stats Bars References
+    [Header("Stats Bars References")]
+    [SerializeField]
+    private Text currentHealthText;
+    [SerializeField]
+    private Text maxHealthText;
+    [SerializeField] 
+    private Image healthFill;
+    [SerializeField]
+    private Text currentManaText;
+    [SerializeField] 
+    private Text maxManaText;
+    [SerializeField] 
+    private Image manaFill;
+    [SerializeField] 
+    private Text currentStaminaText;
+    [SerializeField] 
+    private Text maxStaminaText;
+    [SerializeField] 
+    private Image staminaFill;
+    #endregion
+
+    #region Star Bar Properties and QuaterHearts
+    public QuarterHearts healthHearts;
 
     //field and property
+    /// <summary>
+    /// Current Health Property to clamp values and automate UI
+    /// </summary>
     public float CurrentHealth //property
     {
         get
@@ -82,13 +108,53 @@ public class PlayerStats
                 currentHealth = 0;
                 //die
             }*/
+            
+
+            currentHealthText.text = ((int)stats.currentHealth).ToString(); //round down to int for health text
+            healthFill.fillAmount = stats.currentHealth / stats.maxHealth;
+
+            #region quaterHearts
             if (healthHearts != null)
             {
                 healthHearts.UpdateHearts(value, stats.maxHealth);
             }
+            #endregion
         }
     }
-    public QuarterHearts healthHearts;
+
+    /// <summary>
+    /// Current Mana Property to clamp values and automate UI
+    /// </summary>
+    public float CurrrentMana
+    {
+        get
+        {
+            return stats.currentMana;
+        }
+        set
+        {
+            stats.currentMana = Mathf.Clamp(value, 0, stats.maxMana);
+            currentManaText.text = ((int)stats.currentMana).ToString(); //round down to int for health text
+            manaFill.fillAmount = stats.currentMana / stats.maxMana;
+        }
+    }
+
+    /// <summary>
+    /// Current Stamina Property to clamp values and automate UI
+    /// </summary>
+    public float CurrrentStamina
+    {
+        get
+        {
+            return stats.currentStamina;
+        }
+        set
+        {
+            stats.currentStamina = Mathf.Clamp(value, 0, stats.maxStamina);
+            currentStaminaText.text = ((int)stats.currentStamina).ToString(); //round down to int for health text
+            staminaFill.fillAmount = stats.currentStamina / stats.maxStamina;
+        }
+    }
     #endregion
 
     public bool SetStats(int statIndex, int amount)
@@ -108,5 +174,18 @@ public class PlayerStats
         stats.baseStats[statIndex].additionalStat += amount;
         stats.baseStatPoints -= amount;
         return true;
+    }
+
+    /// <summary>
+    /// At start of scene, stat bar values are updated to relevant values.
+    /// </summary>
+    public void InitializeStatBarsText()
+    {
+        currentHealthText.text = stats.currentHealth.ToString();
+        maxHealthText.text = stats.maxHealth.ToString();
+        currentManaText.text = stats.currentMana.ToString();
+        maxManaText.text = stats.maxMana.ToString();
+        currentStaminaText.text = stats.currentStamina.ToString();
+        maxStaminaText.text = stats.maxStamina.ToString();
     }
 }
