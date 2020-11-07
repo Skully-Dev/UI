@@ -326,86 +326,6 @@ MonoBehaviour:
   m_BiasX: 0
   m_BiasY: 0
   m_CenterOnActivate: 1
---- !u!1 &6619308517170188715
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6619308517170188714}
-  - component: {fileID: 6619308517170188719}
-  - component: {fileID: 6619308517170188712}
-  m_Layer: 8
-  m_Name: Model
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6619308517170188714
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6619308517170188715}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 6619308518695567030}
-  m_Father: {fileID: 6619308518281503222}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &6619308517170188719
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6619308517170188715}
-  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &6619308517170188712
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6619308517170188715}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
 --- !u!1 &6619308517335584904
 GameObject:
   m_ObjectHideFlags: 0
@@ -435,7 +355,7 @@ Transform:
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 6619308518281503222}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 180}
 --- !u!212 &6619308517335584910
 SpriteRenderer:
@@ -684,7 +604,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6619308517943770580}
-  - {fileID: 6619308517170188714}
   - {fileID: 6619308518670463181}
   - {fileID: 6619308517335584911}
   m_Father: {fileID: 0}
@@ -703,38 +622,53 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerStats:
-    speed: 6
-    sprintSpeed: 12
-    crouchSpeed: 3
-    jumpHeight: 1
-    level: 0
-    currentHealth: 100
-    maxHealth: 100
-    currentMana: 100
-    maxMana: 100
-    currentStamina: 100
-    maxStamina: 100
-    baseStatPoints: 10
-    baseStats:
-    - baseStatName: Strength
-      defaultStat: 10
-      additionalStat: 0
-    - baseStatName: Desterity
-      defaultStat: 10
-      additionalStat: 0
-    - baseStatName: Constitution
-      defaultStat: 10
-      additionalStat: 0
-    - baseStatName: Intelligence
-      defaultStat: 10
-      additionalStat: 0
-    - baseStatName: Wisdom
-      defaultStat: 10
-      additionalStat: 0
-    - baseStatName: Charisma
-      defaultStat: 10
-      additionalStat: 0
+    stats:
+      speed: 6
+      sprintSpeed: 12
+      crouchSpeed: 3
+      jumpHeight: 1
+      level: 0
+      currentHealth: 100
+      maxHealth: 100
+      regenHealth: 5
+      currentMana: 100
+      maxMana: 100
+      currentStamina: 100
+      maxStamina: 100
+      regenStamina: 5
+      baseStatPoints: 10
+      baseStats: []
+    currentHealthText: {fileID: 0}
+    maxHealthText: {fileID: 0}
+    healthFill: {fileID: 0}
+    currentManaText: {fileID: 0}
+    maxManaText: {fileID: 0}
+    manaFill: {fileID: 0}
+    currentStaminaText: {fileID: 0}
+    maxStaminaText: {fileID: 0}
+    staminaFill: {fileID: 0}
     healthHearts: {fileID: 0}
+  isDead: 0
+  RegenCooldown: 5
+  disableManaRegenTime: 0
+  ManaRegenCooldown: 5
+  disableStaminaRegenTime: 0
+  StaminaRegenCooldown: 1
+  StaminaDegen: 12
+  customisationTextureIndex: 
+  profession:
+    ProfessionName: Profession
+    AbilityName: Ability
+    AbilityDescription: Does an action
+    defaultStats: []
+  damageSound: {fileID: 0}
+  deathSound: {fileID: 0}
+  deathScreen: {fileID: 0}
+  deathTitle: {fileID: 0}
+  deathMenu: {fileID: 0}
+  backgroundMusic: {fileID: 0}
+  respawnSound: {fileID: 0}
+  respawnLocation: {fileID: 0}
 --- !u!143 &6619308518281503220
 CharacterController:
   m_ObjectHideFlags: 0
@@ -794,7 +728,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6619308518330455096}
-  m_LocalRotation: {x: 0.113976166, y: 0.3576171, z: -0.044024654, w: 0.92584085}
+  m_LocalRotation: {x: 0.11397613, y: 0.35761708, z: -0.044024643, w: 0.92584085}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -998,87 +932,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6619308518281503222}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &6619308518695567031
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6619308518695567030}
-  - component: {fileID: 6619308518695567019}
-  - component: {fileID: 6619308518695567028}
-  m_Layer: 8
-  m_Name: Cube
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6619308518695567030
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6619308518695567031}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.7395463, z: 0.53}
-  m_LocalScale: {x: 0.57081, y: 0.0822366, z: 0.57081}
-  m_Children: []
-  m_Father: {fileID: 6619308517170188714}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &6619308518695567019
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6619308518695567031}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &6619308518695567028
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6619308518695567031}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
 --- !u!1 &6619308518888348469
 GameObject:
   m_ObjectHideFlags: 0
