@@ -37,7 +37,7 @@ public class Player : MonoBehaviour
     [Tooltip("The index values of the players saved chosen textures")]
     public int[] customisationTextureIndex;
 
-    [SerializeField]
+    [SerializeField, Tooltip("What Profession the Player themselves are.")]
     private PlayerProfession profession;
 
     public PlayerProfession Profession
@@ -49,6 +49,21 @@ public class Player : MonoBehaviour
         set
         {
             ChangeProfession(value);
+        }
+    }
+
+    [SerializeField, Tooltip("What Race the Player themselves are.")]
+    private PlayerRace race;
+
+    public PlayerRace Race
+    {
+        get
+        {
+            return race;
+        }
+        set
+        {
+            ChangeRace(value);
         }
     }
 
@@ -90,15 +105,41 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        playerStats.InitializeStatBarsText(); //initialize stat bar UI to appropriate values
+        if (SceneManager.GetActiveScene().name != "Customise")
+        {
+            playerStats.UpdateStatBars(); //initialize stat bar UI to appropriate values
+        }
     }
 
+    /// <summary>
+    /// Method run by property when profession is changed.
+    /// This enables the code to make the appropriate changes to the Player Attributes with a Method Stack.
+    /// Sets chosen profession to current profession.
+    /// Applies the default stat points based on that profession
+    /// </summary>
+    /// <param name="cProfession">The profession being changed to.</param>
     public void ChangeProfession(PlayerProfession cProfession)
     {
         profession =  cProfession;
         SetUpProfession();
+        //May still need to do something for ability
     }
 
+    /// <summary>
+    /// Method run by property when Race is changed.
+    /// This enables the code to make the appropriate changes to the Player Attributes with a Method Stack.
+    /// Sets chosen race to current race.
+    /// </summary>
+    /// <param name="cRace"></param>
+    public void ChangeRace(PlayerRace cRace)
+    {
+        race = cRace;
+        //may still need to do something for ability
+    }
+
+    /// <summary>
+    /// Applies the Default Base Stats of the chosen profession.
+    /// </summary>
     public void SetUpProfession()
     {
         for (int i = 0; i < playerStats.stats.baseStats.Length; i++)
@@ -120,8 +161,11 @@ public class Player : MonoBehaviour
         {
             playerStats.stats.baseStats[i].levelUpStat += 1; //adds 1 to each stat
         }
-    }
+        //increase stat bonuses modifier
+        playerStats.stats.levelModifier *= 1.2f;
 
+        playerStats.UpdateStatBars();
+    }
 
     private void Update()
     {
@@ -147,7 +191,7 @@ public class Player : MonoBehaviour
         {
             if (playerStats.stats.currentMana < playerStats.stats.maxMana) //if mana not full
             {
-                playerStats.CurrrentMana += playerStats.stats.regenStamina * Time.deltaTime; //Increases current mana PROPERTY value (automates UI updates)
+                playerStats.CurrentMana += playerStats.stats.regenMana * Time.deltaTime; //Increases current mana PROPERTY value (automates UI updates)
             }
         }
         #endregion
@@ -157,7 +201,7 @@ public class Player : MonoBehaviour
         {
             if (playerStats.stats.currentStamina < playerStats.stats.maxStamina) //if stamina not full
             {
-                playerStats.CurrrentStamina += playerStats.stats.regenStamina * Time.deltaTime; //Increases current stamina PROPERTY value (automates UI updates)
+                playerStats.CurrentStamina += playerStats.stats.regenStamina * Time.deltaTime; //Increases current stamina PROPERTY value (automates UI updates)
             }
         }
         #endregion
@@ -185,7 +229,7 @@ public class Player : MonoBehaviour
     /// <param name="cost">mana to be spent</param>
     public void UseMana(float cost)
     {
-        playerStats.CurrrentMana -= cost;
+        playerStats.CurrentMana -= cost;
         disableManaRegenTime = Time.time;
     }
 
@@ -207,7 +251,7 @@ public class Player : MonoBehaviour
         }
 
         //use 25 mana for testing
-        if (GUI.Button(new Rect(150,20,100,20), "Use Mana: " + playerStats.CurrrentMana))
+        if (GUI.Button(new Rect(150,20,100,20), "Use Mana: " + playerStats.CurrentMana))
         {
             UseMana(25f);
         }
@@ -271,9 +315,7 @@ public class Player : MonoBehaviour
         #endregion
 
         #region Fresh start with full stat bars.
-        playerStats.CurrentHealth = playerStats.stats.maxHealth;
-        playerStats.CurrrentMana = playerStats.stats.maxMana;
-        playerStats.CurrrentStamina = playerStats.stats.maxStamina;
+        playerStats.RefillStatBars();
         #endregion
     }
 

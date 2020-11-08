@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-[System.Serializable]
+﻿[System.Serializable]
 public class PlayerProfession
 {
     public string ProfessionName = "Profession";
@@ -10,5 +6,6 @@ public class PlayerProfession
     public string AbilityName = "Ability";
     public string AbilityDescription = "Does an action";
 
+    //Each profession comes with a set of default stats you can make changes upon
     public BaseStats[] defaultStats;
 }

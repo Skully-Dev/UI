@@ -21,8 +21,11 @@ public class Customisation : MonoBehaviour
     
     public enum CustomiseParts { Skin, Hair, Eyes, Mouth, Clothes, Armour };
 
-    [SerializeField]
-    PlayerProfession[] playerProfessions; //the defaults for each of our professions.
+    [SerializeField, Tooltip("The defaults for each profession coded in inspector")]
+    PlayerProfession[] playerProfessions;
+
+    [SerializeField, Tooltip("The defaults for each race coded in inspector")]
+    PlayerRace[] playerRaces;
 
     //Renderer for our character mesh so we can reference materials list within script for  changinfg visuals
     public Renderer characterRenderer;
@@ -44,7 +47,11 @@ public class Customisation : MonoBehaviour
     //partsTexture[1][1] = Hair_1 //etc
     //partsTexture[2][0] = Eyes_0 //etc
 
-    public Vector2 scrollPosition = Vector2.zero;
+    [Tooltip("Store the position of Professions scroll thingy")]
+    public Vector2 scrollPositionProfession = Vector2.zero;
+
+    [Tooltip("Store the position of Races scroll thingy")]
+    public Vector2 scrollPositionRace = Vector2.zero;
 
     private void Start()
     {
@@ -81,11 +88,19 @@ public class Customisation : MonoBehaviour
             }
         }
 
+        #region Assign first choice as default of Profession and Race
         if (playerProfessions != null
             && playerProfessions.Length > 0)
         {
             player.Profession = playerProfessions[0];
         }
+
+        if (playerRaces != null
+            && playerRaces.Length > 0)
+        {
+            player.Race = playerRaces[0];
+        }
+        #endregion
 
         //string[] of each body part = Enum.GetNames(typeof(CustomiseParts))
         //["Skin", "Hair", "Eyes", "Mouth", "Clothes", "Armour"]
@@ -213,6 +228,7 @@ public class Customisation : MonoBehaviour
             CustomiseOnGUI();
             StatsOnGUI();
             ProfessionsOnGUI();
+            RacesOnGUI();
 
             if (GUI.Button(new Rect(10, 250, 120, 20), "Save & Play"))
             {
@@ -222,17 +238,58 @@ public class Customisation : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// OnGUI Race scoll box w ALL available Races and their Abilities automatically added.
+    /// Also displays info about current selected Race Ability in box near bottom screen.
+    /// </summary>
+    private void RacesOnGUI()
+    {
+        float curLoopHeight = 0;
 
+        GUI.Box(new Rect(Screen.width - 170, 320, 155, 80), "Race");
+
+        //On Screen scrollable box with enough space for all Races added in inspector
+        scrollPositionRace = GUI.BeginScrollView(new Rect(Screen.width - 170, 340, 155, 50),
+                                                      scrollPositionRace,
+                                                      new Rect(0, 0, 100, 30 * playerRaces.Length));
+
+        //Adds each of the Races to the scollable view as buttons, appropriately spaced out
+        int i = 0;
+        foreach (PlayerRace race in playerRaces)
+        {
+            if (GUI.Button(new Rect(0, curLoopHeight + i * 30, 100, 20), race.RaceName))
+            {
+                player.Race = race;
+            }
+            i++;
+        }
+
+        GUI.EndScrollView();
+
+        #region Information displayed about Race and related ability
+        GUI.Box(new Rect(Screen.width - 340, Screen.height - 90, 155, 80), "Race Ability");
+        GUI.Label(new Rect(Screen.width - 310, Screen.height - 100 + 30, 100, 20), player.Race.RaceName);
+        GUI.Label(new Rect(Screen.width - 310, Screen.height - 100 + 45, 100, 20), player.Race.AbilityName);
+        GUI.Label(new Rect(Screen.width - 310, Screen.height - 100 + 60, 100, 20), player.Race.AbilityDescription);
+        #endregion
+    }
+
+    /// <summary>
+    /// OnGUI Profession scoll box w ALL available Professions and their Abilities and BASESTATS automatically added.
+    /// Also displays info about current selected Professsion Ability in box near bottom screen.
+    /// </summary>
     private void ProfessionsOnGUI()
     {
         float curLoopHeight = 0;
 
         GUI.Box(new Rect(Screen.width - 170, 230, 155, 80), "Profession");
 
-        scrollPosition = GUI.BeginScrollView(new Rect(Screen.width - 170, 250, 155 , 50),
-                                                      scrollPosition,
+        //On screen scrollable box with enough space for all Professions listed in inspector
+        scrollPositionProfession = GUI.BeginScrollView(new Rect(Screen.width - 170, 250, 155 , 50),
+                                                      scrollPositionProfession,
                                                       new Rect(0,0,100,30 * playerProfessions.Length));
 
+        //Adds each of the Professions to the scollable view as buttons, appropriately spaced out
         int i = 0;
         foreach (PlayerProfession profession in playerProfessions)
         {
@@ -245,10 +302,12 @@ public class Customisation : MonoBehaviour
 
         GUI.EndScrollView();
 
-        GUI.Box(new Rect(Screen.width - 170, Screen.height - 90, 155, 80), "Display");
+        #region Information displayed about Profession and related ability
+        GUI.Box(new Rect(Screen.width - 170, Screen.height - 90, 155, 80), "Profession Ability");
         GUI.Label(new Rect(Screen.width - 140, Screen.height - 100 + 30, 100, 20), player.Profession.ProfessionName);
         GUI.Label(new Rect(Screen.width - 140, Screen.height - 100 + 45, 100, 20), player.Profession.AbilityName);
         GUI.Label(new Rect(Screen.width - 140, Screen.height - 100 + 60, 100, 20), player.Profession.AbilityDescription);
+        #endregion
     }
 
     private void StatsOnGUI()

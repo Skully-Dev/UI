@@ -6,6 +6,7 @@ public class PlayerData//load up PlayerData class with Data from our scene
     /// are converted into C# standard variables so they may be translated into binary
     public Stats stats;
     public PlayerProfession profession;
+    public PlayerRace race;
     public int[] customisationTextureIndex;
 
     public float[] position;//doesnt save vector 3's so we write our own position array to save vector3's(UNITY SPECIFIC) as float[](C# friendly)
@@ -20,6 +21,7 @@ public class PlayerData//load up PlayerData class with Data from our scene
     {
         stats = player.playerStats.stats;
         profession = player.Profession; //May need to change to profession not Profession
+        race = player.Race;
         customisationTextureIndex = player.customisationTextureIndex;
 
         position = new float[3]; // 3 floats instanced, so basically a vector 3

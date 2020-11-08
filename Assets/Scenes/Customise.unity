@@ -728,8 +728,8 @@ MonoBehaviour:
   TextureLocation: Character/
   playerProfessions:
   - ProfessionName: Barbarian
-    AbilityName: Rage
-    AbilityDescription: Goes into a rage and deals more damage
+    AbilityName: Hardened
+    AbilityDescription: Extra Health
     defaultStats:
     - baseStatName: Strength
       defaultStat: 18
@@ -756,8 +756,8 @@ MonoBehaviour:
       levelUpStat: 0
       additionalStat: 0
   - ProfessionName: Cleric
-    AbilityName: 
-    AbilityDescription: 
+    AbilityName: Divine Power
+    AbilityDescription: Extra Mana
     defaultStats:
     - baseStatName: Strength
       defaultStat: 10
@@ -784,8 +784,8 @@ MonoBehaviour:
       levelUpStat: 0
       additionalStat: 0
   - ProfessionName: Ranger
-    AbilityName: 
-    AbilityDescription: 
+    AbilityName: Coordinated
+    AbilityDescription: Extra Stamina
     defaultStats:
     - baseStatName: Strength
       defaultStat: 16
@@ -812,8 +812,8 @@ MonoBehaviour:
       levelUpStat: 0
       additionalStat: 0
   - ProfessionName: Rogue
-    AbilityName: 
-    AbilityDescription: 
+    AbilityName: Agility
+    AbilityDescription: Extra Stamina
     defaultStats:
     - baseStatName: Strength
       defaultStat: 13
@@ -840,8 +840,8 @@ MonoBehaviour:
       levelUpStat: 0
       additionalStat: 0
   - ProfessionName: Wizard
-    AbilityName: 
-    AbilityDescription: 
+    AbilityName: Book Smarts
+    AbilityDescription: Extra Mana
     defaultStats:
     - baseStatName: Strength
       defaultStat: 8
@@ -867,9 +867,20 @@ MonoBehaviour:
       defaultStat: 12
       levelUpStat: 0
       additionalStat: 0
+  playerRaces:
+  - RaceName: Human
+    AbilityName: Sweat
+    AbilityDescription: Extra Stamina
+  - RaceName: Elf
+    AbilityName: Divine Gift
+    AbilityDescription: Extra Mana
+  - RaceName: Dwarf
+    AbilityName: Tough as Nails
+    AbilityDescription: Extra Health
   characterRenderer: {fileID: 4381454791845676754}
   currentPartsTextureIndex: 000000000000000000000000000000000000000000000000
-  scrollPosition: {x: 0, y: 0}
+  scrollPositionProfession: {x: 0, y: 0}
+  scrollPositionRace: {x: 0, y: 0}
 --- !u!4 &184386864
 Transform:
   m_ObjectHideFlags: 0

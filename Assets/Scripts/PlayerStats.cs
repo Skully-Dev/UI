@@ -41,11 +41,16 @@ public class Stats
 
     [Header("Current Stats")]
     public int level;
+    public float levelModifier = 1f;
+    public float healthModifier;
+    public float manaModifier;
+    public float staminaModifier;
     public float currentHealth = 100f;
     public float maxHealth = 100f;
     public float regenHealth = 5f;
     public float currentMana = 100f;
     public float maxMana = 100f;
+    public float regenMana = 5f;
     public float currentStamina = 100f;
     public float maxStamina = 100f;
     public float regenStamina = 5f;
@@ -121,11 +126,27 @@ public class PlayerStats
             #endregion
         }
     }
+    public float MaxHealth
+    {
+        get
+        {
+            return stats.maxHealth;
+        }
+        set
+        {
+            stats.maxHealth = value;
+            stats.regenHealth = value * 0.05f;
+            if (CurrentHealth > value)
+            {
+                CurrentHealth = value;
+            }
+        }
+    }
 
     /// <summary>
     /// Current Mana Property to clamp values and automate UI
     /// </summary>
-    public float CurrrentMana
+    public float CurrentMana
     {
         get
         {
@@ -139,10 +160,27 @@ public class PlayerStats
         }
     }
 
+    public float MaxMana
+    {
+        get
+        {
+            return stats.maxMana;
+        }
+        set
+        {
+            stats.maxMana = value;
+            stats.regenMana = value * 0.05f;
+            if (CurrentMana > value)
+            {
+                CurrentMana = value;
+            }
+        }
+    }
+
     /// <summary>
     /// Current Stamina Property to clamp values and automate UI
     /// </summary>
-    public float CurrrentStamina
+    public float CurrentStamina
     {
         get
         {
@@ -155,7 +193,32 @@ public class PlayerStats
             staminaFill.fillAmount = stats.currentStamina / stats.maxStamina;
         }
     }
+
+    public float MaxStamina
+    {
+        get
+        {
+            return stats.maxStamina;
+        }
+        set
+        {
+            stats.maxStamina = value;
+            stats.regenStamina = value * 0.05f;
+
+            if (CurrentStamina > value)
+            {
+                CurrentStamina = value;
+            }
+        }
+    }
     #endregion
+
+    public float CalculateRegen(float statMaxValue)
+    {
+        return statMaxValue * 0.05f;
+    }
+
+
 
     public bool SetStats(int statIndex, int amount)
     {
@@ -179,13 +242,82 @@ public class PlayerStats
     /// <summary>
     /// At start of scene, stat bar values are updated to relevant values.
     /// </summary>
-    public void InitializeStatBarsText()
+    public void UpdateStatBars()
     {
+        UpdateModifiers();
         currentHealthText.text = stats.currentHealth.ToString();
         maxHealthText.text = stats.maxHealth.ToString();
         currentManaText.text = stats.currentMana.ToString();
         maxManaText.text = stats.maxMana.ToString();
         currentStaminaText.text = stats.currentStamina.ToString();
         maxStaminaText.text = stats.maxStamina.ToString();
+    }
+
+    public void UpdateModifiers()
+    {
+        UpdateHealthModifier();
+        UpdateManaModifier();
+        UpdateStaminaModifier();
+    }
+
+    public void UpdateHealthModifier()
+    {
+        //1 per strength
+        stats.healthModifier = stats.baseStats[0].finalStat;
+        //0.5 per Constitution
+        stats.healthModifier += stats.baseStats[2].finalStat * 0.5f;
+        //0.5 per Wisdom
+        stats.healthModifier += stats.baseStats[4].finalStat * 0.5f;
+
+        //half the impact
+        stats.healthModifier *= 0.5f;
+
+        //scale by level
+        stats.healthModifier *= stats.levelModifier;
+
+        MaxHealth = (int)(60 + stats.healthModifier);
+    }
+
+    public void UpdateManaModifier()
+    {
+        //1 per Intelligence
+        stats.manaModifier = stats.baseStats[3].finalStat;
+        //0.5 per Wisdom
+        stats.manaModifier += stats.baseStats[4].finalStat * 0.5f;
+        //0.5 per Charisma
+        stats.manaModifier += stats.baseStats[5].finalStat * 0.5f;
+
+        //half the impact
+        stats.manaModifier *= 0.5f;
+
+        //scale by level
+        stats.manaModifier *= stats.levelModifier;
+
+        MaxMana = (int)(60 + stats.manaModifier);
+    }
+
+    public void UpdateStaminaModifier()
+    {
+        //1 per Dexterity
+        stats.staminaModifier = stats.baseStats[1].finalStat;
+        //0.5 per Constitution
+        stats.staminaModifier += stats.baseStats[2].finalStat * 0.5f;
+        //0.5 per Charisma
+        stats.staminaModifier += stats.baseStats[5].finalStat * 0.5f;
+
+        //half the impact
+        stats.staminaModifier *= 0.5f;
+
+        //scale by level
+        stats.staminaModifier *= stats.levelModifier;
+
+        MaxStamina = (int)(60 + stats.staminaModifier);
+    }
+
+    public void RefillStatBars()
+    {
+        CurrentHealth = stats.maxHealth;
+        CurrentMana = stats.maxMana;
+        CurrentStamina = stats.maxStamina;
     }
 }
