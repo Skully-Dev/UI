@@ -4,14 +4,20 @@ using UnityEngine.UI;
 [System.Serializable]
 public struct BaseStats //like a class, but only stores variables, e.g. Vecotr 3 and color are structs
 {
+    [Tooltip("The Stat name, i.e. Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma")]
     public string baseStatName;
+    [Tooltip("Locked Class base stat points")]
     public int defaultStat; //stat from the class
+    [Tooltip("Locked level up stat points")]
     public int levelUpStat; //stats that you gain on level up, so you can't respec them.
-    public int additionalStat; //additional stat from
+    [Tooltip("Stat points assigned by user, RESPEC-ABLE")]
+    public int additionalStat; //additional stat from initial stat pool AND from customisable level up bonus
 
-    //final stats will be
-    //default + additional
-    public int finalStat
+
+    /// <summary>
+    /// final stat is default + levelUp + additional
+    /// </summary>
+    public int FinalStat
     {
         get
         {
@@ -21,7 +27,7 @@ public struct BaseStats //like a class, but only stores variables, e.g. Vecotr 3
 }
 
 /// <summary>
-/// Seperate into its own class as these are all savable unlike quater heart
+/// Seperate into its own class as these are all savable
 /// which means we can just save Stats instead of saving each and every stat individually.
 /// </summary>
 [System.Serializable]
@@ -33,26 +39,44 @@ public class Stats
     /// </summary>
 
     [Header("Player Movement")]
+    [Tooltip("Players Walking Speed")]
     public float speed = 6f;
+    [Tooltip("Players Running Speed")]
     public float sprintSpeed = 12f;
+    [Tooltip("Players Movement while Crouched Speed")]
     public float crouchSpeed = 3f;
+    [Tooltip("Players Jump Height")]
     public float jumpHeight = 1.0f;
 
 
     [Header("Current Stats")]
+    [Tooltip("What is the players level")]
     public int level;
+    [Tooltip("Scales stat points effectiveness")]
     public float levelModifier = 1f;
+    [Tooltip("Additional health determined by stat points")]
     public float healthModifier;
+    [Tooltip("Additional mana determined by stat points")]
     public float manaModifier;
+    [Tooltip("Additional stamina determined by stat points")]
     public float staminaModifier;
+    [Tooltip("health remaining")]
     public float currentHealth = 100f;
+    [Tooltip("full health value")]
     public float maxHealth = 100f;
+    [Tooltip("The rate of which health regenerates")]
     public float regenHealth = 5f;
+    [Tooltip("mana remaining")]
     public float currentMana = 100f;
+    [Tooltip("full mana value")]
     public float maxMana = 100f;
+    [Tooltip("The rate of which mana regenerates")]
     public float regenMana = 5f;
+    [Tooltip("stamina remaining")]
     public float currentStamina = 100f;
+    [Tooltip("full stamina value")]
     public float maxStamina = 100f;
+    [Tooltip("The rate of which stamina regenerates")]
     public float regenStamina = 5f;
     #endregion
 
@@ -93,7 +117,7 @@ public class PlayerStats
 
     //field and property
     /// <summary>
-    /// Current Health Property to clamp values and automate UI
+    /// Property to clamp values and automate UI, also does quater hearts.
     /// </summary>
     public float CurrentHealth //property
     {
@@ -126,6 +150,10 @@ public class PlayerStats
             #endregion
         }
     }
+
+    /// <summary>
+    /// Property to cap current value to max. Also automates regen value
+    /// </summary>
     public float MaxHealth
     {
         get
@@ -135,7 +163,7 @@ public class PlayerStats
         set
         {
             stats.maxHealth = value;
-            stats.regenHealth = value * 0.05f;
+            stats.regenHealth = CalculateRegen(value, 0.05f);
             if (CurrentHealth > value)
             {
                 CurrentHealth = value;
@@ -144,7 +172,7 @@ public class PlayerStats
     }
 
     /// <summary>
-    /// Current Mana Property to clamp values and automate UI
+    /// Property to clamp values and automate UI
     /// </summary>
     public float CurrentMana
     {
@@ -160,6 +188,9 @@ public class PlayerStats
         }
     }
 
+    /// <summary>
+    /// Property to cap current value to max. Also automates regen value
+    /// </summary>
     public float MaxMana
     {
         get
@@ -169,7 +200,7 @@ public class PlayerStats
         set
         {
             stats.maxMana = value;
-            stats.regenMana = value * 0.05f;
+            stats.regenMana = CalculateRegen(value, 0.05f);
             if (CurrentMana > value)
             {
                 CurrentMana = value;
@@ -178,7 +209,7 @@ public class PlayerStats
     }
 
     /// <summary>
-    /// Current Stamina Property to clamp values and automate UI
+    /// Property to clamp values and automate UI.
     /// </summary>
     public float CurrentStamina
     {
@@ -194,6 +225,9 @@ public class PlayerStats
         }
     }
 
+    /// <summary>
+    /// Property to cap current value to max. Also automates regen value
+    /// </summary>
     public float MaxStamina
     {
         get
@@ -203,7 +237,7 @@ public class PlayerStats
         set
         {
             stats.maxStamina = value;
-            stats.regenStamina = value * 0.05f;
+            stats.regenStamina = CalculateRegen(value, 0.05f);
 
             if (CurrentStamina > value)
             {
@@ -213,13 +247,23 @@ public class PlayerStats
     }
     #endregion
 
-    public float CalculateRegen(float statMaxValue)
+    /// <summary>
+    /// Sets the appropriate regen rate.
+    /// </summary>
+    /// <param name="statMaxValue"></param>
+    /// <returns></returns>
+    public float CalculateRegen(float statMaxValue, float regenRate)
     {
-        return statMaxValue * 0.05f;
+        return statMaxValue * regenRate;
     }
 
 
-
+    /// <summary>
+    /// Used to adjust any stat point value within its limits and stat points remaining accordingly.
+    /// </summary>
+    /// <param name="statIndex">What stat is being adjusted.</param>
+    /// <param name="amount">By how much is it being adjusted.</param>
+    /// <returns></returns>
     public bool SetStats(int statIndex, int amount)
     {
         //increasing
@@ -240,7 +284,7 @@ public class PlayerStats
     }
 
     /// <summary>
-    /// At start of scene, stat bar values are updated to relevant values.
+    /// Updates stat bars values and visuals based on players stat points.
     /// </summary>
     public void UpdateStatBars()
     {
@@ -253,6 +297,9 @@ public class PlayerStats
         maxStaminaText.text = stats.maxStamina.ToString();
     }
 
+    /// <summary>
+    /// Runs all 3 modifier updaters, determines: Max + level up bonus + Regeneration, values of Heath, Stamina and Mana.
+    /// </summary>
     public void UpdateModifiers()
     {
         UpdateHealthModifier();
@@ -260,14 +307,17 @@ public class PlayerStats
         UpdateStaminaModifier();
     }
 
+    /// <summary>
+    /// Based on stat point distribution, Sets Max + level up bonus + Regeneration for Health.
+    /// </summary>
     public void UpdateHealthModifier()
     {
         //1 per strength
-        stats.healthModifier = stats.baseStats[0].finalStat;
+        stats.healthModifier = stats.baseStats[0].FinalStat;
         //0.5 per Constitution
-        stats.healthModifier += stats.baseStats[2].finalStat * 0.5f;
+        stats.healthModifier += stats.baseStats[2].FinalStat * 0.5f;
         //0.5 per Wisdom
-        stats.healthModifier += stats.baseStats[4].finalStat * 0.5f;
+        stats.healthModifier += stats.baseStats[4].FinalStat * 0.5f;
 
         //half the impact
         stats.healthModifier *= 0.5f;
@@ -275,17 +325,21 @@ public class PlayerStats
         //scale by level
         stats.healthModifier *= stats.levelModifier;
 
+        //Applies a whole value to Max which also then applies a value to regen
         MaxHealth = (int)(60 + stats.healthModifier);
     }
 
+    /// <summary>
+    /// Based on stat point distribution, Sets Max + level up bonus + Regeneration for Mana.
+    /// </summary>
     public void UpdateManaModifier()
     {
         //1 per Intelligence
-        stats.manaModifier = stats.baseStats[3].finalStat;
+        stats.manaModifier = stats.baseStats[3].FinalStat;
         //0.5 per Wisdom
-        stats.manaModifier += stats.baseStats[4].finalStat * 0.5f;
+        stats.manaModifier += stats.baseStats[4].FinalStat * 0.5f;
         //0.5 per Charisma
-        stats.manaModifier += stats.baseStats[5].finalStat * 0.5f;
+        stats.manaModifier += stats.baseStats[5].FinalStat * 0.5f;
 
         //half the impact
         stats.manaModifier *= 0.5f;
@@ -293,17 +347,21 @@ public class PlayerStats
         //scale by level
         stats.manaModifier *= stats.levelModifier;
 
+        //Applies a whole value to Max which also then applies a value to regen
         MaxMana = (int)(60 + stats.manaModifier);
     }
 
+    /// <summary>
+    /// Based on stat point distribution, Sets Max + level up bonus + Regeneration for Stamina.
+    /// </summary>
     public void UpdateStaminaModifier()
     {
         //1 per Dexterity
-        stats.staminaModifier = stats.baseStats[1].finalStat;
+        stats.staminaModifier = stats.baseStats[1].FinalStat;
         //0.5 per Constitution
-        stats.staminaModifier += stats.baseStats[2].finalStat * 0.5f;
+        stats.staminaModifier += stats.baseStats[2].FinalStat * 0.5f;
         //0.5 per Charisma
-        stats.staminaModifier += stats.baseStats[5].finalStat * 0.5f;
+        stats.staminaModifier += stats.baseStats[5].FinalStat * 0.5f;
 
         //half the impact
         stats.staminaModifier *= 0.5f;
@@ -311,13 +369,17 @@ public class PlayerStats
         //scale by level
         stats.staminaModifier *= stats.levelModifier;
 
+        //Applies a whole value to Max which also then applies a value to regen
         MaxStamina = (int)(60 + stats.staminaModifier);
     }
 
+    /// <summary>
+    /// Sets Health, Stamina and Mana to max.
+    /// </summary>
     public void RefillStatBars()
     {
-        CurrentHealth = stats.maxHealth;
-        CurrentMana = stats.maxMana;
-        CurrentStamina = stats.maxStamina;
+        CurrentHealth = MaxHealth;
+        CurrentMana = MaxMana;
+        CurrentStamina = MaxStamina;
     }
 }

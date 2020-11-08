@@ -325,7 +325,7 @@ public class Customisation : MonoBehaviour
             }
             
             GUI.Label(new Rect(Screen.width - 140, curLoopHeight + i * 30, 100, 20), 
-                stat.baseStatName + ": " + stat.finalStat);
+                stat.baseStatName + ": " + stat.FinalStat);
 
 
             if (GUI.Button(new Rect(Screen.width - 40, curLoopHeight + i * 30, 20, 20), "+"))

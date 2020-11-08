@@ -20,7 +20,7 @@ public class PlayerData//load up PlayerData class with Data from our scene
     public PlayerData(Player player) // when method is same name as class, it is a constructor, shorthand ctor + TAB + TAB
     {
         stats = player.playerStats.stats;
-        profession = player.Profession; //May need to change to profession not Profession
+        profession = player.Profession;
         race = player.Race;
         customisationTextureIndex = player.customisationTextureIndex;
 

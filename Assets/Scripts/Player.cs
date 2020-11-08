@@ -172,7 +172,7 @@ public class Player : MonoBehaviour
         #region Health Regen
         if (!disableRegen) //if not debuffed
         {
-            if (playerStats.CurrentHealth < playerStats.stats.maxHealth) //if health is less than max
+            if (playerStats.CurrentHealth < playerStats.MaxHealth) //if health is less than max
             {
                 playerStats.CurrentHealth += playerStats.stats.regenHealth * Time.deltaTime; //Increases current health PROPERTY value (automates UI updates)
             }
@@ -189,7 +189,7 @@ public class Player : MonoBehaviour
         #region Mana Regen
         if (Time.time > disableManaRegenTime + ManaRegenCooldown) //check if debuff time is over
         {
-            if (playerStats.stats.currentMana < playerStats.stats.maxMana) //if mana not full
+            if (playerStats.CurrentMana < playerStats.MaxMana) //if mana not full
             {
                 playerStats.CurrentMana += playerStats.stats.regenMana * Time.deltaTime; //Increases current mana PROPERTY value (automates UI updates)
             }
@@ -199,7 +199,7 @@ public class Player : MonoBehaviour
         #region Stamina Regen
         if (Time.time > disableStaminaRegenTime + StaminaRegenCooldown) //check if debuff time is over
         {
-            if (playerStats.stats.currentStamina < playerStats.stats.maxStamina) //if stamina not full
+            if (playerStats.CurrentStamina < playerStats.MaxStamina) //if stamina not full
             {
                 playerStats.CurrentStamina += playerStats.stats.regenStamina * Time.deltaTime; //Increases current stamina PROPERTY value (automates UI updates)
             }
