@@ -914,8 +914,6 @@ MonoBehaviour:
   scrollPositionProfession: {x: 0, y: 0}
   scrollPositionRace: {x: 0, y: 0}
   inputName: Enter Name Here
-  characterName: {fileID: 0}
-  professionDropdown: {fileID: 0}
   professionText: {fileID: 1520300389}
   raceText: {fileID: 1991302528}
   baseStatPointsText: {fileID: 718649752}
@@ -9490,7 +9488,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 300, y: 60}
+  m_SizeDelta: {x: 300, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1520300388
 CanvasRenderer:
@@ -11582,7 +11580,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 300, y: 60}
+  m_SizeDelta: {x: 300, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1991302528
 MonoBehaviour:

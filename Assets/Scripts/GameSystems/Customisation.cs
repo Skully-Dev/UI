@@ -56,15 +56,9 @@ public class Customisation : MonoBehaviour
     [Tooltip("The character name input string")]
     public string inputName;
 
-    [Header("References to update UI")]
-    [SerializeField]
-    private InputField characterName;
-
-    [SerializeField]
-    private Dropdown professionDropdown;
-    [SerializeField]
+    [SerializeField, Tooltip("Reference TEXT where Profession Ability and Discription should be displayed")]
     private Text professionText;
-    [SerializeField]
+    [SerializeField, Tooltip("Reference TEXT where Race Ability and Discription should be displayed")]
     private Text raceText;
 
     [SerializeField, Tooltip("Reference the remaining points pool text")]
@@ -137,8 +131,28 @@ public class Customisation : MonoBehaviour
         }
     }
 
-    #region Set Texture Method (2 Overrides)
 
+
+    private void OnGUI() //like update but runs at a diffirent specific time for GUI
+    {
+        if (showOnGUI)
+        {
+            CustomiseOnGUI();
+            NameOnGUI();
+            ProfessionsOnGUI();
+            RacesOnGUI();
+            StatsOnGUI();
+
+            if (GUI.Button(new Rect(10, 290, 120, 20), "Save & Play"))
+            {
+                SaveAndPlay();
+            }
+        }
+    }
+
+    #region Customise Appearance Methods
+
+    #region Set Texture Method (2 Overrides)
     #region Set Texture (string type) Override (USING THIS ONE!)
     /// <summary>
     /// Changes to next/prior texture available
@@ -183,7 +197,7 @@ public class Customisation : MonoBehaviour
         {
             textureIndex = max - 1;
         }
-        else if (textureIndex > max -1)
+        else if (textureIndex > max - 1)
         {
             textureIndex = 0;
         }
@@ -228,252 +242,7 @@ public class Customisation : MonoBehaviour
         characterRenderer.materials = mats;
     }
     #endregion
-
     #endregion
-
-    /// <summary>
-    /// Save player and load game scene.
-    /// </summary>
-    public void SaveAndPlay()
-    {
-        SaveCharacter();
-        SceneManager.LoadScene(sceneToPlay); //load gamescene
-    }
-
-    /// <summary>
-    /// Save character settings to player prefs
-    /// </summary>
-    public void SaveCharacter()
-    {
-        player.customisationTextureIndex = currentPartsTextureIndex;
-        player.playerStats.stats.name = inputName;
-        PlayerBinarySave.SavePlayerData(player);
-
-
-        /* WIP REDUNDANT
-        //saves index of each
-        PlayerPrefs.SetInt("Skin Index", currentPartsTextureIndex[0]);
-        PlayerPrefs.SetInt("Hair Index", currentPartsTextureIndex[1]);
-        PlayerPrefs.SetInt("Eyes Index", currentPartsTextureIndex[2]);
-        PlayerPrefs.SetInt("Mouth Index", currentPartsTextureIndex[3]);
-        PlayerPrefs.SetInt("Clothes Index", currentPartsTextureIndex[4]);
-        PlayerPrefs.SetInt("Armour Index", currentPartsTextureIndex[5]);
-
-        PlayerPrefs.SetString("Character Name", characterName.text);
-
-        for (int i = 0; i < player.playerStats.baseStats.Length; i++)
-        {
-            PlayerPrefs.SetInt(player.playerStats.baseStats[i].baseStatName + " stat", player.playerStats.baseStats[i].defaultStat);
-            PlayerPrefs.SetInt(player.playerStats.baseStats[i].baseStatName + " additionalStat", player.playerStats.baseStats[i].additionalStat);
-            PlayerPrefs.SetInt(player.playerStats.baseStats[i].baseStatName + " levelUpStat", player.playerStats.baseStats[i].levelUpStat);
-        }
-
-        PlayerPrefs.SetString("Character Profession", player.Profession.ProfessionName);
-        */
-    }
-
-    private void OnGUI() //like update but runs at a diffirent specific time for GUI
-    {
-        if (showOnGUI)
-        {
-            CustomiseOnGUI();
-            StatsOnGUI();
-            ProfessionsOnGUI();
-            RacesOnGUI();
-            NameOnGUI();
-
-            if (GUI.Button(new Rect(10, 290, 120, 20), "Save & Play"))
-            {
-                SaveAndPlay();
-            }
-        }
-    }
-
-    /// <summary>
-    /// On InputField value change of Chatacter Name, stores value to be saved.
-    /// </summary>
-    /// <param name="_name">The value of the input field, passed dynamically</param>
-    public void ChangeName(string _name)
-    {
-        inputName = _name;
-    }
-
-    private void NameOnGUI()
-    {
-        GUI.Box(new Rect(10, 230, 120, 50), "Name");
-        inputName = GUI.TextField(new Rect(20, 250, 100, 20), inputName, 20);
-
-    }
-
-    /// <summary>
-    /// On Dropdown value change of Profession, applies chosen value 
-    /// w the Abilities and BASESTATS automatically applied.
-    /// Also displays info about selected Professions Ability.
-    /// </summary>
-    /// <param name="professionIndex">The index of dropdown chosen value, passed dynamically</param>
-    public void ChangeProfession(int professionIndex)
-    {
-        player.Profession = playerProfessions[professionIndex];
-        professionText.text = player.Profession.AbilityName + " - " + player.Profession.AbilityDescription;
-        UpdateAllStatPointsValues();
-    }
-
-
-    /// <summary>
-    /// OnGUI Profession scoll box w ALL available Professions and their Abilities and BASESTATS automatically added.
-    /// Also displays info about current selected Professsion Ability in box near bottom screen.
-    /// </summary>
-    private void ProfessionsOnGUI()
-    {
-        float curLoopHeight = 0;
-
-        GUI.Box(new Rect(Screen.width - 170, 230, 155, 80), "Profession");
-
-        //On screen scrollable box with enough space for all Professions listed in inspector
-        scrollPositionProfession = GUI.BeginScrollView(new Rect(Screen.width - 170, 250, 155, 50),
-                                                      scrollPositionProfession,
-                                                      new Rect(0, 0, 100, 30 * playerProfessions.Length));
-
-        //Adds each of the Professions to the scollable view as buttons, appropriately spaced out
-        int i = 0;
-        foreach (PlayerProfession profession in playerProfessions)
-        {
-            if (GUI.Button(new Rect(0, curLoopHeight + i * 30, 100, 20), profession.ProfessionName))
-            {
-                player.Profession = profession;
-            }
-            i++;
-        }
-
-        GUI.EndScrollView();
-
-        #region Information displayed about Profession and related ability
-        GUI.Box(new Rect(Screen.width - 170, Screen.height - 90, 155, 80), "Profession Ability");
-        GUI.Label(new Rect(Screen.width - 140, Screen.height - 100 + 30, 100, 20), player.Profession.ProfessionName);
-        GUI.Label(new Rect(Screen.width - 140, Screen.height - 100 + 45, 100, 20), player.Profession.AbilityName);
-        GUI.Label(new Rect(Screen.width - 140, Screen.height - 100 + 60, 100, 20), player.Profession.AbilityDescription);
-        #endregion
-    }
-
-    /// <summary>
-    /// On Dropdown value change of Race, Ability automatically applied.
-    /// Also displays info about Ability.
-    /// </summary>
-    /// <param name="raceIndex">The index of dropdown chosen value, passed dynamically</param>
-    public void ChangeRace(int raceIndex)
-    {
-        player.Race = playerRaces[raceIndex];
-        raceText.text = player.Race.AbilityName + " - " + player.Race.AbilityDescription;
-    }
-
-    /// <summary>
-    /// OnGUI Race scoll box w ALL available Races and their Abilities automatically added.
-    /// Also displays info about current selected Race Ability in box near bottom screen.
-    /// </summary>
-    private void RacesOnGUI()
-    {
-        float curLoopHeight = 0;
-
-        GUI.Box(new Rect(Screen.width - 170, 320, 155, 80), "Race");
-
-        //On Screen scrollable box with enough space for all Races added in inspector
-        scrollPositionRace = GUI.BeginScrollView(new Rect(Screen.width - 170, 340, 155, 50),
-                                                      scrollPositionRace,
-                                                      new Rect(0, 0, 100, 30 * playerRaces.Length));
-
-        //Adds each of the Races to the scollable view as buttons, appropriately spaced out
-        int i = 0;
-        foreach (PlayerRace race in playerRaces)
-        {
-            if (GUI.Button(new Rect(0, curLoopHeight + i * 30, 100, 20), race.RaceName))
-            {
-                player.Race = race;
-            }
-            i++;
-        }
-
-        GUI.EndScrollView();
-
-        #region Information displayed about Race and related ability
-        GUI.Box(new Rect(Screen.width - 340, Screen.height - 90, 155, 80), "Race Ability");
-        GUI.Label(new Rect(Screen.width - 310, Screen.height - 100 + 30, 100, 20), player.Race.RaceName);
-        GUI.Label(new Rect(Screen.width - 310, Screen.height - 100 + 45, 100, 20), player.Race.AbilityName);
-        GUI.Label(new Rect(Screen.width - 310, Screen.height - 100 + 60, 100, 20), player.Race.AbilityDescription);
-        #endregion
-    }
-
-    #region Player Stat Points Methods
-    /* Not needed
-    public enum StatNames { Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma };
-    public string[] statNames = Enum.GetNames(typeof(StatNames));
-    */
-
-    /// <summary>
-    /// Updates all base stats point values
-    /// </summary>
-    private void UpdateAllStatPointsValues()
-    {
-        for (int i = 0; i < statsPointsText.Length; i++)
-        {
-            statsPointsText[i].text = player.playerStats.stats.baseStats[i].FinalStat.ToString();
-        }
-    }
-
-    /// <summary>
-    /// Increase specified player stat by 1 point.
-    /// Also updates points UI for stat and remaining point pool.
-    /// </summary>
-    /// <param name="statIndex">stat index in relation to order of appearance</param>
-    public void IncreaseStat(int statIndex)
-    {
-        player.playerStats.SetStats(statIndex, 1);
-        statsPointsText[statIndex].text = player.playerStats.stats.baseStats[statIndex].FinalStat.ToString();
-        baseStatPointsText.text = player.playerStats.stats.baseStatPoints.ToString();
-    }
-
-    /// <summary>
-    /// Decrease specified player stat by 1 point.
-    /// Also updates points UI for stat and remaining point pool.
-    /// </summary>
-    /// <param name="statIndex">stat index in relation to order of appearance</param>
-    public void DecreaseStat(int statIndex)
-    {
-        player.playerStats.SetStats(statIndex, -1);
-        statsPointsText[statIndex].text = player.playerStats.stats.baseStats[statIndex].FinalStat.ToString();
-        baseStatPointsText.text = player.playerStats.stats.baseStatPoints.ToString();
-    }
-
-    /// <summary>
-    /// Creates an IMGUI Box w Buttons to increase/decrease each of the Base Stats.
-    /// Automatimated point limits and updated point pool.
-    /// </summary>
-    private void StatsOnGUI()
-    {
-        float curLoopHeight = 40;
-        GUI.Box(new Rect(Screen.width - 170, 10, 155, 210), "Stats : " + player.playerStats.stats.baseStatPoints);
-
-        for (int i = 0; i < player.playerStats.stats.baseStats.Length; i++)
-        {
-            BaseStats stat = player.playerStats.stats.baseStats[i];
-
-            if (GUI.Button(new Rect(Screen.width - 165, curLoopHeight + i * 30, 20, 20), "-")) 
-            {
-                player.playerStats.SetStats(i, -1);
-            }
-            
-            GUI.Label(new Rect(Screen.width - 140, curLoopHeight + i * 30, 100, 20), 
-                stat.baseStatName + ": " + stat.FinalStat);
-
-
-            if (GUI.Button(new Rect(Screen.width - 40, curLoopHeight + i * 30, 20, 20), "+"))
-            {
-                player.playerStats.SetStats(i, 1);
-            }
-        }
-    }
-    #endregion
-
-    #region Customise Appearance Methods
 
     /// <summary>
     /// Swaps though to the next available texture for this layer.
@@ -543,7 +312,7 @@ public class Customisation : MonoBehaviour
 
         GUI.Box(new Rect(10, 10, 120, 210), "Visuals"); //a box/pannel for us to put GUI in, the first two numbers are pixels from the top left followed by width and height
 
-        #region Loop create buttons
+        #region Loop create buttons for Customise Appearacne
         string[] names = { "Skin", "Hair", "Eyes", "Mouth", "Clothes", "Armour" };
 
         float curLoopHeight = 40f; //height of first button
@@ -656,8 +425,244 @@ public class Customisation : MonoBehaviour
             TestMethod();
         }
         */
-        #endregion
+        #endregion        
+    }
+    #endregion
+
+    #region Change Name Methods
+    /// <summary>
+    /// On InputField value change of Chatacter Name, stores value to be saved.
+    /// </summary>
+    /// <param name="_name">The value of the input field, passed dynamically</param>
+    public void ChangeName(string _name)
+    {
+        inputName = _name;
+    }
+
+    /// <summary>
+    /// IM GUI text box to enter character name, dynamic.
+    /// </summary>
+    private void NameOnGUI()
+    {
+        GUI.Box(new Rect(10, 230, 120, 50), "Name");
+        inputName = GUI.TextField(new Rect(20, 250, 100, 20), inputName, 20);
+    }
+    #endregion
+
+    #region Change Race AND Profession Methods
+    /// <summary>
+    /// On Dropdown value change of Profession, applies chosen value 
+    /// w the Abilities and BASESTATS automatically applied.
+    /// Also displays info about selected Professions Ability.
+    /// </summary>
+    /// <param name="professionIndex">The index of dropdown chosen value, passed dynamically</param>
+    public void ChangeProfession(int professionIndex)
+    {
+        player.Profession = playerProfessions[professionIndex];
+        professionText.text = player.Profession.AbilityName + " - " + player.Profession.AbilityDescription;
+        UpdateAllStatPointsValues();
+    }
+
+    /// <summary>
+    /// OnGUI Profession scoll box w ALL available Professions and their Abilities and BASESTATS automatically added.
+    /// Also displays info about current selected Professsion Ability in box near bottom screen.
+    /// </summary>
+    private void ProfessionsOnGUI()
+    {
+        #region Profession Change scroll box and buttons
+        float curLoopHeight = 0;
+
+        GUI.Box(new Rect(Screen.width - 170, 230, 155, 80), "Profession");
+
+        //On screen scrollable box with enough space for all Professions listed in inspector
+        scrollPositionProfession = GUI.BeginScrollView(new Rect(Screen.width - 170, 250, 155, 50),
+                                                      scrollPositionProfession,
+                                                      new Rect(0, 0, 100, 30 * playerProfessions.Length));
+
+        //Adds each of the Professions to the scollable view as buttons, appropriately spaced out
+        int i = 0;
+        foreach (PlayerProfession profession in playerProfessions)
+        {
+            if (GUI.Button(new Rect(0, curLoopHeight + i * 30, 100, 20), profession.ProfessionName))
+            {
+                player.Profession = profession;
+            }
+            i++;
+        }
+
+        GUI.EndScrollView();
         #endregion
 
+        #region Information displayed about Profession and related ability
+        GUI.Box(new Rect(Screen.width - 170, Screen.height - 90, 155, 80), "Profession Ability");
+        GUI.Label(new Rect(Screen.width - 140, Screen.height - 100 + 30, 100, 20), player.Profession.ProfessionName);
+        GUI.Label(new Rect(Screen.width - 140, Screen.height - 100 + 45, 100, 20), player.Profession.AbilityName);
+        GUI.Label(new Rect(Screen.width - 140, Screen.height - 100 + 60, 100, 20), player.Profession.AbilityDescription);
+        #endregion
     }
+
+    /// <summary>
+    /// On Dropdown value change of Race, Ability automatically applied.
+    /// Also displays info about Ability.
+    /// </summary>
+    /// <param name="raceIndex">The index of dropdown chosen value, passed dynamically</param>
+    public void ChangeRace(int raceIndex)
+    {
+        player.Race = playerRaces[raceIndex];
+        raceText.text = player.Race.AbilityName + " - " + player.Race.AbilityDescription;
+    }
+
+    /// <summary>
+    /// OnGUI Race scoll box w ALL available Races and their Abilities automatically added.
+    /// Also displays info about current selected Race Ability in box near bottom screen.
+    /// </summary>
+    private void RacesOnGUI()
+    {
+        #region Race Change scroll box and buttons
+        float curLoopHeight = 0;
+
+        GUI.Box(new Rect(Screen.width - 170, 320, 155, 80), "Race");
+
+        //On Screen scrollable box with enough space for all Races added in inspector
+        scrollPositionRace = GUI.BeginScrollView(new Rect(Screen.width - 170, 340, 155, 50),
+                                                      scrollPositionRace,
+                                                      new Rect(0, 0, 100, 30 * playerRaces.Length));
+
+        //Adds each of the Races to the scollable view as buttons, appropriately spaced out
+        int i = 0;
+        foreach (PlayerRace race in playerRaces)
+        {
+            if (GUI.Button(new Rect(0, curLoopHeight + i * 30, 100, 20), race.RaceName))
+            {
+                player.Race = race;
+            }
+            i++;
+        }
+
+        GUI.EndScrollView();
+
+        #endregion
+
+        #region Information displayed about Race and related ability
+        GUI.Box(new Rect(Screen.width - 340, Screen.height - 90, 155, 80), "Race Ability");
+        GUI.Label(new Rect(Screen.width - 310, Screen.height - 100 + 30, 100, 20), player.Race.RaceName);
+        GUI.Label(new Rect(Screen.width - 310, Screen.height - 100 + 45, 100, 20), player.Race.AbilityName);
+        GUI.Label(new Rect(Screen.width - 310, Screen.height - 100 + 60, 100, 20), player.Race.AbilityDescription);
+        #endregion
+    }
+    #endregion
+
+    #region Player Stat Points Methods
+    /* Not needed
+    public enum StatNames { Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma };
+    public string[] statNames = Enum.GetNames(typeof(StatNames));
+    */
+
+    /// <summary>
+    /// Updates all base stats point values
+    /// </summary>
+    private void UpdateAllStatPointsValues()
+    {
+        for (int i = 0; i < statsPointsText.Length; i++)
+        {
+            statsPointsText[i].text = player.playerStats.stats.baseStats[i].FinalStat.ToString();
+        }
+    }
+
+    /// <summary>
+    /// Increase specified player stat by 1 point.
+    /// Also updates points UI for stat and remaining point pool.
+    /// </summary>
+    /// <param name="statIndex">stat index in relation to order of appearance</param>
+    public void IncreaseStat(int statIndex)
+    {
+        player.playerStats.SetStats(statIndex, 1);
+        statsPointsText[statIndex].text = player.playerStats.stats.baseStats[statIndex].FinalStat.ToString();
+        baseStatPointsText.text = player.playerStats.stats.baseStatPoints.ToString();
+    }
+
+    /// <summary>
+    /// Decrease specified player stat by 1 point.
+    /// Also updates points UI for stat and remaining point pool.
+    /// </summary>
+    /// <param name="statIndex">stat index in relation to order of appearance</param>
+    public void DecreaseStat(int statIndex)
+    {
+        player.playerStats.SetStats(statIndex, -1);
+        statsPointsText[statIndex].text = player.playerStats.stats.baseStats[statIndex].FinalStat.ToString();
+        baseStatPointsText.text = player.playerStats.stats.baseStatPoints.ToString();
+    }
+
+    /// <summary>
+    /// Creates an IMGUI Box w Buttons to increase/decrease each of the Base Stats.
+    /// Automatimated point limits and updated point pool.
+    /// </summary>
+    private void StatsOnGUI()
+    {
+        float curLoopHeight = 40;
+        GUI.Box(new Rect(Screen.width - 170, 10, 155, 210), "Stats : " + player.playerStats.stats.baseStatPoints);
+
+        for (int i = 0; i < player.playerStats.stats.baseStats.Length; i++)
+        {
+            BaseStats stat = player.playerStats.stats.baseStats[i];
+
+            if (GUI.Button(new Rect(Screen.width - 165, curLoopHeight + i * 30, 20, 20), "-")) 
+            {
+                player.playerStats.SetStats(i, -1);
+            }
+            
+            GUI.Label(new Rect(Screen.width - 140, curLoopHeight + i * 30, 100, 20), 
+                stat.baseStatName + ": " + stat.FinalStat);
+
+
+            if (GUI.Button(new Rect(Screen.width - 40, curLoopHeight + i * 30, 20, 20), "+"))
+            {
+                player.playerStats.SetStats(i, 1);
+            }
+        }
+    }
+    #endregion
+
+    #region Save Methods
+    /// <summary>
+    /// Save player and load game scene.
+    /// </summary>
+    public void SaveAndPlay()
+    {
+        SaveCharacter();
+        SceneManager.LoadScene(sceneToPlay); //load gamescene
+    }
+
+    /// <summary>
+    /// Save character settings to player prefs
+    /// </summary>
+    public void SaveCharacter()
+    {
+        player.customisationTextureIndex = currentPartsTextureIndex;
+        player.playerStats.stats.name = inputName;
+        PlayerBinarySave.SavePlayerData(player);
+
+
+        /* WIP REDUNDANT
+        //saves index of each
+        PlayerPrefs.SetInt("Skin Index", currentPartsTextureIndex[0]);
+        PlayerPrefs.SetInt("Hair Index", currentPartsTextureIndex[1]);
+        PlayerPrefs.SetInt("Eyes Index", currentPartsTextureIndex[2]);
+        PlayerPrefs.SetInt("Mouth Index", currentPartsTextureIndex[3]);
+        PlayerPrefs.SetInt("Clothes Index", currentPartsTextureIndex[4]);
+        PlayerPrefs.SetInt("Armour Index", currentPartsTextureIndex[5]);
+
+        PlayerPrefs.SetString("Character Name", characterName.text);
+
+        for (int i = 0; i < player.playerStats.baseStats.Length; i++)
+        {
+            PlayerPrefs.SetInt(player.playerStats.baseStats[i].baseStatName + " stat", player.playerStats.baseStats[i].defaultStat);
+            PlayerPrefs.SetInt(player.playerStats.baseStats[i].baseStatName + " additionalStat", player.playerStats.baseStats[i].additionalStat);
+            PlayerPrefs.SetInt(player.playerStats.baseStats[i].baseStatName + " levelUpStat", player.playerStats.baseStats[i].levelUpStat);
+        }
+
+        PlayerPrefs.SetString("Character Profession", player.Profession.ProfessionName);
+        */
+    }
+    #endregion
 }
