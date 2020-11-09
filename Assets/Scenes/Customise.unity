@@ -724,6 +724,7 @@ MonoBehaviour:
   showOnGUI: 1
   player: {fileID: 662170882}
   characterName: {fileID: 0}
+  inputName: Enter Name Here
   sceneToPlay: GameScene
   TextureLocation: Character/
   playerProfessions:
@@ -756,7 +757,7 @@ MonoBehaviour:
       levelUpStat: 0
       additionalStat: 0
   - ProfessionName: Cleric
-    AbilityName: Divine Power
+    AbilityName: Divine
     AbilityDescription: Extra Mana
     defaultStats:
     - baseStatName: Strength
@@ -812,7 +813,7 @@ MonoBehaviour:
       levelUpStat: 0
       additionalStat: 0
   - ProfessionName: Rogue
-    AbilityName: Agility
+    AbilityName: Sneaky
     AbilityDescription: Extra Stamina
     defaultStats:
     - baseStatName: Strength
@@ -840,7 +841,7 @@ MonoBehaviour:
       levelUpStat: 0
       additionalStat: 0
   - ProfessionName: Wizard
-    AbilityName: Book Smarts
+    AbilityName: Magical
     AbilityDescription: Extra Mana
     defaultStats:
     - baseStatName: Strength
@@ -872,10 +873,10 @@ MonoBehaviour:
     AbilityName: Sweat
     AbilityDescription: Extra Stamina
   - RaceName: Elf
-    AbilityName: Divine Gift
+    AbilityName: Divinity
     AbilityDescription: Extra Mana
   - RaceName: Dwarf
-    AbilityName: Tough as Nails
+    AbilityName: Sponge
     AbilityDescription: Extra Health
   characterRenderer: {fileID: 4381454791845676754}
   currentPartsTextureIndex: 000000000000000000000000000000000000000000000000

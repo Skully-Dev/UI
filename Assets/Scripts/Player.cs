@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 /// <summary>
 /// Code relating to player
@@ -12,22 +13,20 @@ public class Player : MonoBehaviour
     [Tooltip("Is the player dead. Stops pause from opening after death.")]
     public bool isDead;
 
-    #region maybe relocate to player stats
-    [Header ("Stats Bars Regeneration/debuff variables")]
-    [Tooltip("health regen debuff bool")]
-    private bool disableRegen = false;
-    [Tooltip("The time of when player was last damaged")]
-    private float disableRegenTime;
+    #region Other Player Stats (maybe relocate to player stats)
+    [Header("Stats Bars Regeneration/debuff variables")]
+    [Tooltip("The time of when player was last damaged + cooldown")]
+    private float healthRegenStartTime;
     [Tooltip("Delay between health loss and regeneration")]
-    public float RegenCooldown = 5f;
+    public float HealthRegenCooldown = 5f;
 
-    [Tooltip("The time of when mana was last used")]
-    public float disableManaRegenTime;
+    [Tooltip("The time of when mana was last used + cooldown")]
+    public float manaRegenStartTime;
     [Tooltip("Delay between mana use and regeneration")]
     public float ManaRegenCooldown = 5f;
 
-    [Tooltip("The time of when stamina was last used")]
-    public float disableStaminaRegenTime;
+    [Tooltip("The time of when stamina was last used + cooldown")]
+    public float staminaRegenStartTime;
     [Tooltip("Delay between stamina use and regeneration")]
     public float StaminaRegenCooldown = 1f;
     [Tooltip("Rate stamina drops when running")]
@@ -37,6 +36,7 @@ public class Player : MonoBehaviour
     [Tooltip("The index values of the players saved chosen textures")]
     public int[] customisationTextureIndex;
 
+    #region Race/Profession Properties/References
     [SerializeField, Tooltip("What Profession the Player themselves are.")]
     private PlayerProfession profession;
 
@@ -66,6 +66,7 @@ public class Player : MonoBehaviour
             ChangeRace(value);
         }
     }
+    #endregion
 
     #region Death/Respawn Reference Variables
     [Header("Death/Respawn references")]
@@ -87,30 +88,94 @@ public class Player : MonoBehaviour
     private GameObject respawnLocation;
     #endregion
 
+    #region Player Info References
+    [Header("Player Info References")]
+    [SerializeField]
+    private Text nameText;
+    [SerializeField]
+    private Text classText;
+    [SerializeField]
+    private Text abilityText;
+    #endregion
+
     //awake happens before start and some values are better initialized before others.
     private void Awake()
     {
-        //Load player data, this would make other load methods a little redundant, check GameManager.Load() for details.
         if (SceneManager.GetActiveScene().name != "Customise") //if not in Customise scene
         {
-            PlayerData loadedPlayer = PlayerBinarySave.LoadPlayerData(); 
-            if (loadedPlayer != null)
+            LoadPlayer();
+            UpdatePlayerCardInfo();
+        }
+    }
+
+    private void Update()
+    {
+        #region Health Regen
+        if (Time.time > healthRegenStartTime) //check if debuff time is over
+        {
+            if (playerStats.CurrentHealth < playerStats.MaxHealth) //if health is less than max
             {
-                playerStats.stats = loadedPlayer.stats;
-                profession = loadedPlayer.profession;
-                customisationTextureIndex = loadedPlayer.customisationTextureIndex;
+                playerStats.CurrentHealth += playerStats.stats.regenHealth * Time.deltaTime; //Increases current health PROPERTY value (automates UI updates)
             }
         }
+        #endregion
+
+        #region Mana Regen
+        if (Time.time > manaRegenStartTime) //check if debuff time is over
+        {
+            if (playerStats.CurrentMana < playerStats.MaxMana) //if mana not full
+            {
+                playerStats.CurrentMana += playerStats.stats.regenMana * Time.deltaTime; //Increases current mana PROPERTY value (automates UI updates)
+            }
+        }
+        #endregion
+
+        #region Stamina Regen
+        if (Time.time > staminaRegenStartTime) //check if debuff time is over
+        {
+            if (playerStats.CurrentStamina < playerStats.MaxStamina) //if stamina not full
+            {
+                playerStats.CurrentStamina += playerStats.stats.regenStamina * Time.deltaTime; //Increases current stamina PROPERTY value (automates UI updates)
+            }
+        }
+        #endregion
     }
 
-    private void Start()
+    #region Load + Save Methods
+    /// <summary>
+    /// Loads save file converts it from binary into PlayerData then is applied to player.
+    /// </summary>
+    public void LoadPlayer()
     {
-        if (SceneManager.GetActiveScene().name != "Customise")
+        PlayerData loadedPlayer = PlayerBinarySave.LoadPlayerData();
+        if (loadedPlayer != null)
         {
-            playerStats.UpdateStatBars(); //initialize stat bar UI to appropriate values
+            playerStats.stats = loadedPlayer.stats;
+            profession = loadedPlayer.profession;
+            race = loadedPlayer.race;
+            customisationTextureIndex = loadedPlayer.customisationTextureIndex;
+
+            Vector3 pos = new Vector3(loadedPlayer.position[0], loadedPlayer.position[1], loadedPlayer.position[2]); //transfers float array into Vector3(for unity)
+            
+            //controller.enabled = false;
+            transform.position = pos;
+            Physics.SyncTransforms();
+            //controller.enabled = true;
+
+            playerStats.UpdateStatBars();
         }
     }
 
+    /// <summary>
+    /// Sends player to be converted into PlayerData to be converted into binary and saved off in a file.
+    /// </summary>
+    public void SavePlayer()
+    {
+        PlayerBinarySave.SavePlayerData(this); //you need to pass it a reference of player to save
+    }
+    #endregion
+
+    #region Change Race/Profession Methods
     /// <summary>
     /// Method run by property when profession is changed.
     /// This enables the code to make the appropriate changes to the Player Attributes with a Method Stack.
@@ -150,7 +215,14 @@ public class Player : MonoBehaviour
             }
         }
     }
+    #endregion
 
+    /// <summary>
+    /// Increases all stat values by 1.
+    /// Get 3 additional points to spend.
+    /// One incrament of exponential level modifier.
+    /// Updates stat bars.
+    /// </summary>
     public void LevelUp()
     {
         //playerStats.
@@ -167,46 +239,7 @@ public class Player : MonoBehaviour
         playerStats.UpdateStatBars();
     }
 
-    private void Update()
-    {
-        #region Health Regen
-        if (!disableRegen) //if not debuffed
-        {
-            if (playerStats.CurrentHealth < playerStats.MaxHealth) //if health is less than max
-            {
-                playerStats.CurrentHealth += playerStats.stats.regenHealth * Time.deltaTime; //Increases current health PROPERTY value (automates UI updates)
-            }
-        }
-        else //if debuffed
-        {
-            if (Time.time > disableRegenTime + RegenCooldown) //check if debuff time is over
-            {
-                disableRegen = false; //if so remove debuff
-            }
-        }
-        #endregion
-
-        #region Mana Regen
-        if (Time.time > disableManaRegenTime + ManaRegenCooldown) //check if debuff time is over
-        {
-            if (playerStats.CurrentMana < playerStats.MaxMana) //if mana not full
-            {
-                playerStats.CurrentMana += playerStats.stats.regenMana * Time.deltaTime; //Increases current mana PROPERTY value (automates UI updates)
-            }
-        }
-        #endregion
-
-        #region Stamina Regen
-        if (Time.time > disableStaminaRegenTime + StaminaRegenCooldown) //check if debuff time is over
-        {
-            if (playerStats.CurrentStamina < playerStats.MaxStamina) //if stamina not full
-            {
-                playerStats.CurrentStamina += playerStats.stats.regenStamina * Time.deltaTime; //Increases current stamina PROPERTY value (automates UI updates)
-            }
-        }
-        #endregion
-    }
-
+    #region Use Stat Bars Methods
     /// <summary>
     /// damage player, regen debuff, sound FX and if 0hp Die();
     /// </summary>
@@ -214,23 +247,12 @@ public class Player : MonoBehaviour
     public void DealDamage(float damage)
     {
         playerStats.CurrentHealth -= damage;
-        disableRegen = true;
-        disableRegenTime = Time.time;
+        healthRegenStartTime = Time.time + HealthRegenCooldown;
         damageSound.Play();
         if (playerStats.CurrentHealth <= 0)
         {
             Die();
         }
-    }
-
-    /// <summary>
-    /// use mana and any related effects code
-    /// </summary>
-    /// <param name="cost">mana to be spent</param>
-    public void UseMana(float cost)
-    {
-        playerStats.CurrentMana -= cost;
-        disableManaRegenTime = Time.time;
     }
 
     /// <summary>
@@ -242,27 +264,18 @@ public class Player : MonoBehaviour
         playerStats.CurrentHealth += health;
     }
 
-    private void OnGUI()
+    /// <summary>
+    /// use mana and any related effects code
+    /// </summary>
+    /// <param name="cost">mana to be spent</param>
+    public void UseMana(float cost)
     {
-        //level player up for testing
-        if (GUI.Button(new Rect(150,0,100,20), "Level Up"))
-        {
-            LevelUp();
-        }
-
-        //use 25 mana for testing
-        if (GUI.Button(new Rect(150,20,100,20), "Use Mana: " + playerStats.CurrentMana))
-        {
-            UseMana(25f);
-        }
-
-        //damage player 25hp for testing
-        if (GUI.Button(new Rect(150, 40, 100, 20), "Do Damage: " + playerStats.CurrentHealth))
-        {
-            DealDamage(25f);
-        }
+        playerStats.CurrentMana -= cost;
+        manaRegenStartTime = Time.time + ManaRegenCooldown;
     }
+    #endregion
 
+    #region Death + Respawn Methods
     /// <summary>
     /// Player death. isDead true, stops main music and plays sound FX, freeze gameplay and run death screen coroutine 
     /// </summary>
@@ -318,6 +331,39 @@ public class Player : MonoBehaviour
         playerStats.RefillStatBars();
         #endregion
     }
+    #endregion
 
-    //Save and Load moved to GameManager
+    /// <summary>
+    /// Updates the Player Card Info displayed in the bottom right corner.
+    /// With player customisation info.
+    /// </summary>
+    public void UpdatePlayerCardInfo()
+    {
+        nameText.text = playerStats.stats.name;
+        classText.text = profession.ProfessionName + "-" + race.RaceName;
+        abilityText.text = profession.AbilityName + " " + race.AbilityName;
+    }
+
+    private void OnGUI()
+    {
+        #region Test Buttons LevelUp UseMana DealDamage
+        //level player up for testing
+        if (GUI.Button(new Rect(150, 0, 100, 20), "Level Up"))
+        {
+            LevelUp();
+        }
+
+        //use 25 mana for testing
+        if (GUI.Button(new Rect(150, 20, 100, 20), "Use Mana: " + playerStats.CurrentMana))
+        {
+            UseMana(25f);
+        }
+
+        //damage player 25hp for testing
+        if (GUI.Button(new Rect(150, 40, 100, 20), "Do Damage: " + playerStats.CurrentHealth))
+        {
+            DealDamage(25f);
+        }
+        #endregion
+    }
 }

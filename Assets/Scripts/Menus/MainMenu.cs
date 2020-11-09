@@ -24,7 +24,7 @@ public class MainMenu : MonoBehaviour
     public void Start() //called once when a script is enabled before any Update methods are called
     {
         Debug.Log("Starting Game Main Menu"); //Plays at start of the game
-        continueButton.SetActive(SaveSystem.SaveExists()); //Active status depends on existence of save file
+        continueButton.SetActive(PlayerBinarySave.SaveExists()); //Active status depends on existence of save file
     }
     #region Start Game and Quit Game Methods
     /// <summary>

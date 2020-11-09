@@ -2,11 +2,11 @@
 using System.IO;//Allows us to work with files on our operating system, used when opening and saving file
 using System.Runtime.Serialization.Formatters.Binary; //C# thing, this is why we need to use floats instead of vectors
 
-public class SaveSystem : MonoBehaviour
+public class PlayerBinarySave : MonoBehaviour
 {
     #region SAVE/LOAD
     //Can be used when and how you want, save at end of level/every 10 mins/ on exit / on events like buttons
-    public static void SavePlayer(Player player) //static allows saving from any point in our game without needing an instance
+    public static void SavePlayerData(Player player) //static allows saving from any point in our game without needing an instance
     {
         BinaryFormatter formatter = new BinaryFormatter();//creating a binary formatter, converts our classes to binary text
 
@@ -21,7 +21,7 @@ public class SaveSystem : MonoBehaviour
         stream.Close();//makes sure to close off the file stream
     }
 
-    public static PlayerData LoadPlayer()
+    public static PlayerData LoadPlayerData()
     {
         string path = Path();
 
@@ -46,7 +46,7 @@ public class SaveSystem : MonoBehaviour
     #endregion
     #region Other Methods
     /// <summary>
-    /// Checks to see if 
+    /// Checks to see if a save already exists
     /// </summary>
     /// <returns></returns>
     public static bool SaveExists()

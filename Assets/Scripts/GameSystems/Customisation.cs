@@ -13,6 +13,8 @@ public class Customisation : MonoBehaviour
     [SerializeField]
     private Text characterName;
 
+    public string inputName;
+
     [SerializeField]
     private string sceneToPlay = "GameScene";
 
@@ -198,8 +200,11 @@ public class Customisation : MonoBehaviour
     public void SaveCharacter()
     {
         player.customisationTextureIndex = currentPartsTextureIndex;
+        player.playerStats.stats.name = inputName;
         PlayerBinarySave.SavePlayerData(player);
-        /*
+
+
+        /* WIP REDUNDANT
         //saves index of each
         PlayerPrefs.SetInt("Skin Index", currentPartsTextureIndex[0]);
         PlayerPrefs.SetInt("Hair Index", currentPartsTextureIndex[1]);
@@ -229,13 +234,21 @@ public class Customisation : MonoBehaviour
             StatsOnGUI();
             ProfessionsOnGUI();
             RacesOnGUI();
+            NameOnGUI();
 
-            if (GUI.Button(new Rect(10, 250, 120, 20), "Save & Play"))
+            if (GUI.Button(new Rect(10, 290, 120, 20), "Save & Play"))
             {
                 SaveCharacter();
                 SceneManager.LoadScene(sceneToPlay); //load gamescene
             }
         }
+    }
+
+    private void NameOnGUI()
+    {
+        GUI.Box(new Rect(10, 230, 120, 50), "Name");
+        inputName = GUI.TextField(new Rect(20, 250, 100, 20), inputName, 15);
+
     }
 
     /// <summary>
@@ -365,7 +378,7 @@ public class Customisation : MonoBehaviour
         #endregion
 
         #region Manual way to make buttons, easier to understand, more repetitive code
-        /*
+        /* WIP REDUNDANT
         //SKIN
         float currentHeight = 40f;
 

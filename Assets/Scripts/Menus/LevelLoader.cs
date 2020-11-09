@@ -43,8 +43,4 @@ public class LevelLoader : MonoBehaviour
         }
     }
     #endregion 
-    public void LoadOnLoad()
-    {
-        PlayerPrefs.SetInt("LoadOnLoad", 1); //1 = true, 0 = false
-    }
 }

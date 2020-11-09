@@ -33,6 +33,8 @@ public struct BaseStats //like a class, but only stores variables, e.g. Vecotr 3
 [System.Serializable]
 public class Stats
 {
+    public string name;
+
     #region Float Variables
     /// <summary>
     /// Stores the player stats
@@ -140,7 +142,7 @@ public class PlayerStats
             
 
             currentHealthText.text = ((int)stats.currentHealth).ToString(); //round down to int for health text
-            healthFill.fillAmount = stats.currentHealth / stats.maxHealth;
+            UpdateHealthFill();
 
             #region quaterHearts
             if (healthHearts != null)
@@ -184,7 +186,7 @@ public class PlayerStats
         {
             stats.currentMana = Mathf.Clamp(value, 0, stats.maxMana);
             currentManaText.text = ((int)stats.currentMana).ToString(); //round down to int for health text
-            manaFill.fillAmount = stats.currentMana / stats.maxMana;
+            UpdateManaFill();
         }
     }
 
@@ -221,7 +223,7 @@ public class PlayerStats
         {
             stats.currentStamina = Mathf.Clamp(value, 0, stats.maxStamina);
             currentStaminaText.text = ((int)stats.currentStamina).ToString(); //round down to int for health text
-            staminaFill.fillAmount = stats.currentStamina / stats.maxStamina;
+            UpdateStaminaFill();
         }
     }
 
@@ -247,6 +249,7 @@ public class PlayerStats
     }
     #endregion
 
+    #region Calculate Regen AND Set Stats Methods
     /// <summary>
     /// Sets the appropriate regen rate.
     /// </summary>
@@ -282,13 +285,16 @@ public class PlayerStats
         stats.baseStatPoints -= amount;
         return true;
     }
+    #endregion
 
+    #region Change Values of Stat Bars Methods
     /// <summary>
     /// Updates stat bars values and visuals based on players stat points.
     /// </summary>
     public void UpdateStatBars()
     {
         UpdateModifiers();
+        UpdateAllFill();
         currentHealthText.text = stats.currentHealth.ToString();
         maxHealthText.text = stats.maxHealth.ToString();
         currentManaText.text = stats.currentMana.ToString();
@@ -363,14 +369,22 @@ public class PlayerStats
         //0.5 per Charisma
         stats.staminaModifier += stats.baseStats[5].FinalStat * 0.5f;
 
+
+        //base speed is 5 + 5% of modifier, capped at 10
+        stats.speed = 5 + stats.staminaModifier * 0.05f;
+        if (stats.speed > 10)
+        {
+            stats.speed = 10;
+        }
+        //run speed is double base speed, therefore capped at 20
+        stats.sprintSpeed = stats.speed * 2;
+
         //half the impact
         stats.staminaModifier *= 0.5f;
-
         //scale by level
         stats.staminaModifier *= stats.levelModifier;
-
         //Applies a whole value to Max which also then applies a value to regen
-        MaxStamina = (int)(60 + stats.staminaModifier);
+        MaxStamina = (int)(60 + stats.staminaModifier);        
     }
 
     /// <summary>
@@ -382,4 +396,41 @@ public class PlayerStats
         CurrentMana = MaxMana;
         CurrentStamina = MaxStamina;
     }
+    #endregion
+
+    #region Stat Bar UI Fill Methods
+    /// <summary>
+    /// Refresh all stat bar UI fill.
+    /// </summary>
+    public void UpdateAllFill()
+    {
+        UpdateHealthFill();
+        UpdateManaFill();
+        UpdateStaminaFill();
+    }
+
+    /// <summary>
+    /// Refresh Health stat bar UI fill.
+    /// </summary>
+    public void UpdateHealthFill()
+    {
+        healthFill.fillAmount = stats.currentHealth / stats.maxHealth;
+    }
+
+    /// <summary>
+    /// Refresh Mana stat bar UI fill.
+    /// </summary>
+    public void UpdateManaFill()
+    {
+        manaFill.fillAmount = stats.currentMana / stats.maxMana;
+    }
+
+    /// <summary>
+    /// Refresh Stamina stat bar UI fill.
+    /// </summary>
+    public void UpdateStaminaFill()
+    {
+        staminaFill.fillAmount = stats.currentStamina / stats.maxStamina;
+    }
+    #endregion
 }

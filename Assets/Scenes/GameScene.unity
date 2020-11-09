@@ -202,7 +202,7 @@ Transform:
   - {fileID: 790259970}
   - {fileID: 1254243140}
   m_Father: {fileID: 0}
-  m_RootOrder: 16
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &20779676
 GameObject:
@@ -2757,6 +2757,7 @@ MonoBehaviour:
   showOnGUI: 0
   player: {fileID: 465187088}
   characterName: {fileID: 0}
+  inputName: Enter Name Here
   sceneToPlay: GameScene
   TextureLocation: Character/
   playerProfessions: []
@@ -3542,7 +3543,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 17
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &516365948
 PrefabInstance:
@@ -3886,8 +3887,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1911319972}
-        m_MethodName: Load
+      - m_Target: {fileID: 465187088}
+        m_MethodName: LoadPlayer
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7552,7 +7553,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 15
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1 &975250196
 GameObject:
@@ -10897,8 +10898,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1911319972}
-        m_MethodName: Save
+      - m_Target: {fileID: 465187088}
+        m_MethodName: SavePlayer
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -11674,7 +11675,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 19
+  m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1380774362
 PrefabInstance:
@@ -15793,7 +15794,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 18
+  m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1757060840
 MonoBehaviour:
@@ -17745,50 +17746,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2012609640}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1911319971
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1911319973}
-  - component: {fileID: 1911319972}
-  m_Layer: 0
-  m_Name: GameManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1911319972
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1911319971}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c3f18455223a0d498f0cc35168aa6cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 465187088}
---- !u!4 &1911319973
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1911319971}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 13
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1915681602
 GameObject:
   m_ObjectHideFlags: 0
@@ -18989,7 +18946,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2012609640
 PrefabInstance:
@@ -20717,6 +20674,26 @@ PrefabInstance:
       propertyPath: respawnLocation
       value: 
       objectReference: {fileID: 975248831}
+    - target: {fileID: 6619308518281503211, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: nameText
+      value: 
+      objectReference: {fileID: 1457026426}
+    - target: {fileID: 6619308518281503211, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: classText
+      value: 
+      objectReference: {fileID: 966122670}
+    - target: {fileID: 6619308518281503211, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: cAbilityText
+      value: 
+      objectReference: {fileID: 1777882390}
+    - target: {fileID: 6619308518281503211, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: abilityText
+      value: 
+      objectReference: {fileID: 1777882390}
     - target: {fileID: 6619308518281503221, guid: 5386e0427fce3684abe890b86c7386e7,
         type: 3}
       propertyPath: cam
