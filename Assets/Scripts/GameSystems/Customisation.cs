@@ -13,13 +13,14 @@ public class Customisation : MonoBehaviour
     [SerializeField]
     private Text characterName;
 
+    [Tooltip("The character name input string")]
     public string inputName;
 
     [SerializeField]
     private string sceneToPlay = "GameScene";
 
-    [SerializeField]
-    private string TextureLocation = "Character/"; //location of warrior textures in project
+    [SerializeField, Tooltip("Location of warrior textures in project")]
+    private string TextureLocation = "Character/";
     
     public enum CustomiseParts { Skin, Hair, Eyes, Mouth, Clothes, Armour };
 
@@ -29,14 +30,16 @@ public class Customisation : MonoBehaviour
     [SerializeField, Tooltip("The defaults for each race coded in inspector")]
     PlayerRace[] playerRaces;
 
-    //Renderer for our character mesh so we can reference materials list within script for  changinfg visuals
+    [Tooltip("Renderer for our character mesh so we can reference materials list within script for changing visuals")]
     public Renderer characterRenderer;
 
     //Enum.GetNames(typeof(CustomiseParts)).Length gets the number of customise parts we have (6) 
     //an array of List<Texture>
     //in other words 6 lists
+    [Tooltip("An array of Lists storing available textures for each part you can change textures for.")]
     public List<Texture2D>[] partsTexture = new List<Texture2D>[Enum.GetNames(typeof(CustomiseParts)).Length]; //i.e. 6
-    [SerializeField] private int[] currentPartsTextureIndex = new int[Enum.GetNames(typeof(CustomiseParts)).Length]; //i.e.6
+    [SerializeField, Tooltip("Stores the texture index values for each part of the mesh for easy saving and reapplying")]
+    private int[] currentPartsTextureIndex = new int[Enum.GetNames(typeof(CustomiseParts)).Length]; //i.e.6
 
     //first number = which body part
     //second number = which version of that body part
@@ -67,14 +70,14 @@ public class Customisation : MonoBehaviour
             do //loop through rach texture and add it to this list
             {
                 //tempTexture = Resources.Load(TextureLocation + part + "_" + count) as Texture; //same thing
-                tempTexture = (Texture2D)Resources.Load(TextureLocation + part + "_" + textureCount);
+                tempTexture = (Texture2D)Resources.Load(TextureLocation + part + "_" + textureCount); //gets the texture file from the computer.
 
-                if (tempTexture != null)
+                if (tempTexture != null) //if file by that texture name exists at that location
                 {
-                    partsTexture[partCount].Add(tempTexture);
+                    partsTexture[partCount].Add(tempTexture); //add it to that parts list of texture options
                 }
                 textureCount++;
-            } while (tempTexture != null);
+            } while (tempTexture != null); //until no textures for that part left
             partCount++;
         }
 
@@ -84,9 +87,9 @@ public class Customisation : MonoBehaviour
         }
         else
         {
-            if (player.customisationTextureIndex.Length != 0)
+            if (player.customisationTextureIndex.Length != 0) //if player has values for textures
             {
-                currentPartsTextureIndex = player.customisationTextureIndex;
+                currentPartsTextureIndex = player.customisationTextureIndex; //copy over those texture index values
             }
         }
 
@@ -108,42 +111,17 @@ public class Customisation : MonoBehaviour
         //["Skin", "Hair", "Eyes", "Mouth", "Clothes", "Armour"]
         foreach (string part in Enum.GetNames(typeof(CustomiseParts))) //loop through our array of parts
         {
-            SetTexture(part, 0);
+            SetTexture(part, 0); //using the players texture index values, Sets textures on chararcter
         }
     }
 
+    #region Set Texture Method (2 Overrides)
+
+    #region Set Texture (string type) Override (USING THIS ONE!)
     /// <summary>
     /// Changes to next/prior texture available
     /// One Override for SetTexture, same name different parameters, meaning the one used depends on the arguments passed through.
-    /// (Not using this one)
-    /// </summary>
-    /// <param name="part">the textures to change through, like Skin_0, Skin_1 etc, or is it eyes/mouth etc.</param>
-    /// <param name="direction"> what direction button the user presses, left(-1) or right(+1)</param>
-    void SetTexture(CustomiseParts part, int direction)
-    {
-
-        int partIndex = (int)part;
-
-        int max = partsTexture[partIndex].Count;
-
-        int currentTexture = currentPartsTextureIndex[partIndex];
-        currentTexture += direction;
-        if (currentTexture < 0)
-        {
-            currentTexture = max - 1;
-        }
-        else if (currentTexture > max - 1)
-        {
-            currentTexture = 0;
-        }
-        currentPartsTextureIndex[partIndex] = currentTexture;
-
-        Material[] mats = characterRenderer.materials;
-        mats[partIndex].mainTexture = partsTexture[partIndex][currentTexture];
-        characterRenderer.materials = mats;
-    }
-    /// <summary>
-    /// Changes to next/prior texture available
+    /// (USING THIS ONE)
     /// </summary>
     /// <param name="type">What part of the character do you want to change the texture for, "Skin", "Hair" etc.</param>
     /// <param name="direction">What direction button the user presses, left(-1) or right(+1)</param>
@@ -174,25 +152,62 @@ public class Customisation : MonoBehaviour
 
         }
 
-        int max = partsTexture[partIndex].Count; // determines however many textures in current part list.
+        int max = partsTexture[partIndex].Count; // determines how many textures in current part list.
 
-        int currentTexture = currentPartsTextureIndex[partIndex];
-        currentTexture += direction;
-        if (currentTexture < 0)
+        //Shifts current index based on texture count
+        int textureIndex = currentPartsTextureIndex[partIndex];
+        textureIndex += direction;
+        if (textureIndex < 0)
         {
-            currentTexture = max - 1;
+            textureIndex = max - 1;
         }
-        else if (currentTexture > max -1)
+        else if (textureIndex > max -1)
         {
-            currentTexture = 0;
+            textureIndex = 0;
         }
-        currentPartsTextureIndex[partIndex] = currentTexture;
+        currentPartsTextureIndex[partIndex] = textureIndex; //stores new index
 
-
+        //applies to player mesh material main textures.
         Material[] mats = characterRenderer.materials;
-        mats[partIndex].mainTexture = partsTexture[partIndex][currentTexture];
+        mats[partIndex].mainTexture = partsTexture[partIndex][textureIndex];
         characterRenderer.materials = mats;
     }
+    #endregion
+
+    #region Set Texture CustomiseParts Override (Currently NOT USED)
+    /// <summary>
+    /// Changes to next/prior texture available
+    /// One Override for SetTexture, same name different parameters, meaning the one used depends on the arguments passed through.
+    /// (Not using this one)
+    /// </summary>
+    /// <param name="part">the textures to change through, like Skin_0, Skin_1 etc, or is it eyes/mouth etc.</param>
+    /// <param name="direction"> what direction button the user presses, left(-1) or right(+1)</param>
+    void SetTexture(CustomiseParts part, int direction)
+    {
+
+        int partIndex = (int)part;
+
+        int max = partsTexture[partIndex].Count;
+
+        int textureIndex = currentPartsTextureIndex[partIndex];
+        textureIndex += direction;
+        if (textureIndex < 0)
+        {
+            textureIndex = max - 1;
+        }
+        else if (textureIndex > max - 1)
+        {
+            textureIndex = 0;
+        }
+        currentPartsTextureIndex[partIndex] = textureIndex;
+
+        Material[] mats = characterRenderer.materials;
+        mats[partIndex].mainTexture = partsTexture[partIndex][textureIndex];
+        characterRenderer.materials = mats;
+    }
+    #endregion
+
+    #endregion
 
     /// <summary>
     /// Save character settings to player prefs
@@ -348,6 +363,68 @@ public class Customisation : MonoBehaviour
         }
     }
 
+    #region Customise Appearance Methods
+
+    /// <summary>
+    /// Swaps though to the next available texture for this layer.
+    /// </summary>
+    /// <param name="nameIndex">0 = skin, 1 = hair, 2 = eyes, 3 = mouth, 4 = clothes, 5 = armour</param>
+    public void NextTexture(int nameIndex)
+    {
+        string[] names = { "Skin", "Hair", "Eyes", "Mouth", "Clothes", "Armour" };
+        SetTexture(names[nameIndex], 1);
+    }
+
+    /// <summary>
+    /// Swaps though to the previous available texture for this layer.
+    /// </summary>
+    /// <param name="nameIndex">0 = skin, 1 = hair, 2 = eyes, 3 = mouth, 4 = clothes, 5 = armour</param>
+    public void PreviousTexture(int nameIndex)
+    {
+        string[] names = { "Skin", "Hair", "Eyes", "Mouth", "Clothes", "Armour" };
+        SetTexture(names[nameIndex], -1);
+    }
+
+    /// <summary>
+    /// Chooses a random texture from available textures for each texture slot.
+    /// </summary>
+    public void RandomiseTextures()
+    {
+        Material[] mats = characterRenderer.materials; //makes a copy of the materials of the characters mesh
+
+        for (int i = 0; i < currentPartsTextureIndex.Length; i++)
+        {
+            int textureCount = partsTexture[i].Count;
+            int randomTextureIndex = UnityEngine.Random.Range(0, textureCount);
+
+            currentPartsTextureIndex[i] = randomTextureIndex; //The simplified storage index variable.
+
+            mats[i].mainTexture = partsTexture[i][randomTextureIndex]; //Changes the copy of the actual texture settings.
+        }
+
+        characterRenderer.materials = mats; //apply the changes to the characters mesh for each materials main texture.
+    }
+
+    /// <summary>
+    /// Chooses the first texture for each customisable part.
+    /// </summary>
+    public void ResetTextures()
+    {
+        Material[] mats = characterRenderer.materials; //makes a copy of the materials of the characters mesh
+        //sets them all to the default 0 texture
+        for (int i = 0; i < currentPartsTextureIndex.Length; i++)
+        {
+            currentPartsTextureIndex[i] = 0; //The simplified storage index variable.
+
+            mats[i].mainTexture = partsTexture[i][0];  //Changes the copy of the actual texture settings.
+        }
+        characterRenderer.materials = mats; //apply the changes to the characters mesh for each materials main texture.
+    }
+
+    /// <summary>
+    /// Creates an IMGUI Box w Buttons for each of the customisable appearance options of the character.
+    /// That then swap through the available textures.
+    /// </summary>
     private void CustomiseOnGUI()
     {
 
@@ -470,5 +547,7 @@ public class Customisation : MonoBehaviour
         }
         */
         #endregion
+        #endregion
+
     }
 }
