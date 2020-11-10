@@ -35,7 +35,7 @@ public class Stats
 {
     public string name;
 
-    #region Float Variables
+    #region Float Variables + level
     /// <summary>
     /// Stores the player stats
     /// </summary>
@@ -295,11 +295,11 @@ public class PlayerStats
     {
         UpdateModifiers();
         UpdateAllFill();
-        currentHealthText.text = stats.currentHealth.ToString();
+        currentHealthText.text = stats.currentHealth.ToString("0");
         maxHealthText.text = stats.maxHealth.ToString();
-        currentManaText.text = stats.currentMana.ToString();
+        currentManaText.text = stats.currentMana.ToString("0");
         maxManaText.text = stats.maxMana.ToString();
-        currentStaminaText.text = stats.currentStamina.ToString();
+        currentStaminaText.text = stats.currentStamina.ToString("0");
         maxStaminaText.text = stats.maxStamina.ToString();
     }
 

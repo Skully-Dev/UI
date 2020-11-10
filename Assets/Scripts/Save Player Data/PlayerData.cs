@@ -1,7 +1,7 @@
 ﻿[System.Serializable]//makes it display in unity, + we can save it in a file.
 public class PlayerData//load up PlayerData class with Data from our scene
 {
-    #region Variables
+    #region References and Variables
     /// These are all the variables that will be saved, this is also where unity specific variables
     /// are converted into C# standard variables so they may be translated into binary
     public Stats stats;
@@ -11,6 +11,7 @@ public class PlayerData//load up PlayerData class with Data from our scene
 
     public float[] position;//doesnt save vector 3's so we write our own position array to save vector3's(UNITY SPECIFIC) as float[](C# friendly)
     #endregion
+
     #region PlayerData Constructor
     /// <summary>
     /// Contructor(Set up for our class), in here we are telling the class how to get the data from the player
@@ -30,15 +31,4 @@ public class PlayerData//load up PlayerData class with Data from our scene
         position[2] = player.transform.position.z;
     }
     #endregion
-    /*
-    public Player GetPlayer()
-    {
-        Player player = new Player();
-
-        player.playerStats.stats = stats;
-        player.Profession = profession;
-
-        return player;
-    }
-    */
 }

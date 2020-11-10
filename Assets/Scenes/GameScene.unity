@@ -2756,16 +2756,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   showOnGUI: 0
   player: {fileID: 465187088}
-  characterName: {fileID: 0}
-  inputName: Enter Name Here
   sceneToPlay: GameScene
-  TextureLocation: Character/
   playerProfessions: []
   playerRaces: []
+  TextureLocation: Character/
   characterRenderer: {fileID: 2012609641}
   currentPartsTextureIndex: 000000000000000000000000000000000000000000000000
-  scrollPositionProfession: {x: 0, y: 0}
-  scrollPositionRace: {x: 0, y: 0}
+  inputName: Enter Name Here
+  professionText: {fileID: 0}
+  raceText: {fileID: 0}
+  baseStatPointsText: {fileID: 0}
+  statsPointsText: []
 --- !u!4 &401851599
 Transform:
   m_ObjectHideFlags: 0
@@ -3898,8 +3899,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1471812029}
+      - m_Target: {fileID: 1633037199}
         m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2003416220}
+        m_MethodName: Resume
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4979,6 +4991,49 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1533728583}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &632000527
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 632000529}
+  - component: {fileID: 632000528}
+  m_Layer: 0
+  m_Name: DestroyMenuMusic
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &632000528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 632000527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b7d8421c7a175b428409bf52ea6d8c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &632000529
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 632000527}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 19
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &655340753 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4174237919881314, guid: a97f3b23196febd47afdd1aef75598b9,
@@ -20762,17 +20817,17 @@ PrefabInstance:
     - target: {fileID: 6619308518330455103, guid: 5386e0427fce3684abe890b86c7386e7,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.113976166
+      value: 0.11397613
       objectReference: {fileID: 0}
     - target: {fileID: 6619308518330455103, guid: 5386e0427fce3684abe890b86c7386e7,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.3576171
+      value: 0.35761708
       objectReference: {fileID: 0}
     - target: {fileID: 6619308518330455103, guid: 5386e0427fce3684abe890b86c7386e7,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.044024654
+      value: -0.044024643
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5386e0427fce3684abe890b86c7386e7, type: 3}

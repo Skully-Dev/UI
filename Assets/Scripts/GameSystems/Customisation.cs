@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.UI;
@@ -7,52 +6,62 @@ using UnityEngine.SceneManagement;
 
 public class Customisation : MonoBehaviour
 {
+    public enum CustomiseParts { Skin, Hair, Eyes, Mouth, Clothes, Armour };
+
+    #region General Variables and Player Reference
     public bool showOnGUI = true;
+
     [SerializeField]
     private Player player;
 
     [SerializeField]
     private string sceneToPlay = "GameScene";
 
-    [SerializeField, Tooltip("Location of warrior textures in project")]
-    private string TextureLocation = "Character/";
-    
-    public enum CustomiseParts { Skin, Hair, Eyes, Mouth, Clothes, Armour };
+    [SerializeField, Tooltip("Reference Button Sound, easier to add to on events via script")]
+    private AudioSource buttonSound;
+    #endregion
 
+    #region Race and Profession Inspector Settings
+    [Header("Race and Profession Settings")]
     [SerializeField, Tooltip("The defaults for each profession coded in inspector")]
     PlayerProfession[] playerProfessions;
 
     [SerializeField, Tooltip("The defaults for each race coded in inspector")]
     PlayerRace[] playerRaces;
+    #endregion
+
+    #region Appearance Settings
+    [Header("Appearance Settings")]
+
+    [SerializeField, Tooltip("Location of warrior textures in project")]
+    private string TextureLocation = "Character/";
 
     [Tooltip("Renderer for our character mesh so we can reference materials list within script for changing visuals")]
     public Renderer characterRenderer;
 
+    //Parts Texture List Array information
     //Enum.GetNames(typeof(CustomiseParts)).Length gets the number of customise parts we have (6) 
     //an array of List<Texture>
     //in other words 6 lists
-    [Tooltip("An array of Lists storing available textures for each part you can change textures for.")]
-    public List<Texture2D>[] partsTexture = new List<Texture2D>[Enum.GetNames(typeof(CustomiseParts)).Length]; //i.e. 6
-    [SerializeField, Tooltip("Stores the texture index values for each part of the mesh for easy saving and reapplying")]
-    private int[] currentPartsTextureIndex = new int[Enum.GetNames(typeof(CustomiseParts)).Length]; //i.e.6
-
+    //
     //first number = which body part
     //second number = which version of that body part
     //partsTexture[0][0] = Skin_0
     //partsTexture[0][1] = Skin_1
     //partsTexture[0][2] = Skin_2
     //partsTexture[0][3] = Skin_3
-    //partsTexture[0][3] = Skin_3
     //partsTexture[1][0] = Hair_0
     //partsTexture[1][1] = Hair_1 //etc
     //partsTexture[2][0] = Eyes_0 //etc
+    [Tooltip("An array of Lists storing available textures for each part you can change textures for.")]
+    public List<Texture2D>[] partsTexture = new List<Texture2D>[Enum.GetNames(typeof(CustomiseParts)).Length]; //i.e. 6
 
-    [Tooltip("Store the position of Professions scroll thingy")]
-    public Vector2 scrollPositionProfession = Vector2.zero;
+    [SerializeField, Tooltip("Stores the texture index values for each part of the mesh for easy saving and reapplying")]
+    private int[] currentPartsTextureIndex = new int[Enum.GetNames(typeof(CustomiseParts)).Length]; //i.e.6
+    #endregion
 
-    [Tooltip("Store the position of Races scroll thingy")]
-    public Vector2 scrollPositionRace = Vector2.zero;
-
+    #region Customisation Scene UI References and Variables
+    [Header("Customise Scene UI stuff")]
     [Tooltip("The character name input string")]
     public string inputName;
 
@@ -66,8 +75,17 @@ public class Customisation : MonoBehaviour
     [SerializeField, Tooltip("Reference each of the Base Stat Point Text in order of appearance.")]
     private Text[] statsPointsText;
 
+    [Header("IMGUI Scroll variables")]
+    [Tooltip("Store the position of Professions scroll thingy")]
+    private Vector2 scrollPositionProfession = Vector2.zero;
+
+    [Tooltip("Store the position of Races scroll thingy")]
+    private Vector2 scrollPositionRace = Vector2.zero;
+    #endregion
+
     private void Start()
     {
+        #region Initialize the array with a List for each texture part with all available textures added to the corrisponding lists.
         int partCount = 0;
         foreach (string part in Enum.GetNames(typeof(CustomiseParts))) //loop through our array of parts
         {
@@ -88,7 +106,9 @@ public class Customisation : MonoBehaviour
             } while (tempTexture != null); //until no textures for that part left
             partCount++;
         }
+        #endregion
 
+        #region Checks if player has Texture Index Values, if so, use them.
         if (player == null)
         {
             Debug.LogError("player in Customisation is null");
@@ -100,8 +120,9 @@ public class Customisation : MonoBehaviour
                 currentPartsTextureIndex = player.customisationTextureIndex; //copy over those texture index values
             }
         }
+        #endregion
 
-        #region Assign first choice as default of Profession and Race
+        #region Assign first choice as default of Profession and Race if not already assigned.
         if (playerProfessions != null
             && playerProfessions.Length > 0)
         {
@@ -115,13 +136,16 @@ public class Customisation : MonoBehaviour
         }
         #endregion
 
+        #region Apply the texture for each appearance part based on index values.
         //string[] of each body part = Enum.GetNames(typeof(CustomiseParts))
         //["Skin", "Hair", "Eyes", "Mouth", "Clothes", "Armour"]
         foreach (string part in Enum.GetNames(typeof(CustomiseParts))) //loop through our array of parts
         {
             SetTexture(part, 0); //using the players texture index values, Sets textures on chararcter
         }
+        #endregion
 
+        #region Initialize Customise Scene UI values
         if ("Customise" == SceneManager.GetActiveScene().name)
         {
             professionText.text = player.Profession.AbilityName + " - " + player.Profession.AbilityDescription;
@@ -129,10 +153,10 @@ public class Customisation : MonoBehaviour
             UpdateAllStatPointsValues();
             baseStatPointsText.text = player.playerStats.stats.baseStatPoints.ToString();
         }
+        #endregion
     }
 
-
-
+    #region IMGUI OnGUI - Runs Methods
     private void OnGUI() //like update but runs at a diffirent specific time for GUI
     {
         if (showOnGUI)
@@ -149,10 +173,12 @@ public class Customisation : MonoBehaviour
             }
         }
     }
+    #endregion
 
     #region Customise Appearance Methods
 
     #region Set Texture Method (2 Overrides)
+
     #region Set Texture (string type) Override (USING THIS ONE!)
     /// <summary>
     /// Changes to next/prior texture available
@@ -242,6 +268,7 @@ public class Customisation : MonoBehaviour
         characterRenderer.materials = mats;
     }
     #endregion
+   
     #endregion
 
     /// <summary>
@@ -252,6 +279,7 @@ public class Customisation : MonoBehaviour
     {
         string[] names = { "Skin", "Hair", "Eyes", "Mouth", "Clothes", "Armour" };
         SetTexture(names[nameIndex], 1);
+        buttonSound.Play();
     }
 
     /// <summary>
@@ -262,6 +290,7 @@ public class Customisation : MonoBehaviour
     {
         string[] names = { "Skin", "Hair", "Eyes", "Mouth", "Clothes", "Armour" };
         SetTexture(names[nameIndex], -1);
+        buttonSound.Play();
     }
 
     /// <summary>
@@ -282,6 +311,8 @@ public class Customisation : MonoBehaviour
         }
 
         characterRenderer.materials = mats; //apply the changes to the characters mesh for each materials main texture.
+
+        buttonSound.Play();
     }
 
     /// <summary>
@@ -298,6 +329,8 @@ public class Customisation : MonoBehaviour
             mats[i].mainTexture = partsTexture[i][0];  //Changes the copy of the actual texture settings.
         }
         characterRenderer.materials = mats; //apply the changes to the characters mesh for each materials main texture.
+
+        buttonSound.Play();
     }
 
     /// <summary>
@@ -461,6 +494,8 @@ public class Customisation : MonoBehaviour
         player.Profession = playerProfessions[professionIndex];
         professionText.text = player.Profession.AbilityName + " - " + player.Profession.AbilityDescription;
         UpdateAllStatPointsValues();
+
+        buttonSound.Play();
     }
 
     /// <summary>
@@ -510,6 +545,8 @@ public class Customisation : MonoBehaviour
     {
         player.Race = playerRaces[raceIndex];
         raceText.text = player.Race.AbilityName + " - " + player.Race.AbilityDescription;
+
+        buttonSound.Play();
     }
 
     /// <summary>
@@ -579,6 +616,8 @@ public class Customisation : MonoBehaviour
         player.playerStats.SetStats(statIndex, 1);
         statsPointsText[statIndex].text = player.playerStats.stats.baseStats[statIndex].FinalStat.ToString();
         baseStatPointsText.text = player.playerStats.stats.baseStatPoints.ToString();
+
+        buttonSound.Play();
     }
 
     /// <summary>
@@ -591,6 +630,8 @@ public class Customisation : MonoBehaviour
         player.playerStats.SetStats(statIndex, -1);
         statsPointsText[statIndex].text = player.playerStats.stats.baseStats[statIndex].FinalStat.ToString();
         baseStatPointsText.text = player.playerStats.stats.baseStatPoints.ToString();
+
+        buttonSound.Play();
     }
 
     /// <summary>
@@ -631,6 +672,8 @@ public class Customisation : MonoBehaviour
     {
         SaveCharacter();
         SceneManager.LoadScene(sceneToPlay); //load gamescene
+
+        buttonSound.Play();
     }
 
     /// <summary>
@@ -642,8 +685,8 @@ public class Customisation : MonoBehaviour
         player.playerStats.stats.name = inputName;
         PlayerBinarySave.SavePlayerData(player);
 
-
-        /* WIP REDUNDANT
+        #region Save to PlayerPrefs (REDUNDANT)
+        /*
         //saves index of each
         PlayerPrefs.SetInt("Skin Index", currentPartsTextureIndex[0]);
         PlayerPrefs.SetInt("Hair Index", currentPartsTextureIndex[1]);
@@ -663,6 +706,7 @@ public class Customisation : MonoBehaviour
 
         PlayerPrefs.SetString("Character Profession", player.Profession.ProfessionName);
         */
+        #endregion
     }
     #endregion
 }
