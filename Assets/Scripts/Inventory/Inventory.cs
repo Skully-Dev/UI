@@ -34,18 +34,33 @@ public class Inventory : MonoBehaviour
 
     public GUIStyle[] Styles;
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.I)) //I for Inventory
+        {
+            showInventory = !showInventory;
+        }
+    }
+
     public void AddItem(Item item)
     {
-        Item foundItem = inventory.Find(findItem => findItem.Name == item.Name); //things on the left is paramater, lambda =>  right is expression, each itteration findItem will be the specific item that itteration and it will test it againt the item werre trying to find.
-
-        if (foundItem != null)
+        if (item.Type.ToString() == "Money")
         {
-            foundItem.Amount++;
+            money += item.Value; //money converts from item to player money.
         }
         else
         {
-            Item newItem = new Item(item,1);
-            inventory.Add(newItem);
+            Item foundItem = inventory.Find(findItem => findItem.Name == item.Name); //things on the left is paramater, lambda =>  right is expression, each itteration findItem will be the specific item that itteration and it will test it againt the item werre trying to find.
+
+            if (foundItem != null)
+            {
+                foundItem.Amount++;
+            }
+            else
+            {
+                Item newItem = new Item(item, 1);
+                inventory.Add(newItem);
+            }
         }
     }
 
@@ -160,6 +175,7 @@ public class Inventory : MonoBehaviour
             case ItemType.Quest:
                 break;
             case ItemType.Money:
+                //Is auto converted and added into money float variables
                 break;
             default:
                 break;

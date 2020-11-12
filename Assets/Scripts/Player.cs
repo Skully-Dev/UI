@@ -365,5 +365,76 @@ public class Player : MonoBehaviour
             DealDamage(25f);
         }
         #endregion
+
+        if (nearShop)
+        {
+            if (!alreadyOpen)
+            {
+                if (GUI.Button(new Rect(30, 1020, 120, 60), "Open Shop"))
+                {
+                    shop.OpenShopToggle();
+                    alreadyOpen = true;
+                    Time.timeScale = 0;
+                }
+            }
+            else
+            {
+                if (GUI.Button(new Rect(30, 1020, 120, 60), "Exit Shop"))
+                {
+                    shop.OpenShopToggle();
+                    alreadyOpen = false;
+                    Time.timeScale = 1;
+                }
+            }
+        }
+
+        if (nearChest)
+        {
+            if (!alreadyOpen)
+            {
+                if (GUI.Button(new Rect(30, 1020, 120, 60), "Open Chest"))
+                {
+                    chest.OpenChestToggle();
+                    alreadyOpen = true;
+                    Time.timeScale = 0;
+                }
+            }
+            else
+            {
+                if (GUI.Button(new Rect(30, 1020, 120, 60), "Exit Chest"))
+                {
+                    chest.OpenChestToggle();
+                    alreadyOpen = false;
+                    Time.timeScale = 1;
+                }
+            }
+        }
+    }
+
+    Chest chest;
+    Shop shop;
+    bool nearShop = false;
+    bool nearChest = false;
+    bool alreadyOpen = false;
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Chest")
+        {
+            nearChest = true;
+            chest = other.gameObject.GetComponent<Chest>();
+        }
+
+        if (other.gameObject.tag == "Shop")
+        {
+            nearShop = true;
+            shop = other.gameObject.GetComponent<Shop>();
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        nearChest = false;
+        nearShop = false;
     }
 }

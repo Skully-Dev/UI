@@ -15,6 +15,9 @@ public enum ItemType
     Money
 }
 
+/// <summary>
+/// Determining the core requirements of an item
+/// </summary>
 [System.Serializable]//debug
 public class Item
 {
@@ -28,9 +31,9 @@ public class Item
     [SerializeField]private Texture2D icon;
     [SerializeField]private GameObject mesh;
     [SerializeField]private ItemType type;
-    [SerializeField] private int damage;//
+    [SerializeField] private int damage;// only ever need one of the 3, so could be replaced with effect amount and apply based on item type
     [SerializeField] private int armour;// only ever need one of the 3, so could be replaced with effect amount and apply based on item type
-    [SerializeField] private int heal;//
+    [SerializeField] private int heal;// only ever need one of the 3, so could be replaced with effect amount and apply based on item type
     #endregion
 
     #region Public Properties
@@ -91,6 +94,7 @@ public class Item
     }
     #endregion
 
+    #region Contructors
     public Item()
     {
 
@@ -109,4 +113,5 @@ public class Item
         armour = copyItem.Armour;
         heal = copyItem.Heal;
     }
+    #endregion
 }

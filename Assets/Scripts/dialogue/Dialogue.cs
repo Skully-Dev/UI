@@ -35,7 +35,7 @@ public class Dialogue : MonoBehaviour
             scr.x = Screen.width / 16;
             scr.y = Screen.height / 9;
 
-            //The dialigue box takes up the whole bottom 3rd of the screen and displays thee NPC's name and current dialogue line
+            //The dialigue box takes up the whole bottom 3rd of the screen and displays the NPC's name and current dialogue line
             GUI.Box(new Rect(0, 6 * scr.y,
                              Screen.width, scr.y * 3),
                              name + " : " + dialogueText[currentLineIndex]);
