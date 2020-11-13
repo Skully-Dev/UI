@@ -42,6 +42,16 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    public Item FindItem(string itemName)
+    {
+        //for each item in inventory, check if inventory item name == item name
+            //if so return that as found item
+        //goes through each item in inventory and compairs to item passed in
+        Item foundItem = inventory.Find(findItem => findItem.Name == itemName); //things on the left is paramater, lambda =>  right is expression, each itteration findItem will be the specific item that itteration and it will test it againt the item werre trying to find.
+
+        return foundItem;
+    }
+
     public void AddItem(Item item)
     {
         if (item.Type.ToString() == "Money")

@@ -110,6 +110,8 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        Interact();
+
         #region Health Regen
         if (Time.time > healthRegenStartTime) //check if debuff time is over
         {
@@ -342,6 +344,68 @@ public class Player : MonoBehaviour
         nameText.text = playerStats.stats.name;
         classText.text = profession.ProfessionName + "-" + race.RaceName;
         abilityText.text = profession.AbilityName + " " + race.AbilityName;
+    }
+
+    [SerializeField]
+    private Inventory playerInventory;
+    private void Interact()
+    {
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            //basically a vector, drawn from point in direction to infinity unless otherwise specified.
+            Ray ray;
+            //stores information about what the ray hits
+            RaycastHit hitInfo;
+
+            //from middle of screen
+            ray = Camera.main.ScreenPointToRay(new Vector2(Screen.width / 2, Screen.height / 2));
+
+            //this is how you make a mask
+            int layerMask = LayerMask.NameToLayer("Interactable"); //get the layer ID (1,2,3,4,5)
+            layerMask = 1 << layerMask; //actually turning into a mask (using bitwise operations)
+
+            /*
+            int itemLayerMask = LayerMask.NameToLayer("Items"); //get the layerID
+            itemLayerMask = 1 << itemLayerMask;
+
+            int finalLayerMask = layerMask | itemLayerMask;
+
+            //ID
+            //6 // 0110
+            //4 // 0100
+
+            //Bitwise mask OR result
+            //6 //100000
+            //4 //001000
+                    |
+                 =101000
+            */
+
+            //actually casts the ray, returns a bool
+            if (Physics.Raycast(ray, out hitInfo, 10f, layerMask) /*|| Physics.SphereCast(ray, 5f, out hitInfo, 10f, layerMask)*/) //casts a ray, returns info about ray hit, within a distance (CURRENLTY THE DISTANCE FROM THE CAMERA, COULD CHANGE IT TO CHECK DISTANCE OF HIT TRANSFORM TO PLAYER TRANSFORM).
+            {
+                //If object has component NPC
+                NPC npc = hitInfo.collider.GetComponent<NPC>(); //trys to store it as NPC, if not npc, npc will equal null.
+                if (npc != null)
+                {
+                    npc.Interact();
+                }
+
+                InWorldItem inWorldItem = hitInfo.collider.GetComponent<InWorldItem>(); //trys to store it as InWorldItem
+                if (inWorldItem != null) //if it is an InWorldItem
+                {
+                    playerInventory.AddItem(inWorldItem.item); //add to inv
+                    inWorldItem.gameObject.SetActive(false); //hide item.
+                }
+
+                /* Same thing but one line.
+                if (hitInfo.collider.TryGetComponent<NPC>(out NPC npc))
+                {
+
+                }
+                */
+            }
+        }
     }
 
     private void OnGUI()

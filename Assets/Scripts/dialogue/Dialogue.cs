@@ -18,12 +18,12 @@ public class Dialogue : MonoBehaviour
 
     [Header("NPC Name and Dialogue")]
     //name of the specific NPC talking
-    public string name;
+    public string npcName;
     //array for text of the dialogue
     public string[] dialogueText;
     #endregion
 
-    private void OnGUI()
+    protected virtual void OnGUI() //virtual allows us to override OnGUI
     {
         if (showDialogue)
         {
@@ -38,7 +38,7 @@ public class Dialogue : MonoBehaviour
             //The dialigue box takes up the whole bottom 3rd of the screen and displays the NPC's name and current dialogue line
             GUI.Box(new Rect(0, 6 * scr.y,
                              Screen.width, scr.y * 3),
-                             name + " : " + dialogueText[currentLineIndex]);
+                             npcName + " : " + dialogueText[currentLineIndex]);
 
             //if not at the end of the dialogue
             if (currentLineIndex < dialogueText.Length - 1)
@@ -51,21 +51,27 @@ public class Dialogue : MonoBehaviour
                 }
             }
             else
-            {
-                if (GUI.Button(new Rect(15 * scr.x, 8.5f * scr.y,
-                                        scr.x, scr.y * 0.5f), "Bye"))
-                {
-                    showDialogue = false;
-                    currentLineIndex = 0;
-
-                    playerMovement.enabled = true;
-                    //also maybe mouse/screen aim control enable/disable
-
-                    //enable and disable
-                    //Cursor.lockState = CursorLockMode.Locked;
-                    Cursor.visible = false;
-                }
+            { //for quests instead have 1 accept, 1 reject
+                EndDialogue();
             }
         }
     }
+
+    protected virtual void EndDialogue()
+    {
+        if (GUI.Button(new Rect(15 * scr.x, 8.5f * scr.y,
+                        scr.x, scr.y * 0.5f), "Bye"))
+        {
+            showDialogue = false;
+            currentLineIndex = 0;
+
+            playerMovement.enabled = true;
+            //also maybe mouse/screen aim control enable/disable
+
+            //enable and disable
+            //Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+    }
+
 }
