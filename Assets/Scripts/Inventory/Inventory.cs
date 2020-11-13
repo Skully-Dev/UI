@@ -74,7 +74,7 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    private void Display()
+    private void DisplayItems()
     {
         if (sortType == "") //display all items
         {
@@ -111,21 +111,18 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    public enum State { Inventory, Chest, Shop }
+    public State state = State.Inventory;
+
     private void UseItem()
     {
-        //Icon
-        GUI.Box(new Rect(4.25f * scr.x, 0.5f * scr.y,
-                         3 * scr.x, 3 * scr.y), selectedItem.Icon);
-        GUI.Box(new Rect(4.55f * scr.x, 3.5f * scr.y,
-                          2.5f * scr.x, 0.5f * scr.y), selectedItem.Name);
+        //Description, value, amount
         GUI.Box(new Rect(4.25f * scr.x, 4 * scr.y,
                          3 * scr.x,
                          3 * scr.y),
                          selectedItem.Description +
                          "\nValue: " + selectedItem.Value +
                          "\nAmount: " + selectedItem.Amount);
-        //Description, value, amount
-        //Style
 
         switch (selectedItem.Type) //using switch TAB to auto fill, when you type (selectedItem.Type) and press enter it will auto fill the cases.
         {
@@ -192,7 +189,64 @@ public class Inventory : MonoBehaviour
         }
     }
 
-private void OnGUI()
+    public Chest chest;
+    private void StoreItem()
+    {
+        //Description, value, amount
+        GUI.Box(new Rect(4.25f * scr.x, 4 * scr.y,
+                         3 * scr.x,
+                         3 * scr.y),
+                         selectedItem.Description +
+                         "\nValue: " + selectedItem.Value +
+                         "\nAmount: " + selectedItem.Amount);
+
+        if (GUI.Button(new Rect(4.5f * scr.x, 6.5f * scr.y,
+                scr.x, 0.25f * scr.y), "Store"))
+        {
+            selectedItem.Amount--;
+            chest.AddItem(selectedItem);
+
+            if (selectedItem.Amount <= 0)
+            {
+                inventory.Remove(selectedItem);
+                selectedItem = null;
+            }
+        }
+    }
+
+    public Shop shop;
+
+    private void SellItem()
+    {
+        //Description, value, amount
+        GUI.Box(new Rect(4.25f * scr.x, 4 * scr.y,
+                         3 * scr.x,
+                         3 * scr.y), 
+                         selectedItem.Description +
+                         "\nAmount: " + selectedItem.Amount +
+                         "\nTrade value: " + (int)(selectedItem.Value * (1f - shop.profitMarginHalved)));
+
+        // SELL, can't sell quest items.
+        if (selectedItem.Type != ItemType.Quest)
+        {
+            if (GUI.Button(new Rect(4.5f * scr.x, 6.5f * scr.y,
+                scr.x, 0.25f * scr.y), "Sell"))
+            {
+                selectedItem.Amount--;
+                shop.AddItem(selectedItem);
+
+                money += (int)(selectedItem.Value * (1f - shop.profitMarginHalved));
+
+                if (selectedItem.Amount <= 0)
+                {
+                    inventory.Remove(selectedItem);
+                    selectedItem = null;
+                }
+            }
+        }
+    }
+
+    private void OnGUI()
     {
         //even square boxes
         scr.x = Screen.width / 16;
@@ -200,7 +254,11 @@ private void OnGUI()
 
         if (showInventory)
         {
+            //full screen backdrop
             GUI.Box(new Rect(0, 0, Screen.width, Screen.height), "");
+
+            GUI.Box(new Rect(250, 20, 170, 40), "Money: " + money);
+
             string[] itemTypes = Enum.GetNames(typeof(ItemType));
             int CountOfItemTypes = itemTypes.Length;
 
@@ -211,10 +269,32 @@ private void OnGUI()
                     sortType = itemTypes[i];
                 }
             }
-            Display();
+            DisplayItems();
             if (selectedItem != null)
             {
-                UseItem();
+                //selected item backdrop
+                GUI.Box(new Rect(4f * scr.x, 0.25f * scr.y,
+                                    3.5f * scr.x, 7 * scr.y), "");
+                //selected item Icon
+                GUI.Box(new Rect(4.25f * scr.x, 0.5f * scr.y,
+                                 3 * scr.x, 3 * scr.y), selectedItem.Icon);
+                //Selected item Name
+                GUI.Box(new Rect(4.55f * scr.x, 3.5f * scr.y,
+                                  2.5f * scr.x, 0.5f * scr.y), selectedItem.Name);
+
+                if (state == State.Inventory)
+                {
+                    UseItem();
+                }
+                if (state == State.Chest)
+                {
+                    StoreItem();
+                }
+                if (state == State.Shop)
+                {
+                    SellItem();
+                }
+
             }
         }
     }

@@ -28,8 +28,6 @@ public class PlayerController : MonoBehaviour
         controller = GetComponent<CharacterController>(); //reference Character Controller of the Game Object the script is attached to.
 
         cam = Camera.main; //refernce the main camera, its child to player
-
-        Cursor.lockState = CursorLockMode.Locked; //Locks cursor position to middle of screen
     }
 
     //FixedUpdate is called on  a regular timeline and has the SAME TIME BETWEEN CALLS, immediately after FixedUpdate any necessary physics calculations are made, anything applied to a RigidBody (i.e. physics related functions) should be executed in FixedUpdate, runs every 0.2 seconds

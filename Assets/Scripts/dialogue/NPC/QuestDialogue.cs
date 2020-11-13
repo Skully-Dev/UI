@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Used to make dialogue options appropriate to QUESTS like accept and decline at end of quest offer.
+/// Only need one in scene, to be referenced by QUEST-NPC.
+/// Be sure to attach player cam and controls though!
+/// </summary>
 public class QuestDialogue : Dialogue
 {
     QuestManager questManager;
@@ -28,14 +33,7 @@ public class QuestDialogue : Dialogue
             showDialogue = false;
             currentLineIndex = 0;
 
-            playerMovement.enabled = true;
-            //also maybe mouse/screen aim control enable/disable
-
-            //Code to add quest aka accept
-
-            //enable and disable
-            //Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            EnableControls();
         }
 
         if (GUI.Button(new Rect(13 * scr.x, 8.5f * scr.y,
@@ -44,14 +42,7 @@ public class QuestDialogue : Dialogue
             showDialogue = false;
             currentLineIndex = 0;
 
-            playerMovement.enabled = true;
-            //also maybe mouse/screen aim control enable/disable
-
-            //Code to add quest aka accept
-
-            //enable and disable
-            //Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            EnableControls();
         }
     }
 }

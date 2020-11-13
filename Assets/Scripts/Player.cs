@@ -314,6 +314,7 @@ public class Player : MonoBehaviour
     {
         isDead = false;//toggle isDead to false (e.g. pause now works)
         Time.timeScale = 1f; //unfreeze gameplay
+        Cursor.lockState = CursorLockMode.Locked; //lock cursor in place
         Cursor.visible = false; //hide cursor
 
         #region Sounds
@@ -348,6 +349,12 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private Inventory playerInventory;
+    [SerializeField]
+    private GameObject sphereCastObject;
+    private float sphereCastOffset = 0;
+    private float sphereCastRadius;
+    private Vector3 sphereCastDirection;
+    private float sphereCastDistance;
     private void Interact()
     {
         if (Input.GetKeyDown(KeyCode.E))
@@ -359,6 +366,15 @@ public class Player : MonoBehaviour
 
             //from middle of screen
             ray = Camera.main.ScreenPointToRay(new Vector2(Screen.width / 2, Screen.height / 2));
+
+            //This would be better at start to initialize, but it is here to make it easy to find.
+            if (sphereCastOffset == 0)
+            {
+                sphereCastOffset = sphereCastObject.transform.localPosition.y; //4
+                sphereCastRadius = sphereCastObject.transform.localScale.x * 0.5f; //2
+                sphereCastDirection = -Vector3.up; // (0,-1,0)
+                sphereCastDistance = sphereCastOffset + -sphereCastDirection.y; //5
+            }
 
             //this is how you make a mask
             int layerMask = LayerMask.NameToLayer("Interactable"); //get the layer ID (1,2,3,4,5)
@@ -382,28 +398,45 @@ public class Player : MonoBehaviour
             */
 
             //actually casts the ray, returns a bool
-            if (Physics.Raycast(ray, out hitInfo, 10f, layerMask) /*|| Physics.SphereCast(ray, 5f, out hitInfo, 10f, layerMask)*/) //casts a ray, returns info about ray hit, within a distance (CURRENLTY THE DISTANCE FROM THE CAMERA, COULD CHANGE IT TO CHECK DISTANCE OF HIT TRANSFORM TO PLAYER TRANSFORM).
+            //casts a ray, returns info about ray hit, within a distance (CURRENLTY THE DISTANCE FROM THE CAMERA). Sphere cast is based on player position however!
+            if (Physics.Raycast(ray, out hitInfo, 10f, layerMask) || Physics.SphereCast(new Vector3 (transform.position.x, transform.position.y + sphereCastOffset, transform.position.z), sphereCastRadius, sphereCastDirection, out hitInfo, sphereCastDistance, layerMask))
             {
-                //If object has component NPC
-                NPC npc = hitInfo.collider.GetComponent<NPC>(); //trys to store it as NPC, if not npc, npc will equal null.
-                if (npc != null)
+                //CHANGE IT TO CHECK DISTANCE OF HIT POINT TO PLAYER TRANSFORM
+                if (Vector3.Distance(hitInfo.point, transform.position) <= 6f)
                 {
-                    npc.Interact();
-                }
+                    //If object has component NPC
+                    NPC npc = hitInfo.collider.GetComponent<NPC>(); //trys to store it as NPC, if not npc, npc will equal null.
+                    if (npc != null)
+                    {
+                        npc.Interact();
+                    }
 
-                InWorldItem inWorldItem = hitInfo.collider.GetComponent<InWorldItem>(); //trys to store it as InWorldItem
-                if (inWorldItem != null) //if it is an InWorldItem
-                {
-                    playerInventory.AddItem(inWorldItem.item); //add to inv
-                    inWorldItem.gameObject.SetActive(false); //hide item.
-                }
+                    InWorldItem inWorldItem = hitInfo.collider.GetComponent<InWorldItem>(); //trys to store it as InWorldItem
+                    if (inWorldItem != null) //if it is an InWorldItem
+                    {
+                        playerInventory.AddItem(inWorldItem.item); //add to inv
+                        inWorldItem.gameObject.SetActive(false); //hide item.
+                    }
 
-                /* Same thing but one line.
-                if (hitInfo.collider.TryGetComponent<NPC>(out NPC npc))
-                {
+                    /* Same thing but one line.
+                    if (hitInfo.collider.TryGetComponent<NPC>(out NPC npc))
+                    {
 
+                    }
+                    */
+
+                    Shop shop = hitInfo.collider.GetComponent<Shop>();
+                    if (shop != null)
+                    {
+                        shop.OpenShopToggle();
+                    }
+
+                    Chest chest = hitInfo.collider.GetComponent<Chest>();
+                    if (chest != null)
+                    {
+                        chest.OpenChestToggle();
+                    }
                 }
-                */
             }
         }
     }
@@ -429,7 +462,8 @@ public class Player : MonoBehaviour
             DealDamage(25f);
         }
         #endregion
-
+        
+        /*
         if (nearShop)
         {
             if (!alreadyOpen)
@@ -473,14 +507,16 @@ public class Player : MonoBehaviour
                 }
             }
         }
+        */
     }
-
+    /*
     Chest chest;
     Shop shop;
     bool nearShop = false;
     bool nearChest = false;
     bool alreadyOpen = false;
 
+    
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Chest")
@@ -501,4 +537,5 @@ public class Player : MonoBehaviour
         nearChest = false;
         nearShop = false;
     }
+    */
 }

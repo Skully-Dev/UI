@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Cinemachine;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,6 +13,9 @@ public class Dialogue : MonoBehaviour
 
     //To disable player movement during dialogue
     public ThirdPersonMovement playerMovement;
+    //To disable camera rotation;
+    public GameObject playerCam;
+    public CinemachineFreeLook cineCam;
 
     //screen
     public Vector2 scr;
@@ -27,9 +31,7 @@ public class Dialogue : MonoBehaviour
     {
         if (showDialogue)
         {
-            playerMovement.enabled = false;
-            //also maybe mouse/screen aim control enable/disable
-
+            DisableControls();
 
             //set up our ratio for 16:9
             scr.x = Screen.width / 16;
@@ -65,13 +67,37 @@ public class Dialogue : MonoBehaviour
             showDialogue = false;
             currentLineIndex = 0;
 
-            playerMovement.enabled = true;
-            //also maybe mouse/screen aim control enable/disable
-
-            //enable and disable
-            //Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            EnableControls();
         }
+    }
+
+    private void DisableControls()
+    {
+        //enable cursor
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        playerMovement.enabled = false;
+
+        //mouse/screen aim control to 10% speed
+        //playerCam.SetActive(false);
+        cineCam.m_XAxis.m_MaxSpeed = 60f;
+        cineCam.m_YAxis.m_MaxSpeed = 0.4f;
+
+    }
+
+    protected void EnableControls()
+    {
+        //disable cursor
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        playerMovement.enabled = true;
+
+        //mouse/screen aim control to 100% speed
+        //playerCam.SetActive(true);
+        cineCam.m_XAxis.m_MaxSpeed = 300;
+        cineCam.m_YAxis.m_MaxSpeed = 2;
     }
 
 }

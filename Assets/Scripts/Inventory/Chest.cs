@@ -78,6 +78,11 @@ public class Chest : MonoBehaviour
 
             //display players inventory
             playerInventory.showInventory = true;
+
+            if (GUI.Button(new Rect(30, 1020, 120, 60), "Exit Chest"))
+            {
+                OpenChestToggle();
+            }
         }
     }
 
@@ -87,12 +92,32 @@ public class Chest : MonoBehaviour
         {
             playerInventory.showInventory = false;
             showChest = false;
+            Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
         else
         {
+            playerInventory.state = Inventory.State.Chest;
+            playerInventory.chest = this;
+
             showChest = true;
+            Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
+        }
+    }
+
+    public void AddItem(Item item)
+    {
+        Item foundItem = chestInventory.Find(findItem => findItem.Name == item.Name); //things on the left is paramater, lambda =>  right is expression, each itteration findItem will be the specific item that itteration and it will test it againt the item werre trying to find.
+
+        if (foundItem != null)
+        {
+            foundItem.Amount++;
+        }
+        else
+        {
+            Item newItem = new Item(item, 1);
+            chestInventory.Add(newItem);
         }
     }
 }

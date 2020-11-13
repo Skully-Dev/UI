@@ -9,6 +9,7 @@ public class Shop : MonoBehaviour
     [Tooltip("Currently selected item to display info for")]
     private Item selectedItem;
 
+    public float profitMarginHalved = 0.2f;
 
     private Inventory playerInventory;
 
@@ -58,15 +59,16 @@ public class Shop : MonoBehaviour
                                     2.5f * scr.x, .5f * scr.y), selectedItem.Name);
                 //Description, Price, Quantity
                 GUI.Box(new Rect(8.75f * scr.x, 4 * scr.y, 3 * scr.x, 3 * scr.y),
-                                    selectedItem.Description + "\nValue: " +
-                                    selectedItem.Value + "\nAmount: " + selectedItem.Amount);
+                                    selectedItem.Description +
+                                    "\nPrice: " + (int)(selectedItem.Value * (1f + profitMarginHalved)) + 
+                                    "\nAmount: " + selectedItem.Amount);
 
                 //Purchase option (only if you can afford)
-                if (playerInventory.money >= selectedItem.Value)
+                if (playerInventory.money >= (int)(selectedItem.Value * (1f + profitMarginHalved)))
                 {
                     if (GUI.Button(new Rect(10.5f * scr.x, 6.5f * scr.y, scr.x, 0.25f * scr.y), "Purchase Item"))
                     {
-                        playerInventory.money -= selectedItem.Value; //maybe convert money variable by removing and just using objects of type money, where you give money objects to buy and get money objects to sell.
+                        playerInventory.money -= (int)(selectedItem.Value * (1f + profitMarginHalved)); //maybe convert money variable by removing and just using objects of type money, where you give money objects to buy and get money objects to sell.
 
                         //add to player
                         playerInventory.AddItem(selectedItem);
@@ -84,21 +86,45 @@ public class Shop : MonoBehaviour
 
             //display players inv
             playerInventory.showInventory = true;
+
+            if (GUI.Button(new Rect(30, 1020, 120, 60), "Exit Shop"))
+            {
+                OpenShopToggle();
+            }
         }
     }
-
     public void OpenShopToggle()
     {
         if (showShop)
         {
             playerInventory.showInventory = false;
             showShop = false;
+            Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
         else
         {
+            playerInventory.state = Inventory.State.Shop;
+            playerInventory.shop = this;
+
             showShop = true;
+            Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
+        }
+    }
+
+    public void AddItem(Item item)
+    {
+        Item foundItem = shopInventory.Find(findItem => findItem.Name == item.Name); //things on the left is paramater, lambda =>  right is expression, each itteration findItem will be the specific item that itteration and it will test it againt the item werre trying to find.
+
+        if (foundItem != null)
+        {
+            foundItem.Amount++;
+        }
+        else
+        {
+            Item newItem = new Item(item, 1);
+            shopInventory.Add(newItem);
         }
     }
 }

@@ -21,6 +21,7 @@ public class PauseMenu : MonoBehaviour
 
     private void Awake()
     {
+        Cursor.lockState = CursorLockMode.Locked; //stops cursor from going off window
         Cursor.visible = false;  //hides the cursor from view
     }
 
@@ -65,6 +66,7 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 1f;//time resumes normal game time
         gameIsPaused = false; //sets bool for conditionals
 
+        Cursor.lockState = CursorLockMode.Locked; //locks cursor midscreen
         Cursor.visible = false;  //hides the cursor from view
     }
 
@@ -80,6 +82,7 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 0f;//Make game time stand still
         gameIsPaused = true; //sets bool for conditionals
 
+        Cursor.lockState = CursorLockMode.None; //Unlocks cursor for use.
         Cursor.visible = true; //makes cursor visable for use.
     }
     #endregion
