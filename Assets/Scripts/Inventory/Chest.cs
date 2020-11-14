@@ -92,8 +92,8 @@ public class Chest : MonoBehaviour
         {
             playerInventory.showInventory = false;
             showChest = false;
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+
+            playerInventory.gameManager.EnableControls();
         }
         else
         {
@@ -101,8 +101,8 @@ public class Chest : MonoBehaviour
             playerInventory.chest = this;
 
             showChest = true;
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+
+            playerInventory.gameManager.DisableControls(false);
         }
     }
 

@@ -5,6 +5,8 @@ using System;
 
 public class Inventory : MonoBehaviour
 {
+    public GameManager gameManager;
+
     #region Inventory Variables
     [SerializeField] private List<Item> inventory = new List<Item>();
     private Item selectedItem;
@@ -38,7 +40,19 @@ public class Inventory : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.I)) //I for Inventory
         {
-            showInventory = !showInventory;
+            if (!GameManager.isDisplay)
+            {
+                showInventory = true;
+                state = State.Inventory;
+
+                gameManager.DisableControls(false);
+            }
+            else if (showInventory && state == State.Inventory)
+            {
+                showInventory = false;
+
+                gameManager.EnableControls();
+            }
         }
     }
 
@@ -98,7 +112,7 @@ public class Inventory : MonoBehaviour
                 if (inventory[i].Type == type)
                 {
                     if (GUI.Button(new Rect(0.5f * scr.x,
-                        0.25f * scr.y + slotCount * (0.25f * scr.y),
+                        0.25f * scr.y + (slotCount+1) * (0.25f * scr.y),
                         3f * scr.x,
                         0.25f * scr.y),
                         inventory[i].Name))
@@ -146,7 +160,55 @@ public class Inventory : MonoBehaviour
                 }
                 break;
             case ItemType.Weapon:
-                if (equipmentSlots[2].currentItem == null || selectedItem.Name != equipmentSlots[2].item.Name)
+                #region Equip/Unequip code
+                if (equipmentSlots[2].currentItem == null) //if holding no weapons
+                {
+                    if (GUI.Button(new Rect(4.75f * scr.x, 6.5f * scr.y, scr.x, 0.25f * scr.y), "Equip"))
+                    {
+                        GameObject currentItem = Instantiate(selectedItem.Mesh, equipmentSlots[2].equipLocation); //the spawn of the item
+                        equipmentSlots[2].currentItem = currentItem; //reference to instance of the spawned object
+                        equipmentSlots[2].item = selectedItem; //copy the info of the new equipted weapon
+                    }
+                }
+                else if (equipmentSlots[3].currentItem == null && selectedItem.Name != equipmentSlots[2].item.Name) //if holding 1 weapon and selected item is different
+                {
+                    if (GUI.Button(new Rect(4.75f * scr.x, 6.5f * scr.y, scr.x, 0.25f * scr.y), "Equip"))
+                    {
+                        GameObject currentItem = Instantiate(selectedItem.Mesh, equipmentSlots[3].equipLocation); //the spawn of the item
+                        equipmentSlots[3].currentItem = currentItem; //reference to instance of the spawned object
+                        equipmentSlots[3].item = selectedItem; //copy the info of the new equipted weapon
+                    }
+                }
+                else if (selectedItem.Name != equipmentSlots[2].item.Name && selectedItem.Name != equipmentSlots[3].item.Name) //if holding 2 weapons but both are different to selected one.
+                {
+                    if (GUI.Button(new Rect(4.75f * scr.x, 6.5f * scr.y, scr.x, 0.25f * scr.y), "Equip"))
+                    {
+                        if (equipmentSlots[3].currentItem != null)
+                        {
+                            Destroy(equipmentSlots[3].currentItem); //destroies the spawn of the weapon to unequip
+                        }
+                        GameObject currentItem = Instantiate(selectedItem.Mesh, equipmentSlots[3].equipLocation); //spawn the new one
+                        equipmentSlots[3].currentItem = currentItem; //replace reference to instance of the spawned object
+                        equipmentSlots[3].item = selectedItem; //copy the info of the new equipted weapon
+                    }
+                }
+                else //otherwise you already have one of this weapon equipted
+                {
+                    if (GUI.Button(new Rect(4.75f * scr.x, 6.5f * scr.y, scr.x, 0.25f * scr.y), "Unequip"))
+                    {
+                        if (selectedItem.Name == equipmentSlots[2].item.Name) //if it is the primary weapon you are trying to unequip
+                        {
+                            Destroy(equipmentSlots[2].currentItem); //remove the spawn of primary
+                            GameObject currentItem = Instantiate(equipmentSlots[3].item.Mesh, equipmentSlots[2].equipLocation); //spawn the secondary into primary position
+                            equipmentSlots[2].currentItem = currentItem; //replace reference to instance
+                            equipmentSlots[2].item = equipmentSlots[3].item; //copy info into primary
+                        }
+                        Destroy(equipmentSlots[3].currentItem); //delete the spawn of the secondary in both cases.
+                        equipmentSlots[3].item = null; //secondary no longer has info so null
+                    }
+                }
+                /* When it was only 1 weapon OLD WIP
+                if (equipmentSlots[2].currentItem == null || selectedItem.Name != equipmentSlots[2].item.Name )
                 {
                     if (GUI.Button(new Rect(4.75f * scr.x, 6.5f * scr.y, scr.x, 0.25f * scr.y), "Equip"))
                     {
@@ -168,14 +230,52 @@ public class Inventory : MonoBehaviour
                         equipmentSlots[2].item = null;
                     }
                 }
+                */
+                #endregion
                 break;
             case ItemType.Apparel:
+                if (equipmentSlots[0].currentItem == null || selectedItem.Name != equipmentSlots[0].item.Name)
+                {
+                    if (GUI.Button(new Rect(4.75f * scr.x, 6.5f * scr.y, scr.x, 0.25f * scr.y), "Equip"))
+                    {
+                        if (equipmentSlots[0].currentItem != null)
+                        {
+                            Destroy(equipmentSlots[0].currentItem);
+                        }
+                        GameObject currentItem = Instantiate(selectedItem.Mesh, equipmentSlots[0].equipLocation);
+                        equipmentSlots[0].currentItem = currentItem;
+                        equipmentSlots[0].item = selectedItem;
+                    }
+                }
+                else
+                {
+                    if (GUI.Button(new Rect(4.75f * scr.x, 6.5f * scr.y,
+                        scr.x, 0.25f * scr.y), "Unequip"))
+                    {
+                        Destroy(equipmentSlots[0].currentItem);
+                        equipmentSlots[0].item = null;
+                    }
+                }
                 break;
             case ItemType.Crafting:
                 break;
             case ItemType.Ingredients:
                 break;
             case ItemType.Potions:
+                if (GUI.Button(new Rect(4.5f * scr.x, 6.5f * scr.y,
+                    scr.x, 0.25f * scr.y), "Drink"))
+                {
+                    selectedItem.Amount--;
+
+                    player.RefillStat(selectedItem.Heal, selectedItem.Mana, selectedItem.Stamina);
+
+                    if (selectedItem.Amount <= 0)
+                    {
+                        inventory.Remove(selectedItem);
+                        selectedItem = null;
+                        break;
+                    }
+                }
                 break;
             case ItemType.Scrolls:
                 break;
@@ -236,6 +336,7 @@ public class Inventory : MonoBehaviour
                 shop.AddItem(selectedItem);
 
                 money += (int)(selectedItem.Value * (1f - shop.profitMarginHalved));
+                shop.Profit += selectedItem.Value - (int)(selectedItem.Value * (1f - shop.profitMarginHalved));
 
                 if (selectedItem.Amount <= 0)
                 {
@@ -262,13 +363,22 @@ public class Inventory : MonoBehaviour
             string[] itemTypes = Enum.GetNames(typeof(ItemType));
             int CountOfItemTypes = itemTypes.Length;
 
+            //Sorting options buttons
             for (int i = 0; i < CountOfItemTypes; i++)
             {
-                if (GUI.Button(new Rect(4 * scr.x + i * scr.x, 0, scr.x, 0.25f * scr.y), itemTypes[i]))
+                if (itemTypes[i] != "Money") //because money is stored in money var once collected
                 {
-                    sortType = itemTypes[i];
+                    if (GUI.Button(new Rect(4 * scr.x + i * scr.x, 0, scr.x, 0.25f * scr.y), itemTypes[i]))
+                    {
+                        sortType = itemTypes[i];
+                    }
                 }
             }
+            if (GUI.Button(new Rect(4 * scr.x + 8 * scr.x, 0, scr.x, 0.25f * scr.y), "ALL")) //dont sort option
+            {
+                sortType = "";
+            }
+
             DisplayItems();
             if (selectedItem != null)
             {
@@ -295,6 +405,15 @@ public class Inventory : MonoBehaviour
                     SellItem();
                 }
 
+            }
+            if (state == State.Inventory)
+            {
+                if (GUI.Button(new Rect(30, 1020, 120, 60), "Exit Inventory"))
+                {
+                    showInventory = false;
+
+                    gameManager.EnableControls();
+                }
             }
         }
     }

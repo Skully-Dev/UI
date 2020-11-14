@@ -1,0 +1,58 @@
+﻿using UnityEngine;
+using Cinemachine;
+
+public class GameManager : MonoBehaviour
+{
+    [Tooltip("is currently on a display of sorts")]
+    public static bool isDisplay = false;
+
+    [SerializeField]
+    private ThirdPersonMovement playerMovement;
+
+    [SerializeField]
+    private CinemachineFreeLook cineCam;
+    
+    /// <summary>
+    /// Disable player movements, Enable Cursor.
+    /// </summary>
+    public void DisableControls(bool mouseAimOn)
+    {
+        //enable cursor
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        playerMovement.enabled = false;
+
+        if (mouseAimOn)
+        {
+            //mouse/screen aim control to 10% speed
+            cineCam.m_XAxis.m_MaxSpeed = 60f;
+            cineCam.m_YAxis.m_MaxSpeed = 0.4f;
+        }
+        else
+        {
+            Time.timeScale = 0f;
+        }
+
+        isDisplay = true;
+    }
+
+    /// <summary>
+    /// Enable player movements, Disable Cursor.
+    /// </summary>
+    public void EnableControls()
+    {
+        //disable cursor
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        playerMovement.enabled = true;
+
+        //mouse/screen aim control to 100% speed
+        Time.timeScale = 1f;
+        cineCam.m_XAxis.m_MaxSpeed = 300;
+        cineCam.m_YAxis.m_MaxSpeed = 2;
+
+        isDisplay = false;
+    }
+}

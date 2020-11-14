@@ -34,6 +34,9 @@ public class Item
     [SerializeField] private int damage;// only ever need one of the 3, so could be replaced with effect amount and apply based on item type
     [SerializeField] private int armour;// only ever need one of the 3, so could be replaced with effect amount and apply based on item type
     [SerializeField] private int heal;// only ever need one of the 3, so could be replaced with effect amount and apply based on item type
+    [SerializeField] private int stamina;
+    [SerializeField] private int mana;
+    [SerializeField] private int effect; //USING FOR CUSTOM EFFECTS
     #endregion
 
     #region Public Properties
@@ -92,6 +95,21 @@ public class Item
         get { return heal; }
         set { heal = value; }
     }
+    public int Effect
+    {
+        get { return effect; }
+        set { effect = value; }
+    }
+    public int Stamina
+    {
+        get { return stamina; }
+        set { stamina = value; }
+    }
+    public int Mana
+    {
+        get { return mana; }
+        set { mana = value; }
+    }
     #endregion
 
     #region Contructors
@@ -112,6 +130,9 @@ public class Item
         damage = copyItem.Damage;
         armour = copyItem.Armour;
         heal = copyItem.Heal;
+        effect = copyItem.Effect;
+        stamina = copyItem.Mana;
+        mana = copyItem.Stamina;
     }
     #endregion
 }

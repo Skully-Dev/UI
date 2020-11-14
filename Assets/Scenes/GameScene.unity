@@ -3021,6 +3021,51 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &409030518
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 409030520}
+  - component: {fileID: 409030519}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &409030519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 409030518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0360e2990a4a9da4b923533edfb9c88b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerMovement: {fileID: 465187085}
+  cineCam: {fileID: 1030685930}
+--- !u!4 &409030520
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 409030518}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 433.029, y: 2.249857, z: 445.89676}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 24
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &413448663
 GameObject:
   m_ObjectHideFlags: 0
@@ -3782,11 +3827,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5efca2298059cb543907a8256270245f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameManager: {fileID: 409030519}
   showDialogue: 0
   currentLineIndex: 0
-  playerMovement: {fileID: 465187085}
-  playerCam: {fileID: 1030685927}
-  cineCam: {fileID: 1030685930}
   scr: {x: 0, y: 0}
   npcName: 
   dialogueText: []
@@ -4939,6 +4982,9 @@ MonoBehaviour:
     damage: 0
     armour: 0
     heal: 0
+    stamina: 0
+    mana: 0
+    effect: 0
 --- !u!135 &586395988
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -9126,19 +9172,13 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!1 &1030685927 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6619308517943770581, guid: 5386e0427fce3684abe890b86c7386e7,
-    type: 3}
-  m_PrefabInstance: {fileID: 6619308517853024507}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1030685930 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6619308517943770571, guid: 5386e0427fce3684abe890b86c7386e7,
     type: 3}
   m_PrefabInstance: {fileID: 6619308517853024507}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1030685927}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 319d2fe34a804e245819465c9505ea59, type: 3}
@@ -12729,11 +12769,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae71ce028e429a34e9f01026157d833b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameManager: {fileID: 0}
   showDialogue: 1
   currentLineIndex: 0
-  playerMovement: {fileID: 465187085}
-  playerCam: {fileID: 0}
-  cineCam: {fileID: 0}
   scr: {x: 0, y: 0}
   npcName: 
   dialogueText:
@@ -12756,6 +12794,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1380294324 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1635151505898509390, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
+    type: 3}
+  m_PrefabInstance: {fileID: 2012609640}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1380774362
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17311,6 +17355,9 @@ MonoBehaviour:
     damage: 0
     armour: 0
     heal: 15
+    stamina: 0
+    mana: 0
+    effect: 0
   - name: HP Potion
     description: heals
     value: 20
@@ -17321,7 +17368,24 @@ MonoBehaviour:
     damage: 0
     armour: 0
     heal: 100
+    stamina: 0
+    mana: 0
+    effect: 0
+  - name: Beer
+    description: Refill all stats by 25
+    value: 20
+    amount: 5
+    icon: {fileID: 2800000, guid: 05499f65712e23845836bddf2477fd33, type: 3}
+    mesh: {fileID: 0}
+    type: 5
+    damage: 0
+    armour: 0
+    heal: 25
+    stamina: 25
+    mana: 25
+    effect: 0
   profitMarginHalved: 0.2
+  profit: 0
   showShop: 0
 --- !u!1 &1768674610
 GameObject:
@@ -17730,6 +17794,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4454994527ab6e4798b4bc6b7245218, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameManager: {fileID: 409030519}
   inventory:
   - name: Apple
     description: Can eat, may be poison...
@@ -17741,6 +17806,9 @@ MonoBehaviour:
     damage: 0
     armour: 0
     heal: 100
+    stamina: 0
+    mana: 0
+    effect: 0
   - name: Axe
     description: Ouchie Stick
     value: 25
@@ -17751,6 +17819,9 @@ MonoBehaviour:
     damage: 20
     armour: 0
     heal: 0
+    stamina: 0
+    mana: 0
+    effect: 0
   - name: Armor
     description: It Protec
     value: 35
@@ -17761,6 +17832,9 @@ MonoBehaviour:
     damage: 0
     armour: 0
     heal: 0
+    stamina: 0
+    mana: 0
+    effect: 0
   - name: Book
     description: Ahh yes! Words.
     value: 5
@@ -17771,6 +17845,9 @@ MonoBehaviour:
     damage: 0
     armour: 0
     heal: 0
+    stamina: 0
+    mana: 0
+    effect: 0
   - name: Ingots
     description: Used to create a protec and/or ouchie
     value: 10
@@ -17781,6 +17858,9 @@ MonoBehaviour:
     damage: 0
     armour: 0
     heal: 0
+    stamina: 0
+    mana: 0
+    effect: 0
   - name: HP Potion
     description: Bought from Mr Pirelli. Tastes like piss.
     value: 15
@@ -17791,6 +17871,9 @@ MonoBehaviour:
     damage: 0
     armour: 0
     heal: 0
+    stamina: 0
+    mana: 0
+    effect: 0
   - name: Scroll
     description: Less words. More important?!
     value: 1
@@ -17801,6 +17884,9 @@ MonoBehaviour:
     damage: 0
     armour: 0
     heal: 0
+    stamina: 0
+    mana: 0
+    effect: 0
   - name: Ring
     description: 'Must drop precious in lava mountain.. '
     value: 666
@@ -17811,6 +17897,9 @@ MonoBehaviour:
     damage: 0
     armour: 0
     heal: 0
+    stamina: 0
+    mana: 0
+    effect: 0
   - name: Cube Weapon
     description: vertex make pointy!
     value: 5
@@ -17821,16 +17910,34 @@ MonoBehaviour:
     damage: 50
     armour: 0
     heal: 0
+    stamina: 0
+    mana: 0
+    effect: 0
+  - name: Cap
+    description: Protec the egg!
+    value: 5
+    amount: 1
+    icon: {fileID: 2800000, guid: 966cc9c4c1c194445b999387e2fca458, type: 3}
+    mesh: {fileID: 2655828969563644575, guid: 9ab2c1d35e09cd348958a2d74be8681b, type: 3}
+    type: 2
+    damage: 50
+    armour: 0
+    heal: 0
+    stamina: 0
+    mana: 0
+    effect: 0
   player: {fileID: 465187088}
   money: 100
   showInventory: 0
   equipmentSlots:
   - slotName: Head
-    equipLocation: {fileID: 2029056503}
+    equipLocation: {fileID: 1996323989}
   - slotName: Chest
     equipLocation: {fileID: 696763434}
   - slotName: Weapon
     equipLocation: {fileID: 1909518202}
+  - slotName: Secondary
+    equipLocation: {fileID: 1380294324}
   Styles:
   - m_Name: 
     m_Normal:
@@ -17899,6 +18006,7 @@ MonoBehaviour:
     m_StretchWidth: 0
     m_StretchHeight: 0
   state: 0
+  chest: {fileID: 0}
   shop: {fileID: 0}
 --- !u!4 &1796612489
 Transform:
@@ -20539,6 +20647,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1992639429}
   m_CullTransparentMesh: 0
+--- !u!4 &1996323989 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1290772534489571231, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
+    type: 3}
+  m_PrefabInstance: {fileID: 2012609640}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2001990823
 GameObject:
   m_ObjectHideFlags: 0
@@ -20670,6 +20784,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 137532331567999428, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1006394340002720651, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
         type: 3}
@@ -20866,6 +20985,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 7485276227981752252, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7518653737361706073, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
         type: 3}
       propertyPath: m_Layer
@@ -20889,7 +21013,7 @@ PrefabInstance:
     - target: {fileID: 8859076461700599824, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8921384409161279298, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
         type: 3}
@@ -21098,12 +21222,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!4 &2029056503 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1062076824047764902, guid: 5d22bc25c6ff0bb4b9af6a0020c22575,
-    type: 3}
-  m_PrefabInstance: {fileID: 2012609640}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2035691941
 GameObject:
   m_ObjectHideFlags: 0

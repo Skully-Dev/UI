@@ -35,7 +35,7 @@ public class PauseMenu : MonoBehaviour
             {
                 Resume();
             }
-            else //otherwise
+            else if (!GameManager.isDisplay)
             {
                 Pause();
             }
@@ -59,6 +59,8 @@ public class PauseMenu : MonoBehaviour
     /// </summary>
     public void Resume()
     {
+        GameManager.isDisplay = false;
+
         foreach (GameObject element in pauseMenuUI)
         {
             element.SetActive(false); //hide pause menu UI
@@ -75,6 +77,8 @@ public class PauseMenu : MonoBehaviour
     /// </summary>
     public void Pause()
     {
+        GameManager.isDisplay = true;
+
         foreach (GameObject element in pauseMenuUI)
         {
             element.SetActive(true); //reveals Pause Menu UI

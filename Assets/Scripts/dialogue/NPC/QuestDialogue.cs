@@ -33,7 +33,7 @@ public class QuestDialogue : Dialogue
             showDialogue = false;
             currentLineIndex = 0;
 
-            EnableControls();
+            gameManager.EnableControls();
         }
 
         if (GUI.Button(new Rect(13 * scr.x, 8.5f * scr.y,
@@ -42,7 +42,7 @@ public class QuestDialogue : Dialogue
             showDialogue = false;
             currentLineIndex = 0;
 
-            EnableControls();
+            gameManager.EnableControls();
         }
     }
 }

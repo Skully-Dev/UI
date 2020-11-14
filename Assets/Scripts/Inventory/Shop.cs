@@ -11,6 +11,38 @@ public class Shop : MonoBehaviour
 
     public float profitMarginHalved = 0.2f;
 
+    [SerializeField]
+    private float profit;
+    public float Profit
+    {
+        get
+        {
+            return profit;
+        }
+        set
+        {
+            profit = value;
+            //like affinity, sets price margin based on amount of profit made off player
+            //profit is the absolute difference between trade price and true value
+            if (value >= 500)
+            {
+                profitMarginHalved = 0.05f;
+            }
+            else if (value >= 100)
+            {
+                profitMarginHalved = 0.1f;
+            }
+            else if (value >= 25)
+            {
+                profitMarginHalved = 0.15f;
+            }
+            else
+            {
+                profitMarginHalved = 0.2f;
+            }
+        }
+    }
+
     private Inventory playerInventory;
 
     #region Display shop Variables
@@ -69,6 +101,7 @@ public class Shop : MonoBehaviour
                     if (GUI.Button(new Rect(10.5f * scr.x, 6.5f * scr.y, scr.x, 0.25f * scr.y), "Purchase Item"))
                     {
                         playerInventory.money -= (int)(selectedItem.Value * (1f + profitMarginHalved)); //maybe convert money variable by removing and just using objects of type money, where you give money objects to buy and get money objects to sell.
+                        Profit += (int)(selectedItem.Value * (1f + profitMarginHalved)) - selectedItem.Value;
 
                         //add to player
                         playerInventory.AddItem(selectedItem);
@@ -99,8 +132,8 @@ public class Shop : MonoBehaviour
         {
             playerInventory.showInventory = false;
             showShop = false;
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+
+            playerInventory.gameManager.EnableControls();
         }
         else
         {
@@ -108,8 +141,8 @@ public class Shop : MonoBehaviour
             playerInventory.shop = this;
 
             showShop = true;
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+
+            playerInventory.gameManager.DisableControls(false);
         }
     }
 

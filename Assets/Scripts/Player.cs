@@ -267,6 +267,16 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
+    /// refill any or all stats by an amount and any related effects
+    /// </summary>
+    public void RefillStat(float health, float stamina, float mana)
+    {
+        Heal(health);
+        playerStats.CurrentStamina += stamina;
+        playerStats.CurrentMana += mana;
+    }
+
+    /// <summary>
     /// use mana and any related effects code
     /// </summary>
     /// <param name="cost">mana to be spent</param>
@@ -357,7 +367,7 @@ public class Player : MonoBehaviour
     private float sphereCastDistance;
     private void Interact()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E) && !GameManager.isDisplay)
         {
             //basically a vector, drawn from point in direction to infinity unless otherwise specified.
             Ray ray;
