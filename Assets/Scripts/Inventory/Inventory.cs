@@ -5,6 +5,7 @@ using System;
 
 public class Inventory : MonoBehaviour
 {
+    public bool showOnGUI;
     public GameManager gameManager;
 
     #region Inventory Variables
@@ -34,7 +35,7 @@ public class Inventory : MonoBehaviour
     public Equipment[] equipmentSlots;
     #endregion
 
-    public GUIStyle[] Styles;
+    //public GUIStyle[] Styles;
 
     private void Update()
     {
@@ -77,7 +78,7 @@ public class Inventory : MonoBehaviour
         {
             Item foundItem = inventory.Find(findItem => findItem.Name == item.Name); //things on the left is paramater, lambda =>  right is expression, each itteration findItem will be the specific item that itteration and it will test it againt the item werre trying to find.
 
-            if (foundItem != null || item.Type == ItemType.Apparel || item.Type == ItemType.Weapon)
+            if ((item.Type != ItemType.Apparel && item.Type != ItemType.Weapon) && foundItem != null )
             {
                 foundItem.Amount++;
             }
@@ -128,6 +129,9 @@ public class Inventory : MonoBehaviour
 
     public enum State { Inventory, Chest, Shop }
     public State state = State.Inventory;
+
+    [SerializeField]
+    private GameObject StandInMesh;
 
     private void UseItem()
     {
@@ -200,12 +204,21 @@ public class Inventory : MonoBehaviour
                         if (selectedItem.Name == equipmentSlots[2].item.Name) //if it is the primary weapon you are trying to unequip
                         {
                             Destroy(equipmentSlots[2].currentItem); //remove the spawn of primary
-                            GameObject currentItem = Instantiate(equipmentSlots[3].item.Mesh, equipmentSlots[2].equipLocation); //spawn the secondary into primary position
-                            equipmentSlots[2].currentItem = currentItem; //replace reference to instance
-                            equipmentSlots[2].item = equipmentSlots[3].item; //copy info into primary
+                            equipmentSlots[2].item = null;
+                            if (equipmentSlots[3].currentItem != null)
+                            {
+                                GameObject currentItem = Instantiate(equipmentSlots[3].item.Mesh, equipmentSlots[2].equipLocation); //spawn the secondary into primary position
+                                equipmentSlots[2].currentItem = currentItem; //replace reference to instance
+                                equipmentSlots[2].item = equipmentSlots[3].item; //copy info into primary
+                                Destroy(equipmentSlots[3].currentItem); //delete the spawn of the secondary
+                                equipmentSlots[3].item = null; //secondary no longer has info so null
+                            }
                         }
-                        Destroy(equipmentSlots[3].currentItem); //delete the spawn of the secondary in both cases.
-                        equipmentSlots[3].item = null; //secondary no longer has info so null
+                        else
+                        {
+                            Destroy(equipmentSlots[3].currentItem); //delete the spawn of the secondary
+                            equipmentSlots[3].item = null; //secondary no longer has info so null
+                        }
                     }
                 }
                 /* When it was only 1 weapon OLD WIP
@@ -288,8 +301,60 @@ public class Inventory : MonoBehaviour
             default:
                 break;
         }
+
+        if (selectedItem.Type != ItemType.Quest)
+        {
+            if (GUI.Button(new Rect(6f * scr.x, 6.5f * scr.y, scr.x, 0.25f * scr.y), "Discard"))
+            {
+                if (IsEquipt())
+                {
+                    Debug.Log("You must unequipt first");
+                }
+                else
+                {
+                    selectedItem.Amount--;
+                    if (selectedItem.Mesh == null)
+                    {
+                        selectedItem.Mesh = StandInMesh;
+                    }
+                    if (selectedItem.Mesh != null)
+                    {
+                        GameObject spawn = Instantiate(selectedItem.Mesh, player.transform.position + player.transform.forward * 2 + Vector3.up + UnityEngine.Random.insideUnitSphere * 1.8f + player.transform.forward, Quaternion.identity);
+                        spawn.GetComponent<InWorldItem>().item = new Item(selectedItem, 1); // Creates a NEW reference, w same info but behaves independently.
+                        spawn.GetComponent<Rigidbody>().isKinematic = false; // Allows gravity
+                        spawn.layer = LayerMask.NameToLayer("Interactable"); // Allows interaction (to pick up)
+                        spawn.transform.parent = InWorldItemsGroup.transform; //puts the item into a group as to keep inspector tidy.
+                    }
+
+                    if (selectedItem.Amount <= 0)
+                    {
+                        inventory.Remove(selectedItem);
+                        selectedItem = null;
+                    }
+                }
+            }
+        }
     }
 
+    public bool IsEquipt()
+    {
+        foreach (var equipmentSlot in equipmentSlots)
+        {
+            if (selectedItem != null)
+            {
+                if (equipmentSlot.currentItem != null)
+                {
+                    if (selectedItem.Name == equipmentSlot.item.Name)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public GameObject InWorldItemsGroup;
     public Chest chest;
     private void StoreItem()
     {
@@ -330,19 +395,25 @@ public class Inventory : MonoBehaviour
         // SELL, can't sell quest items.
         if (selectedItem.Type != ItemType.Quest)
         {
-            if (GUI.Button(new Rect(4.5f * scr.x, 6.5f * scr.y,
-                scr.x, 0.25f * scr.y), "Sell"))
+            if (GUI.Button(new Rect(4.5f * scr.x, 6.5f * scr.y, scr.x, 0.25f * scr.y), "Sell"))
             {
-                selectedItem.Amount--;
-                shop.AddItem(selectedItem);
-
-                money += (int)(selectedItem.Value * (1f - shop.profitMarginHalved));
-                shop.Profit += selectedItem.Value - (int)(selectedItem.Value * (1f - shop.profitMarginHalved));
-
-                if (selectedItem.Amount <= 0)
+                if (IsEquipt())
                 {
-                    inventory.Remove(selectedItem);
-                    selectedItem = null;
+                    Debug.Log("You must unequip first");
+                }
+                else
+                {
+                    selectedItem.Amount--;
+                    shop.AddItem(selectedItem);
+
+                    money += (int)(selectedItem.Value * (1f - shop.profitMarginHalved));
+                    shop.Profit += selectedItem.Value - (int)(selectedItem.Value * (1f - shop.profitMarginHalved));
+
+                    if (selectedItem.Amount <= 0)
+                    {
+                        inventory.Remove(selectedItem);
+                        selectedItem = null;
+                    }
                 }
             }
         }

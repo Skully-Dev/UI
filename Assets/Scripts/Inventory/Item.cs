@@ -29,7 +29,8 @@ public class Item
     [SerializeField]private int value;
     [SerializeField]private int amount;
     [SerializeField]private Texture2D icon;
-    [SerializeField]private GameObject mesh;
+    //[SerializeField]private GameObject mesh;
+    public GameObject Mesh;
     [SerializeField]private ItemType type;
     [SerializeField] private int damage;// only ever need one of the 3, so could be replaced with effect amount and apply based on item type
     [SerializeField] private int armour;// only ever need one of the 3, so could be replaced with effect amount and apply based on item type
@@ -72,11 +73,11 @@ public class Item
         get { return icon; }
         set { icon = value; }
     }
-    public GameObject Mesh
+    /*public GameObject Mesh
     {
         get { return mesh; }
         set { mesh = value; }
-    }
+    }*/
     public ItemType Type
     {
         get { return type; }
@@ -130,6 +131,11 @@ public class Item
 
     }
 
+    /// <summary>
+    /// Creates a duplicate of the item, therefore a new instance but with the same values as the original.
+    /// </summary>
+    /// <param name="copyItem">The item you want to create a new identical instance of</param>
+    /// <param name="copyAmount">As amount is quantity, you will often only want to be making the 1</param>
     public Item(Item copyItem, int copyAmount)
     {
         name = copyItem.Name;
@@ -137,7 +143,7 @@ public class Item
         value = copyItem.value;
         amount = copyAmount;
         icon = copyItem.Icon;
-        mesh = copyItem.Mesh; //as they are prefabs, this is fine, but if it was an item in scene, instantiate would be a better solution
+        Mesh = copyItem.Mesh; //as they are prefabs, this is fine, but if it was an item in scene, instantiate would be a better solution
         type = copyItem.Type;
         damage = copyItem.Damage;
         armour = copyItem.Armour;

@@ -425,7 +425,8 @@ public class Player : MonoBehaviour
                     if (inWorldItem != null) //if it is an InWorldItem
                     {
                         playerInventory.AddItem(inWorldItem.item); //add to inv
-                        inWorldItem.gameObject.SetActive(false); //hide item.
+                        //inWorldItem.gameObject.SetActive(false); //hide item.
+                        Destroy(inWorldItem.gameObject);
                     }
 
                     /* Same thing but one line.
