@@ -424,9 +424,12 @@ public class Player : MonoBehaviour
                     InWorldItem inWorldItem = hitInfo.collider.GetComponent<InWorldItem>(); //trys to store it as InWorldItem
                     if (inWorldItem != null) //if it is an InWorldItem
                     {
-                        playerInventory.AddItem(inWorldItem.item); //add to inv
-                        //inWorldItem.gameObject.SetActive(false); //hide item.
-                        Destroy(inWorldItem.gameObject);
+                        //Try adding item to player inventory
+                        if (playerInventory.AddItem(inWorldItem.item))
+                        {
+                            //if successful, remove item from world.
+                            Destroy(inWorldItem.gameObject);
+                        }                        
                     }
 
                     /* Same thing but one line.

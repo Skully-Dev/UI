@@ -11806,7 +11806,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1260640875}
-  m_LocalRotation: {x: 0.104107186, y: 0.0072420887, z: -0.0007580929, w: 0.99453944}
+  m_LocalRotation: {x: 0.104107186, y: 0.007242157, z: -0.0007581001, w: 0.99453944}
   m_LocalPosition: {x: 425.70837, y: 3.5, z: 454.57608}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -18250,6 +18250,10 @@ PrefabInstance:
       propertyPath: chestInventory.Array.data[3].effect
       value: 15
       objectReference: {fileID: 0}
+    - target: {fileID: 1495338071, guid: c32ba4bae77ff3045a6b50a57e2bf75e, type: 3}
+      propertyPath: capacity
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 1234697994683276, guid: c32ba4bae77ff3045a6b50a57e2bf75e, type: 3}
       propertyPath: m_Name
       value: Chest
@@ -22873,12 +22877,12 @@ PrefabInstance:
     - target: {fileID: 6619308516894048877, guid: 5386e0427fce3684abe890b86c7386e7,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.0007580947
+      value: -0.0007580983
       objectReference: {fileID: 0}
     - target: {fileID: 6619308516894048877, guid: 5386e0427fce3684abe890b86c7386e7,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.007242105
+      value: 0.0072421394
       objectReference: {fileID: 0}
     - target: {fileID: 6619308516894048877, guid: 5386e0427fce3684abe890b86c7386e7,
         type: 3}
@@ -23108,12 +23112,12 @@ PrefabInstance:
     - target: {fileID: 6619308518330455103, guid: 5386e0427fce3684abe890b86c7386e7,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.007227118
+      value: 0.0072271526
       objectReference: {fileID: 0}
     - target: {fileID: 6619308518330455103, guid: 5386e0427fce3684abe890b86c7386e7,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.0008896995
+      value: -0.00088970363
       objectReference: {fileID: 0}
     - target: {fileID: 6619308518330455103, guid: 5386e0427fce3684abe890b86c7386e7,
         type: 3}

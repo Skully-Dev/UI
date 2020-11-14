@@ -9,6 +9,8 @@ public class Inventory : MonoBehaviour
     public GameManager gameManager;
 
     #region Inventory Variables
+    public int capacity = 10;
+
     public List<Item> inventory = new List<Item>(); //was [SerializeField] private, made public for ConsumablesBar
     public Item selectedItem; //was private, made public for ConsumablesBar
     [SerializeField] private Player player;
@@ -68,11 +70,12 @@ public class Inventory : MonoBehaviour
         return foundItem;
     }
 
-    public void AddItem(Item item)
+    public bool AddItem(Item item)
     {
         if (item.Type.ToString() == "Money")
         {
             money += item.Value; //money converts from item to player money.
+            return true;
         }
         else
         {
@@ -81,11 +84,22 @@ public class Inventory : MonoBehaviour
             if ((item.Type != ItemType.Apparel && item.Type != ItemType.Weapon) && foundItem != null )
             {
                 foundItem.Amount++;
+                return true;
             }
             else
             {
-                Item newItem = new Item(item, 1);
-                inventory.Add(newItem);
+                if (inventory.Count < capacity)
+                {
+                    Item newItem = new Item(item, 1);
+                    inventory.Add(newItem);
+                    return true;
+                }
+                else
+                {
+                    Debug.Log("I can't carry that! I've got no more space for new items.");
+                    return false;
+                }
+
             }
         }
     }
@@ -369,13 +383,17 @@ public class Inventory : MonoBehaviour
         if (GUI.Button(new Rect(4.5f * scr.x, 6.5f * scr.y,
                 scr.x, 0.25f * scr.y), "Store"))
         {
-            selectedItem.Amount--;
-            chest.AddItem(selectedItem);
-
-            if (selectedItem.Amount <= 0)
+            //Try adding item to chest
+            if (chest.AddItem(selectedItem))
             {
-                inventory.Remove(selectedItem);
-                selectedItem = null;
+                //If successful, reduce amount of item
+                selectedItem.Amount--;
+
+                if (selectedItem.Amount <= 0)
+                {
+                    inventory.Remove(selectedItem);
+                    selectedItem = null;
+                }
             }
         }
     }

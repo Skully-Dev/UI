@@ -100,19 +100,22 @@ public class Shop : MonoBehaviour
                 {
                     if (GUI.Button(new Rect(10.5f * scr.x, 6.5f * scr.y, scr.x, 0.25f * scr.y), "Purchase Item"))
                     {
-                        playerInventory.money -= (int)(selectedItem.Value * (1f + profitMarginHalved)); //maybe convert money variable by removing and just using objects of type money, where you give money objects to buy and get money objects to sell.
-                        Profit += (int)(selectedItem.Value * (1f + profitMarginHalved)) - selectedItem.Value;
-
-                        //add to player
-                        playerInventory.AddItem(selectedItem);
-
-                        //remove from shop
-                        selectedItem.Amount--;
-                        if (selectedItem.Amount <= 0)
+                        //Attempts to add item to player
+                        if (playerInventory.AddItem(selectedItem))
                         {
-                            shopInventory.Remove(selectedItem);
-                            selectedItem = null;
+                            //if successful, then pay for item and update stock.
+                            playerInventory.money -= (int)(selectedItem.Value * (1f + profitMarginHalved)); //maybe convert money variable by removing and just using objects of type money, where you give money objects to buy and get money objects to sell.
+                            Profit += (int)(selectedItem.Value * (1f + profitMarginHalved)) - selectedItem.Value;
+
+                            //remove from shop
+                            selectedItem.Amount--;
+                            if (selectedItem.Amount <= 0)
+                            {
+                                shopInventory.Remove(selectedItem);
+                                selectedItem = null;
+                            }
                         }
+
                     }
                 }
             }

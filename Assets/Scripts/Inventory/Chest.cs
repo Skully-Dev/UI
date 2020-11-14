@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Chest : MonoBehaviour
 {
+    [SerializeField]
+    private int capacity = 10;
+
     [Tooltip("Items within the chest")]
     public List<Item> chestInventory = new List<Item>();
     [Tooltip("Currently selected item to display info for")]
@@ -64,15 +67,17 @@ public class Chest : MonoBehaviour
                 if (GUI.Button(new Rect(10.5f * scr.x, 6.5f * scr.y, scr.x, 0.25f * scr.y), "Take Item"))
                 {
                     //add to player
-                    playerInventory.AddItem(selectedItem);
-
-                    //remove from chest
-                    selectedItem.Amount--;
-                    if (selectedItem.Amount <= 0)
+                    if (playerInventory.AddItem(selectedItem))
                     {
-                        chestInventory.Remove(selectedItem);
-                        selectedItem = null;
+                        //If taking the item was successful, remove from chest
+                        selectedItem.Amount--;
+                        if (selectedItem.Amount <= 0)
+                        {
+                            chestInventory.Remove(selectedItem);
+                            selectedItem = null;
+                        }
                     }
+                    
                 }
             }
 
@@ -105,19 +110,33 @@ public class Chest : MonoBehaviour
             playerInventory.gameManager.DisableControls(false);
         }
     }
-
-    public void AddItem(Item item)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="item"></param>
+    /// <returns>If adding the item was sucessful</returns>
+    public bool AddItem(Item item)
     {
         Item foundItem = chestInventory.Find(findItem => findItem.Name == item.Name); //things on the left is paramater, lambda =>  right is expression, each itteration findItem will be the specific item that itteration and it will test it againt the item werre trying to find.
 
         if (foundItem != null)
         {
             foundItem.Amount++;
+            return true;
         }
         else
         {
-            Item newItem = new Item(item, 1);
-            chestInventory.Add(newItem);
+            if (chestInventory.Count < capacity)
+            {
+                Item newItem = new Item(item, 1);
+                chestInventory.Add(newItem);
+                return true;
+            }
+            else
+            {
+                Debug.Log("That won't fit. The chest is too full...");
+                return false;
+            }
         }
     }
 }
