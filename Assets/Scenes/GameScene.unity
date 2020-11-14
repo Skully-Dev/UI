@@ -2639,6 +2639,36 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d477d5d301e42c74fb599f99637c2150, type: 3}
+--- !u!1 &349542386
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 349542387}
+  m_Layer: 8
+  m_Name: Hold Weapon
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &349542387
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 349542386}
+  m_LocalRotation: {x: 0.9916396, y: 0.00000015186019, z: -0.00000019045204, w: 0.12903869}
+  m_LocalPosition: {x: -0, y: 0.00047, z: -0.00009}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1380294324}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 165.172, y: -0.000015258789, z: 0}
 --- !u!4 &356623145 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4718566220974350, guid: 71a03e255850ab443bb18540df126e02,
@@ -16765,6 +16795,148 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1697736519}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1709149476
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1709149478}
+  - component: {fileID: 1709149477}
+  m_Layer: 0
+  m_Name: ConsumablesBar
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1709149477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1709149476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 617fc2fc6c80e2e4badc133664983dd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 465187088}
+  playerInventory: {fileID: 1796612488}
+  hotbar:
+  - buttonText: 
+    keyCode: 257
+    item:
+      name: 
+      description: 
+      value: 0
+      amount: 0
+      icon: {fileID: 0}
+      mesh: {fileID: 0}
+      type: 0
+      damage: 0
+      armour: 0
+      heal: 0
+      stamina: 0
+      mana: 0
+      effect: 0
+  - buttonText: 
+    keyCode: 0
+    item:
+      name: 
+      description: 
+      value: 0
+      amount: 0
+      icon: {fileID: 0}
+      mesh: {fileID: 0}
+      type: 0
+      damage: 0
+      armour: 0
+      heal: 0
+      stamina: 0
+      mana: 0
+      effect: 0
+  - buttonText: 
+    keyCode: 0
+    item:
+      name: 
+      description: 
+      value: 0
+      amount: 0
+      icon: {fileID: 0}
+      mesh: {fileID: 0}
+      type: 0
+      damage: 0
+      armour: 0
+      heal: 0
+      stamina: 0
+      mana: 0
+      effect: 0
+  - buttonText: 
+    keyCode: 0
+    item:
+      name: 
+      description: 
+      value: 0
+      amount: 0
+      icon: {fileID: 0}
+      mesh: {fileID: 0}
+      type: 0
+      damage: 0
+      armour: 0
+      heal: 0
+      stamina: 0
+      mana: 0
+      effect: 0
+  - buttonText: 
+    keyCode: 0
+    item:
+      name: 
+      description: 
+      value: 0
+      amount: 0
+      icon: {fileID: 0}
+      mesh: {fileID: 0}
+      type: 0
+      damage: 0
+      armour: 0
+      heal: 0
+      stamina: 0
+      mana: 0
+      effect: 0
+  - buttonText: 
+    keyCode: 0
+    item:
+      name: 
+      description: 
+      value: 0
+      amount: 0
+      icon: {fileID: 0}
+      mesh: {fileID: 0}
+      type: 0
+      damage: 0
+      armour: 0
+      heal: 0
+      stamina: 0
+      mana: 0
+      effect: 0
+--- !u!4 &1709149478
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1709149476}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 427.81805, y: 2.3077872, z: 461.596}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 25
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1727557977
 GameObject:
   m_ObjectHideFlags: 0
@@ -17926,6 +18098,20 @@ MonoBehaviour:
     stamina: 0
     mana: 0
     effect: 0
+  selectedItem:
+    name: 
+    description: 
+    value: 0
+    amount: 0
+    icon: {fileID: 0}
+    mesh: {fileID: 0}
+    type: 0
+    damage: 0
+    armour: 0
+    heal: 0
+    stamina: 0
+    mana: 0
+    effect: 0
   player: {fileID: 465187088}
   money: 100
   showInventory: 0
@@ -17937,7 +18123,7 @@ MonoBehaviour:
   - slotName: Weapon
     equipLocation: {fileID: 1909518202}
   - slotName: Secondary
-    equipLocation: {fileID: 1380294324}
+    equipLocation: {fileID: 349542387}
   Styles:
   - m_Name: 
     m_Normal:
@@ -22772,17 +22958,17 @@ PrefabInstance:
     - target: {fileID: 6619308518330455103, guid: 5386e0427fce3684abe890b86c7386e7,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.113976166
+      value: 0.11397613
       objectReference: {fileID: 0}
     - target: {fileID: 6619308518330455103, guid: 5386e0427fce3684abe890b86c7386e7,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.3576171
+      value: 0.35761708
       objectReference: {fileID: 0}
     - target: {fileID: 6619308518330455103, guid: 5386e0427fce3684abe890b86c7386e7,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.044024654
+      value: -0.044024643
       objectReference: {fileID: 0}
     - target: {fileID: 6619308518330455103, guid: 5386e0427fce3684abe890b86c7386e7,
         type: 3}

@@ -8,8 +8,8 @@ public class Inventory : MonoBehaviour
     public GameManager gameManager;
 
     #region Inventory Variables
-    [SerializeField] private List<Item> inventory = new List<Item>();
-    private Item selectedItem;
+    public List<Item> inventory = new List<Item>(); //was [SerializeField] private, made public for ConsumablesBar
+    public Item selectedItem; //was private, made public for ConsumablesBar
     [SerializeField] private Player player;
 
     public int money = 100;
@@ -50,6 +50,7 @@ public class Inventory : MonoBehaviour
             else if (showInventory && state == State.Inventory)
             {
                 showInventory = false;
+                selectedItem = null;
 
                 gameManager.EnableControls();
             }
@@ -76,7 +77,7 @@ public class Inventory : MonoBehaviour
         {
             Item foundItem = inventory.Find(findItem => findItem.Name == item.Name); //things on the left is paramater, lambda =>  right is expression, each itteration findItem will be the specific item that itteration and it will test it againt the item werre trying to find.
 
-            if (foundItem != null)
+            if (foundItem != null || item.Type == ItemType.Apparel || item.Type == ItemType.Weapon)
             {
                 foundItem.Amount++;
             }

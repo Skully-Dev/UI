@@ -36,7 +36,9 @@ public class Item
     [SerializeField] private int heal;// only ever need one of the 3, so could be replaced with effect amount and apply based on item type
     [SerializeField] private int stamina;
     [SerializeField] private int mana;
-    [SerializeField] private int effect; //USING FOR CUSTOM EFFECTS
+    [SerializeField] private int effect; //FOR CUSTOM EFFECTS
+    [SerializeField] private int cooldown;
+    [SerializeField] private float timer;
     #endregion
 
     #region Public Properties
@@ -110,6 +112,16 @@ public class Item
         get { return mana; }
         set { mana = value; }
     }
+    public int Cooldown
+    {
+        get { return cooldown; }
+        set { cooldown = value; }
+    }
+    public float Timer
+    {
+        get { return timer; }
+        set { timer = value; }
+    }
     #endregion
 
     #region Contructors
@@ -133,6 +145,8 @@ public class Item
         effect = copyItem.Effect;
         stamina = copyItem.Mana;
         mana = copyItem.Stamina;
+        cooldown = copyItem.Cooldown;
+        timer = copyItem.Timer;
     }
     #endregion
 }
