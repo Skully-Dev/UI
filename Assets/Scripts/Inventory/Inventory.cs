@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using System;
 using UnityEngine.UI;
@@ -282,6 +283,7 @@ public class Inventory : MonoBehaviour
     private void UpdateUseSelectedItemButtons()
     {
         primaryButton.onClick.RemoveAllListeners();
+        primaryButton.gameObject.SetActive(true); //Basically true unless otherwise specified, saves me rewritting.
         primaryButton.interactable = true; //Basically true unless otherwise specified, saves me rewritting.
 
         #region Primary Button
@@ -366,20 +368,25 @@ public class Inventory : MonoBehaviour
                 }
                 break;
             case ItemType.Crafting:
+                primaryButton.gameObject.SetActive(false); //no option, hide button
                 break;
             case ItemType.Ingredients:
+                primaryButton.gameObject.SetActive(false); //no option, hide button
                 break;
             case ItemType.Potions:
                 primaryButton.GetComponentInChildren<Text>().text = "Drink";
                 primaryButton.onClick.AddListener(DrinkEvent);
                 break;
             case ItemType.Scrolls:
+                primaryButton.gameObject.SetActive(false); //no option, hide button
                 break;
             case ItemType.Quest:
+                primaryButton.gameObject.SetActive(false); //no option, hide button
                 break;
             case ItemType.Money:  //Is auto converted and added into money float variables
                 break;
             default:
+                primaryButton.gameObject.SetActive(false); //no option, hide button
                 break;
         }
         #endregion
@@ -391,7 +398,18 @@ public class Inventory : MonoBehaviour
         }
         #endregion
 
-        primaryButton.onClick.AddListener(UpdateUseSelectedItemButtons);
+        primaryButton.onClick.AddListener(EndFrameUpdateButtons);
+    }
+
+    public void EndFrameUpdateButtons()
+    {
+        StartCoroutine(UpdateUseSelectedItemButtonsCo());
+    }
+
+    IEnumerator UpdateUseSelectedItemButtonsCo()
+    {
+        yield return new WaitForEndOfFrame();
+        UpdateUseSelectedItemButtons();
     }
 
     /// <summary>
