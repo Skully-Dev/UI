@@ -92,6 +92,8 @@ public class Inventory : MonoBehaviour
     private Text selectedDiscription;
     [SerializeField]
     private Button primaryButton;
+    [SerializeField]
+    private Button secondaryButton;
     #endregion
 
     public void SelectItem(int i)
@@ -185,7 +187,7 @@ public class Inventory : MonoBehaviour
 
     private void UnequipHat()
     {
-        Destroy(equipmentSlots[0].currentItem); //destroy the spawn of the item. Visuals.
+        DestroyImmediate(equipmentSlots[0].currentItem); //destroy the spawn of the item. Visuals.
         equipmentSlots[0].item = null; //set the equipment slot to empty
     }
     #endregion
@@ -254,13 +256,14 @@ public class Inventory : MonoBehaviour
 
     private void UnequipPrimaryHand()
     {
-        Destroy(equipmentSlots[2].currentItem); //remove the spawn of primary
+        DestroyImmediate(equipmentSlots[2].currentItem);
+        //Destroy(equipmentSlots[2].currentItem); //remove the spawn of primary
         equipmentSlots[2].item = null;
     }
 
     private void UnequipSecondaryHand()
     {
-        Destroy(equipmentSlots[3].currentItem); //delete the spawn of the secondary
+        DestroyImmediate(equipmentSlots[3].currentItem); //delete the spawn of the secondary
         equipmentSlots[3].item = null; //secondary no longer has info so null
     }
 
@@ -286,6 +289,12 @@ public class Inventory : MonoBehaviour
         primaryButton.gameObject.SetActive(true); //Basically true unless otherwise specified, saves me rewritting.
         primaryButton.interactable = true; //Basically true unless otherwise specified, saves me rewritting.
 
+        secondaryButton.onClick.RemoveAllListeners();
+        secondaryButton.gameObject.SetActive(true);
+        secondaryButton.interactable = true;
+        secondaryButton.GetComponentInChildren<Text>().text = "Discard";
+        secondaryButton.onClick.AddListener(DiscardEvent);
+
         #region Primary Button
         switch (selectedItem.Type) //using switch TAB to auto fill, when you type (selectedItem.Type) and press enter it will auto fill the cases.
         {
@@ -302,33 +311,7 @@ public class Inventory : MonoBehaviour
                     primaryButton.interactable = false;
                 }
                 break;
-            case ItemType.Weapon:
-                //Check if unequiping
-                if (equipmentSlots[2].currentItem != null) //if holding a primary weapon
-                {
-                    if (selectedItem.Name == equipmentSlots[2].item.Name) //if that weapon is the same as selected weapon
-                    {
-                        currentArmedState = CurrentArmedState.AlreadyEquipted;
-                        primaryButton.GetComponentInChildren<Text>().text = "Unequip";
-                        primaryButton.onClick.AddListener(UnequipWeaponEvent);
-                    }
-                }
-                else if (equipmentSlots[3].currentItem != null) //if holding a secondary weapon
-                {
-                    if (selectedItem.Name == equipmentSlots[3].item.Name) //if that weapon is the same as selected weapon
-                    {
-                        currentArmedState = CurrentArmedState.AlreadyEquipted;
-                        primaryButton.GetComponentInChildren<Text>().text = "Unequip";
-                        primaryButton.onClick.AddListener(UnequipWeaponEvent);
-                    }
-                }
-                else //otherwise equip
-                {
-                    primaryButton.GetComponentInChildren<Text>().text = "Equip";
-                    primaryButton.onClick.AddListener(EquipWeaponEvent);
-                }
-
-                /*
+            case ItemType.Weapon:               
                 if (equipmentSlots[2].currentItem == null) //if primary slot empty
                 {
                     currentArmedState = CurrentArmedState.Unarmed;
@@ -352,8 +335,9 @@ public class Inventory : MonoBehaviour
                     currentArmedState = CurrentArmedState.AlreadyEquipted;
                     primaryButton.GetComponentInChildren<Text>().text = "Unequip";
                     primaryButton.onClick.AddListener(UnequipWeaponEvent);
+
+                    secondaryButton.interactable = false; //cant drop while equipt
                 }
-                */
                 break;
             case ItemType.Apparel:
                 if (equipmentSlots[0].currentItem == null || selectedItem.Name != equipmentSlots[0].item.Name) //If no apparel equipt or selected item is different to equipt item.
@@ -365,6 +349,8 @@ public class Inventory : MonoBehaviour
                 {
                     primaryButton.GetComponentInChildren<Text>().text = "Unequip";
                     primaryButton.onClick.AddListener(UnequipHatEvent);
+
+                    secondaryButton.interactable = false; //cant drop while equipt
                 }
                 break;
             case ItemType.Crafting:
@@ -382,79 +368,44 @@ public class Inventory : MonoBehaviour
                 break;
             case ItemType.Quest:
                 primaryButton.gameObject.SetActive(false); //no option, hide button
+                secondaryButton.gameObject.SetActive(false); //cant drop quest items
                 break;
             case ItemType.Money:  //Is auto converted and added into money float variables
                 break;
             default:
                 primaryButton.gameObject.SetActive(false); //no option, hide button
+                secondaryButton.gameObject.SetActive(false); //no option, hide button
                 break;
         }
         #endregion
 
-        #region Secondary Button
-        if (selectedItem.Type != ItemType.Quest) //No tossing quest items
-        { 
-        
-        }
-        #endregion
-
-        primaryButton.onClick.AddListener(EndFrameUpdateButtons);
+        primaryButton.onClick.AddListener(UpdateUseSelectedItemButtons);
+        secondaryButton.onClick.AddListener(RefreshInventory);
     }
 
-    public void EndFrameUpdateButtons()
+    public void DiscardEvent()
     {
-        StartCoroutine(UpdateUseSelectedItemButtonsCo());
-    }
-
-    IEnumerator UpdateUseSelectedItemButtonsCo()
-    {
-        yield return new WaitForEndOfFrame();
-        UpdateUseSelectedItemButtons();
-    }
-
-    /// <summary>
-    /// Display Selected item information. 
-    /// Determines what buttons are available and how they work based on selected item TYPE, and Equipt Status
-    /// </summary>
-    private void UseItemNew()
-    {
-
-        if (selectedItem.Type != ItemType.Quest) //No tossing quest items
+        selectedItem.Amount--;
+        if (selectedItem.Mesh == null)
         {
-            if (GUI.Button(new Rect(6f * scr.x, 6.5f * scr.y, scr.x, 0.25f * scr.y), "Discard"))
-            {
-                if (IsEquipt()) //no discarding equipted items, this could happen before like quest items check, therefore it won't show discard for equipt items, but this also makes the check happen continuiously instead of just on button press...
-                {
-                    Debug.Log("You must unequipt first");
-                }
-                else
-                {
-                    //Therefore discardable
+            selectedItem.Mesh = StandInMesh; //adds a default mesh for objects without a unique one.
+        }
+        if (selectedItem.Mesh != null)
+        {
+            //  TODO: do a ray cast, sky down, for ground layer, so item doesnt get droped through the surface of the earth! //^^^^ if done, may need to rearrage code to make (selectedItem.Amount--;) happen AFTER a successful drop.
+            //drops items within a random circle infront of player
+            GameObject spawn = Instantiate(selectedItem.Mesh, player.transform.position + player.transform.forward * 2 + Vector3.up + UnityEngine.Random.insideUnitSphere * 1.8f + player.transform.forward, Quaternion.identity);
+            spawn.GetComponent<InWorldItem>().item = new Item(selectedItem, 1); // Creates a NEW reference, w same info but behaves independently.
+            spawn.GetComponent<Rigidbody>().isKinematic = false; // Allows gravity
+            spawn.layer = LayerMask.NameToLayer("Interactable"); // Allows interaction (to pick up)
+            spawn.transform.parent = InWorldItemsGroup.transform; //puts the item into a group as to keep inspector tidy.
+        }
 
-                    selectedItem.Amount--;
-                    if (selectedItem.Mesh == null)
-                    {
-                        selectedItem.Mesh = StandInMesh; //adds a default mesh for objects without a unique one.
-                    }
-                    if (selectedItem.Mesh != null)
-                    {
-                        //  TODO: do a ray cast, sky down, for ground layer, so item doesnt get droped through the surface of the earth! //^^^^ if done, may need to rearrage code to make (selectedItem.Amount--;) happen AFTER a successful drop.
-                        //drops items within a random circle infront of player
-                        GameObject spawn = Instantiate(selectedItem.Mesh, player.transform.position + player.transform.forward * 2 + Vector3.up + UnityEngine.Random.insideUnitSphere * 1.8f + player.transform.forward, Quaternion.identity);
-                        spawn.GetComponent<InWorldItem>().item = new Item(selectedItem, 1); // Creates a NEW reference, w same info but behaves independently.
-                        spawn.GetComponent<Rigidbody>().isKinematic = false; // Allows gravity
-                        spawn.layer = LayerMask.NameToLayer("Interactable"); // Allows interaction (to pick up)
-                        spawn.transform.parent = InWorldItemsGroup.transform; //puts the item into a group as to keep inspector tidy.
-                    }
-
-                    //Checks to see if item slot should be free'd up.
-                    if (selectedItem.Amount <= 0)
-                    {
-                        inventory.Remove(selectedItem);
-                        selectedItem = null;
-                    }
-                }
-            }
+        //Checks to see if item slot should be free'd up.
+        if (selectedItem.Amount <= 0)
+        {
+            inventory.Remove(selectedItem);
+            selectedItem = null;
         }
     }
 
@@ -581,6 +532,7 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    #region Converted OnGUI
     /// <summary>
     /// Display Selected item information. 
     /// Determines what buttons are available and how they work based on selected item TYPE, and Equipt Status
@@ -815,6 +767,7 @@ public class Inventory : MonoBehaviour
         }
         return false;
     }
+    #endregion
 
     /// <summary>
     /// A button for putting inventory items into a chest.
