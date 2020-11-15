@@ -98,6 +98,18 @@ public class Player : MonoBehaviour
     private Text abilityText;
     #endregion
 
+    #region Interact References and Variables
+    [SerializeField]
+    private Inventory playerInventory;
+    //SphereCast size is ALL based on in scene sphere so easy to visualise how it works.
+    [SerializeField]
+    private GameObject sphereCastObject;
+    private float sphereCastOffset;
+    private float sphereCastRadius;
+    private Vector3 sphereCastDirection;
+    private float sphereCastDistance;
+    #endregion
+
     //awake happens before start and some values are better initialized before others.
     private void Awake()
     {
@@ -106,6 +118,11 @@ public class Player : MonoBehaviour
             LoadPlayer();
             UpdatePlayerCardInfo();
         }
+    }
+
+    private void Start()
+    {
+        InitializeSphereCastValues();
     }
 
     private void Update()
@@ -219,6 +236,7 @@ public class Player : MonoBehaviour
     }
     #endregion
 
+    #region Level Up Method
     /// <summary>
     /// Increases all stat values by 1.
     /// Get 3 additional points to spend.
@@ -240,6 +258,7 @@ public class Player : MonoBehaviour
 
         playerStats.UpdateStatBars();
     }
+    #endregion
 
     #region Use Stat Bars Methods
     /// <summary>
@@ -346,6 +365,7 @@ public class Player : MonoBehaviour
     }
     #endregion
 
+    #region Update Player Card Info Method
     /// <summary>
     /// Updates the Player Card Info displayed in the bottom right corner.
     /// With player customisation info.
@@ -356,15 +376,23 @@ public class Player : MonoBehaviour
         classText.text = profession.ProfessionName + "-" + race.RaceName;
         abilityText.text = profession.AbilityName + " " + race.AbilityName;
     }
+    #endregion
 
-    [SerializeField]
-    private Inventory playerInventory;
-    [SerializeField]
-    private GameObject sphereCastObject;
-    private float sphereCastOffset = 0;
-    private float sphereCastRadius;
-    private Vector3 sphereCastDirection;
-    private float sphereCastDistance;
+    #region Initialize SphereCast Variables Method
+    private void InitializeSphereCastValues()
+    {
+        sphereCastOffset = sphereCastObject.transform.localPosition.y; //4
+        sphereCastRadius = sphereCastObject.transform.localScale.x * 0.5f; //2
+        sphereCastDirection = -Vector3.up; // (0,-1,0)
+        sphereCastDistance = sphereCastOffset + -sphereCastDirection.y; //5
+    }
+    #endregion
+
+    #region Interact Method
+    /// <summary>
+    /// First cast ray from crosshair, if null, Cast sphere from sky down on player.
+    /// If anything interactable is hit, attempt to use it.
+    /// </summary>
     private void Interact()
     {
         if (Input.GetKeyDown(KeyCode.E) && !GameManager.isDisplay)
@@ -376,15 +404,6 @@ public class Player : MonoBehaviour
 
             //from middle of screen
             ray = Camera.main.ScreenPointToRay(new Vector2(Screen.width / 2, Screen.height / 2));
-
-            //This would be better at start to initialize, but it is here to make it easy to find.
-            if (sphereCastOffset == 0)
-            {
-                sphereCastOffset = sphereCastObject.transform.localPosition.y; //4
-                sphereCastRadius = sphereCastObject.transform.localScale.x * 0.5f; //2
-                sphereCastDirection = -Vector3.up; // (0,-1,0)
-                sphereCastDistance = sphereCastOffset + -sphereCastDirection.y; //5
-            }
 
             //this is how you make a mask
             int layerMask = LayerMask.NameToLayer("Interactable"); //get the layer ID (1,2,3,4,5)
@@ -411,7 +430,7 @@ public class Player : MonoBehaviour
             //casts a ray, returns info about ray hit, within a distance (CURRENLTY THE DISTANCE FROM THE CAMERA). Sphere cast is based on player position however!
             if (Physics.Raycast(ray, out hitInfo, 10f, layerMask) || Physics.SphereCast(new Vector3 (transform.position.x, transform.position.y + sphereCastOffset, transform.position.z), sphereCastRadius, sphereCastDirection, out hitInfo, sphereCastDistance, layerMask))
             {
-                //CHANGE IT TO CHECK DISTANCE OF HIT POINT TO PLAYER TRANSFORM
+                //CHECK DISTANCE OF HIT POINT TO PLAYER TRANSFORM
                 if (Vector3.Distance(hitInfo.point, transform.position) <= 6f)
                 {
                     //If object has component NPC
@@ -425,19 +444,12 @@ public class Player : MonoBehaviour
                     if (inWorldItem != null) //if it is an InWorldItem
                     {
                         //Try adding item to player inventory
-                        if (playerInventory.AddItem(inWorldItem.item))
+                        if (playerInventory.AddItemAttempt(inWorldItem.item))
                         {
                             //if successful, remove item from world.
                             Destroy(inWorldItem.gameObject);
                         }                        
                     }
-
-                    /* Same thing but one line.
-                    if (hitInfo.collider.TryGetComponent<NPC>(out NPC npc))
-                    {
-
-                    }
-                    */
 
                     Shop shop = hitInfo.collider.GetComponent<Shop>();
                     if (shop != null)
@@ -450,10 +462,18 @@ public class Player : MonoBehaviour
                     {
                         chest.OpenChestToggle();
                     }
+
+                    /* Same thing but one line.
+                    if (hitInfo.collider.TryGetComponent<NPC>(out NPC npc))
+                    {
+
+                    }
+                    */
                 }
             }
         }
     }
+    #endregion
 
     private void OnGUI()
     {
@@ -476,80 +496,6 @@ public class Player : MonoBehaviour
             DealDamage(25f);
         }
         #endregion
-        
-        /*
-        if (nearShop)
-        {
-            if (!alreadyOpen)
-            {
-                if (GUI.Button(new Rect(30, 1020, 120, 60), "Open Shop"))
-                {
-                    shop.OpenShopToggle();
-                    alreadyOpen = true;
-                    Time.timeScale = 0;
-                }
-            }
-            else
-            {
-                if (GUI.Button(new Rect(30, 1020, 120, 60), "Exit Shop"))
-                {
-                    shop.OpenShopToggle();
-                    alreadyOpen = false;
-                    Time.timeScale = 1;
-                }
-            }
-        }
-
-        if (nearChest)
-        {
-            if (!alreadyOpen)
-            {
-                if (GUI.Button(new Rect(30, 1020, 120, 60), "Open Chest"))
-                {
-                    chest.OpenChestToggle();
-                    alreadyOpen = true;
-                    Time.timeScale = 0;
-                }
-            }
-            else
-            {
-                if (GUI.Button(new Rect(30, 1020, 120, 60), "Exit Chest"))
-                {
-                    chest.OpenChestToggle();
-                    alreadyOpen = false;
-                    Time.timeScale = 1;
-                }
-            }
-        }
-        */
-    }
-    /*
-    Chest chest;
-    Shop shop;
-    bool nearShop = false;
-    bool nearChest = false;
-    bool alreadyOpen = false;
-
-    
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.tag == "Chest")
-        {
-            nearChest = true;
-            chest = other.gameObject.GetComponent<Chest>();
-        }
-
-        if (other.gameObject.tag == "Shop")
-        {
-            nearShop = true;
-            shop = other.gameObject.GetComponent<Shop>();
-        }
     }
 
-    private void OnTriggerExit(Collider other)
-    {
-        nearChest = false;
-        nearShop = false;
-    }
-    */
 }

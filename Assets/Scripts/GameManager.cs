@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     private CinemachineFreeLook cineCam;
     
     /// <summary>
-    /// Disable player movements, Enable Cursor.
+    /// Disable player movements, Enable Cursor, sets isDisplay as true.
     /// </summary>
     public void DisableControls(bool mouseAimOn)
     {
@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Enable player movements, Disable Cursor.
+    /// Enable player movements, Disable Cursor, sets isDisplay as false.
     /// </summary>
     public void EnableControls()
     {

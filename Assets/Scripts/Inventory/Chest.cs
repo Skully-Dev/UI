@@ -67,7 +67,7 @@ public class Chest : MonoBehaviour
                 if (GUI.Button(new Rect(10.5f * scr.x, 6.5f * scr.y, scr.x, 0.25f * scr.y), "Take Item"))
                 {
                     //add to player
-                    if (playerInventory.AddItem(selectedItem))
+                    if (playerInventory.AddItemAttempt(selectedItem))
                     {
                         //If taking the item was successful, remove from chest
                         selectedItem.Amount--;

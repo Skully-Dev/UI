@@ -101,7 +101,7 @@ public class Shop : MonoBehaviour
                     if (GUI.Button(new Rect(10.5f * scr.x, 6.5f * scr.y, scr.x, 0.25f * scr.y), "Purchase Item"))
                     {
                         //Attempts to add item to player
-                        if (playerInventory.AddItem(selectedItem))
+                        if (playerInventory.AddItemAttempt(selectedItem))
                         {
                             //if successful, then pay for item and update stock.
                             playerInventory.money -= (int)(selectedItem.Value * (1f + profitMarginHalved)); //maybe convert money variable by removing and just using objects of type money, where you give money objects to buy and get money objects to sell.
