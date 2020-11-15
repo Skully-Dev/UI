@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.UI;
 
 public class Inventory : MonoBehaviour
 {
@@ -55,9 +56,9 @@ public class Inventory : MonoBehaviour
         public Transform equipLocation;
         //nonSerialized means public but NOT in the inspector.
         [Tooltip("The Game Object Spawn of the equipt item")]
-        [NonSerialized] public GameObject currentItem; //the actual item
+        /*[NonSerialized]*/ public GameObject currentItem; //the actual item
         [Tooltip("The typical item information like in inventory, stored w equipment.")]
-        [NonSerialized] public Item item; 
+        /*[NonSerialized]*/ public Item item; 
     };
     /// <summary>
     /// The array of various equiptment slots, check inspector for available slots.
@@ -74,6 +75,370 @@ public class Inventory : MonoBehaviour
     public Chest chest;
     [Tooltip("A place to reference a used shop")]
     public Shop shop;
+
+    #region Canvas UI References and Variables
+    [SerializeField]
+    private Text moneyText;
+    [SerializeField]
+    private Button[] inventoryButtons;
+
+    //selected item
+    [SerializeField]
+    private Image selectedIcon;
+    [SerializeField]
+    private Text selectedName;
+    [SerializeField]
+    private Text selectedDiscription;
+    [SerializeField]
+    private Button primaryButton;
+    #endregion
+
+    public void SelectItem(int i)
+    {
+        //get selected item
+        selectedItem = inventory[i];
+        
+        //set up selected item icon
+        Sprite mySprite = Sprite.Create(inventory[i].Icon, selectedIcon.sprite.rect,selectedIcon.sprite.pivot);
+        selectedIcon.sprite = mySprite;
+
+        selectedName.text = inventory[i].Name;
+        selectedDiscription.text = selectedItem.Description +
+                                    "\nValue: $" + selectedItem.Value +
+                                    "\nQuantity: " + selectedItem.Amount;
+        UpdateUseSelectedItemButtons();
+    }
+
+    /// <summary>
+    /// Refresh the names of the buttons.
+    /// </summary>
+    public void RefreshInventory()
+    {
+        moneyText.text = "$" + money.ToString();
+
+        int itemCount = inventory.Count;
+        for (int i = 0; i < inventoryButtons.Length; i++)
+        {
+            //Update Inventory Button Text
+            Text buttonText = inventoryButtons[i].GetComponentInChildren<Text>();
+            if (i < itemCount)
+            {
+                buttonText.text = inventory[i].Name;
+            }
+            else
+            {
+                buttonText.text = "-Empty Slot-";
+            }
+        }
+    }
+
+    private void EatEvent()
+    {
+        selectedItem.Amount--;
+
+        player.Heal(selectedItem.Heal);
+
+        if (selectedItem.Amount <= 0)
+        {
+            inventory.Remove(selectedItem);
+            selectedItem = null;
+        }
+    }
+
+    private void DrinkEvent()
+    {
+        selectedItem.Amount--; //reduce item count
+
+        player.RefillStat(selectedItem.Heal, selectedItem.Mana, selectedItem.Stamina); //apply effects
+
+        if (selectedItem.Amount <= 0) //check if no more of item.
+        {
+            inventory.Remove(selectedItem); //empty the spot in inventory
+            selectedItem = null; //clear selection to nothing.
+        }
+    }
+
+
+    #region Hat Equip Methods
+    private void EquipHatEvent()
+    {
+        if (equipmentSlots[0].currentItem != null) //if a hat is already equipt
+        {
+            UnequipHat(); //unequip the old hat.
+        }
+
+        EquipHat(); //equip the new hat.
+    }
+
+    private void UnequipHatEvent()
+    {
+        UnequipHat();
+    }
+
+    private void EquipHat()
+    {
+        GameObject currentItem = Instantiate(selectedItem.Mesh, equipmentSlots[0].equipLocation); //spawn selected item into appropriate location on character
+        equipmentSlots[0].currentItem = currentItem; //reference the spawn
+        equipmentSlots[0].item = selectedItem; //copy the item info into the equiptment slot
+    }
+
+    private void UnequipHat()
+    {
+        Destroy(equipmentSlots[0].currentItem); //destroy the spawn of the item. Visuals.
+        equipmentSlots[0].item = null; //set the equipment slot to empty
+    }
+    #endregion
+
+    #region Weapon Equip Methods
+    private void EquipWeaponEvent()
+    {
+        //determine the situation
+        if (equipmentSlots[2].currentItem == null) //if primary slot empty
+        {
+            currentArmedState = CurrentArmedState.Unarmed;
+        }
+        else if (equipmentSlots[3].currentItem == null && selectedItem.Name != equipmentSlots[2].item.Name) //if not already equpited AND secondary slot empty
+        {
+            currentArmedState = CurrentArmedState.Single;
+        }
+        else if (selectedItem.Name != equipmentSlots[2].item.Name && selectedItem.Name != equipmentSlots[3].item.Name) //if not already equipted but BOTH hands are full
+        {
+            currentArmedState = CurrentArmedState.Duel;
+        }
+
+        //act accordingly
+        if (currentArmedState == CurrentArmedState.Unarmed)
+        {
+            EquipPrimaryHand();
+        }
+        else if (currentArmedState == CurrentArmedState.Single)
+        {
+            EquipSecondaryHand();
+        }
+        else if (currentArmedState == CurrentArmedState.Duel)
+        {
+            UnequipSecondaryHand(); //unequip current secondary
+            EquipSecondaryHand(); //equip new secondary
+        }
+    }
+
+    private void UnequipWeaponEvent()
+    {
+        if (selectedItem.Name == equipmentSlots[2].item.Name) //if it is the primary weapon you are trying to unequip
+        {
+            UnequipPrimaryHand();
+            if (equipmentSlots[3].currentItem != null) //if holding a secondary weapon
+            {
+                SwapSecondaryToPrimaryHand(); //swap it to primary
+            }
+        }
+        else //otherwise it is the secondary weapon you are trying to unequip
+        {
+            UnequipSecondaryHand();
+        }
+    }
+
+    private void EquipPrimaryHand()
+    {
+        GameObject currentItem = Instantiate(selectedItem.Mesh, equipmentSlots[2].equipLocation); //the spawn of the item
+        equipmentSlots[2].currentItem = currentItem; //reference to instance of the spawned object
+        equipmentSlots[2].item = selectedItem; //copy the info of the new equipted weapon
+    }
+    private void EquipSecondaryHand()
+    {
+        GameObject currentItem = Instantiate(selectedItem.Mesh, equipmentSlots[3].equipLocation); //the spawn of the item
+        equipmentSlots[3].currentItem = currentItem; //reference to instance of the spawned object
+        equipmentSlots[3].item = selectedItem; //copy the info of the new equipted weapon
+    }
+
+    private void UnequipPrimaryHand()
+    {
+        Destroy(equipmentSlots[2].currentItem); //remove the spawn of primary
+        equipmentSlots[2].item = null;
+    }
+
+    private void UnequipSecondaryHand()
+    {
+        Destroy(equipmentSlots[3].currentItem); //delete the spawn of the secondary
+        equipmentSlots[3].item = null; //secondary no longer has info so null
+    }
+
+    private void SwapSecondaryToPrimaryHand()
+    {
+        GameObject currentItem = Instantiate(equipmentSlots[3].item.Mesh, equipmentSlots[2].equipLocation); //spawn the secondary into primary position
+        equipmentSlots[2].currentItem = currentItem; //replace reference to instance
+        equipmentSlots[2].item = equipmentSlots[3].item; //copy info into primary
+        UnequipSecondaryHand(); //BASICALLY remove the double up, weapon can't be in both hands.
+    }
+    #endregion
+
+    public enum CurrentArmedState { Unarmed, Single, Duel, AlreadyEquipted };
+    public CurrentArmedState currentArmedState = CurrentArmedState.Unarmed;
+
+    /// <summary>
+    /// Display Selected item information. 
+    /// Determines what buttons are available and how they work based on selected item TYPE, and Equipt Status
+    /// </summary>
+    private void UpdateUseSelectedItemButtons()
+    {
+        primaryButton.onClick.RemoveAllListeners();
+        primaryButton.interactable = true; //Basically true unless otherwise specified, saves me rewritting.
+
+        #region Primary Button
+        switch (selectedItem.Type) //using switch TAB to auto fill, when you type (selectedItem.Type) and press enter it will auto fill the cases.
+        {
+            case ItemType.Food:
+                primaryButton.GetComponentInChildren<Text>().text = "Eat";
+                primaryButton.onClick.AddListener(EatEvent);
+
+                if (player.playerStats.CurrentHealth < player.playerStats.stats.maxHealth)
+                {
+                    primaryButton.enabled = true;
+                }
+                else
+                {
+                    primaryButton.interactable = false;
+                }
+                break;
+            case ItemType.Weapon:
+                //Check if unequiping
+                if (equipmentSlots[2].currentItem != null) //if holding a primary weapon
+                {
+                    if (selectedItem.Name == equipmentSlots[2].item.Name) //if that weapon is the same as selected weapon
+                    {
+                        currentArmedState = CurrentArmedState.AlreadyEquipted;
+                        primaryButton.GetComponentInChildren<Text>().text = "Unequip";
+                        primaryButton.onClick.AddListener(UnequipWeaponEvent);
+                    }
+                }
+                else if (equipmentSlots[3].currentItem != null) //if holding a secondary weapon
+                {
+                    if (selectedItem.Name == equipmentSlots[3].item.Name) //if that weapon is the same as selected weapon
+                    {
+                        currentArmedState = CurrentArmedState.AlreadyEquipted;
+                        primaryButton.GetComponentInChildren<Text>().text = "Unequip";
+                        primaryButton.onClick.AddListener(UnequipWeaponEvent);
+                    }
+                }
+                else //otherwise equip
+                {
+                    primaryButton.GetComponentInChildren<Text>().text = "Equip";
+                    primaryButton.onClick.AddListener(EquipWeaponEvent);
+                }
+
+                /*
+                if (equipmentSlots[2].currentItem == null) //if primary slot empty
+                {
+                    currentArmedState = CurrentArmedState.Unarmed;
+                    primaryButton.GetComponentInChildren<Text>().text = "Equip";
+                    primaryButton.onClick.AddListener(EquipWeaponEvent);
+                }
+                else if (equipmentSlots[3].currentItem == null && selectedItem.Name != equipmentSlots[2].item.Name) //if not already equpited AND secondary slot empty
+                {
+                    currentArmedState = CurrentArmedState.Single;
+                    primaryButton.GetComponentInChildren<Text>().text = "Equip";
+                    primaryButton.onClick.AddListener(EquipWeaponEvent);
+                }
+                else if (selectedItem.Name != equipmentSlots[2].item.Name && selectedItem.Name != equipmentSlots[3].item.Name) //if not already equipted but BOTH hands are full
+                {
+                    currentArmedState = CurrentArmedState.Duel;
+                    primaryButton.GetComponentInChildren<Text>().text = "Equip";
+                    primaryButton.onClick.AddListener(EquipWeaponEvent);
+                }
+                else //otherwise you already have one of this weapon equipted
+                {
+                    currentArmedState = CurrentArmedState.AlreadyEquipted;
+                    primaryButton.GetComponentInChildren<Text>().text = "Unequip";
+                    primaryButton.onClick.AddListener(UnequipWeaponEvent);
+                }
+                */
+                break;
+            case ItemType.Apparel:
+                if (equipmentSlots[0].currentItem == null || selectedItem.Name != equipmentSlots[0].item.Name) //If no apparel equipt or selected item is different to equipt item.
+                {
+                    primaryButton.GetComponentInChildren<Text>().text = "Equip";                    
+                    primaryButton.onClick.AddListener(EquipHatEvent);
+                }
+                else
+                {
+                    primaryButton.GetComponentInChildren<Text>().text = "Unequip";
+                    primaryButton.onClick.AddListener(UnequipHatEvent);
+                }
+                break;
+            case ItemType.Crafting:
+                break;
+            case ItemType.Ingredients:
+                break;
+            case ItemType.Potions:
+                primaryButton.GetComponentInChildren<Text>().text = "Drink";
+                primaryButton.onClick.AddListener(DrinkEvent);
+                break;
+            case ItemType.Scrolls:
+                break;
+            case ItemType.Quest:
+                break;
+            case ItemType.Money:  //Is auto converted and added into money float variables
+                break;
+            default:
+                break;
+        }
+        #endregion
+
+        #region Secondary Button
+        if (selectedItem.Type != ItemType.Quest) //No tossing quest items
+        { 
+        
+        }
+        #endregion
+
+        primaryButton.onClick.AddListener(UpdateUseSelectedItemButtons);
+    }
+
+    /// <summary>
+    /// Display Selected item information. 
+    /// Determines what buttons are available and how they work based on selected item TYPE, and Equipt Status
+    /// </summary>
+    private void UseItemNew()
+    {
+
+        if (selectedItem.Type != ItemType.Quest) //No tossing quest items
+        {
+            if (GUI.Button(new Rect(6f * scr.x, 6.5f * scr.y, scr.x, 0.25f * scr.y), "Discard"))
+            {
+                if (IsEquipt()) //no discarding equipted items, this could happen before like quest items check, therefore it won't show discard for equipt items, but this also makes the check happen continuiously instead of just on button press...
+                {
+                    Debug.Log("You must unequipt first");
+                }
+                else
+                {
+                    //Therefore discardable
+
+                    selectedItem.Amount--;
+                    if (selectedItem.Mesh == null)
+                    {
+                        selectedItem.Mesh = StandInMesh; //adds a default mesh for objects without a unique one.
+                    }
+                    if (selectedItem.Mesh != null)
+                    {
+                        //  TODO: do a ray cast, sky down, for ground layer, so item doesnt get droped through the surface of the earth! //^^^^ if done, may need to rearrage code to make (selectedItem.Amount--;) happen AFTER a successful drop.
+                        //drops items within a random circle infront of player
+                        GameObject spawn = Instantiate(selectedItem.Mesh, player.transform.position + player.transform.forward * 2 + Vector3.up + UnityEngine.Random.insideUnitSphere * 1.8f + player.transform.forward, Quaternion.identity);
+                        spawn.GetComponent<InWorldItem>().item = new Item(selectedItem, 1); // Creates a NEW reference, w same info but behaves independently.
+                        spawn.GetComponent<Rigidbody>().isKinematic = false; // Allows gravity
+                        spawn.layer = LayerMask.NameToLayer("Interactable"); // Allows interaction (to pick up)
+                        spawn.transform.parent = InWorldItemsGroup.transform; //puts the item into a group as to keep inspector tidy.
+                    }
+
+                    //Checks to see if item slot should be free'd up.
+                    if (selectedItem.Amount <= 0)
+                    {
+                        inventory.Remove(selectedItem);
+                        selectedItem = null;
+                    }
+                }
+            }
+        }
+    }
 
     private void Update()
     {
