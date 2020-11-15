@@ -1,17 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class Shop : MonoBehaviour
 {
+    public bool showOnGUI;
+
     [Tooltip("Stock of the shop")]
     public List<Item> shopInventory = new List<Item>();
     [Tooltip("Currently selected item to display info for")]
     private Item selectedItem;
 
+    [Tooltip("The current mark-up, undercut value of the shop.")]
     public float profitMarginHalved = 0.2f;
 
-    [SerializeField]
+    [SerializeField, Tooltip("The total amount of money the shop is better off thanks to you. Influences prices.")]
     private float profit;
     public float Profit
     {
@@ -43,17 +45,20 @@ public class Shop : MonoBehaviour
         }
     }
 
+    [Tooltip("reference to the players inventory")]
     private Inventory playerInventory;
 
     #region Display shop Variables
-    [SerializeField] private bool showShop = false;
-    private Vector2 scr;
+    [SerializeField, Tooltip("Display state of shop window")] private bool showShop = false;
+    [Tooltip("Screen width and height divided by 16 and 9 (ratio 120:1)")] private Vector2 scr;
     //There might be some Dialogue
     #endregion
 
     private void Start()
     {
-        // FIXME: Would make more sense to get the player inventory stright from the player, rather than search the scene for an inventroy.
+        //Initialize player inventory reference
+
+        // TODO: maybe get the player inventory stright from the player, rather than search the scene for an inventroy.
         playerInventory = (Inventory) FindObjectOfType<Inventory>();
         if (playerInventory == null)
         {
@@ -63,72 +68,82 @@ public class Shop : MonoBehaviour
 
     private void OnGUI()
     {
-        scr.x = Screen.width / 16;
-        scr.y = Screen.height / 9;
-
-        if (showShop)
+        if (showOnGUI)
         {
-            for (int i = 0; i < shopInventory.Count; i++)
-            {
-                if (GUI.Button(new Rect(12.5f * scr.x, (0.25f * scr.y) + i * (0.25f * scr.y),
-                                         3 * scr.x, .25f * scr.y), shopInventory[i].Name))
-                {
-                    selectedItem = shopInventory[i];
-                }
-            }
+            scr.x = Screen.width / 16;
+            scr.y = Screen.height / 9;
 
-            if (selectedItem != null)
+            if (showShop)
             {
-                //DISPLAY SELECTED ITEM
-                //backdrop
-                GUI.Box(new Rect(8.5f * scr.x, 0.25f * scr.y,
-                                    3.5f * scr.x, 7 * scr.y), "");
-                //Icon
-                GUI.Box(new Rect(8.75f * scr.x, 0.5f * scr.y,
-                                    3 * scr.x, 3 * scr.y), selectedItem.Icon);
-                //Name Title
-                GUI.Box(new Rect(9.05f * scr.x, 3.5f * scr.y,
-                                    2.5f * scr.x, .5f * scr.y), selectedItem.Name);
-                //Description, Price, Quantity
-                GUI.Box(new Rect(8.75f * scr.x, 4 * scr.y, 3 * scr.x, 3 * scr.y),
-                                    selectedItem.Description +
-                                    "\nPrice: " + (int)(selectedItem.Value * (1f + profitMarginHalved)) + 
-                                    "\nAmount: " + selectedItem.Amount);
-
-                //Purchase option (only if you can afford)
-                if (playerInventory.money >= (int)(selectedItem.Value * (1f + profitMarginHalved)))
+                //Display all shop inventory as buttons w text as name.
+                for (int i = 0; i < shopInventory.Count; i++)
                 {
-                    if (GUI.Button(new Rect(10.5f * scr.x, 6.5f * scr.y, scr.x, 0.25f * scr.y), "Purchase Item"))
+                    if (GUI.Button(new Rect(12.5f * scr.x, (0.25f * scr.y) + i * (0.25f * scr.y),
+                                             3 * scr.x, .25f * scr.y), shopInventory[i].Name))
                     {
-                        //Attempts to add item to player
-                        if (playerInventory.AddItemAttempt(selectedItem))
-                        {
-                            //if successful, then pay for item and update stock.
-                            playerInventory.money -= (int)(selectedItem.Value * (1f + profitMarginHalved)); //maybe convert money variable by removing and just using objects of type money, where you give money objects to buy and get money objects to sell.
-                            Profit += (int)(selectedItem.Value * (1f + profitMarginHalved)) - selectedItem.Value;
-
-                            //remove from shop
-                            selectedItem.Amount--;
-                            if (selectedItem.Amount <= 0)
-                            {
-                                shopInventory.Remove(selectedItem);
-                                selectedItem = null;
-                            }
-                        }
-
+                        selectedItem = shopInventory[i];
                     }
                 }
-            }
 
-            //display players inv
-            playerInventory.showInventory = true;
+                //when item is selected
+                if (selectedItem != null)
+                {
+                    //DISPLAY SELECTED ITEM
+                    //backdrop
+                    GUI.Box(new Rect(8.5f * scr.x, 0.25f * scr.y,
+                                        3.5f * scr.x, 7 * scr.y), "");
+                    //Icon
+                    GUI.Box(new Rect(8.75f * scr.x, 0.5f * scr.y,
+                                        3 * scr.x, 3 * scr.y), selectedItem.Icon);
+                    //Name Title
+                    GUI.Box(new Rect(9.05f * scr.x, 3.5f * scr.y,
+                                        2.5f * scr.x, .5f * scr.y), selectedItem.Name);
+                    //Description, Price, Quantity
+                    GUI.Box(new Rect(8.75f * scr.x, 4 * scr.y, 3 * scr.x, 3 * scr.y),
+                                        selectedItem.Description +
+                                        "\nPrice: " + (int)(selectedItem.Value * (1f + profitMarginHalved)) +
+                                        "\nAmount: " + selectedItem.Amount);
 
-            if (GUI.Button(new Rect(30, 1020, 120, 60), "Exit Shop"))
-            {
-                OpenShopToggle();
+                    //Purchase option (only if you can afford)
+                    if (playerInventory.money >= (int)(selectedItem.Value * (1f + profitMarginHalved)))
+                    {
+                        if (GUI.Button(new Rect(10.5f * scr.x, 6.5f * scr.y, scr.x, 0.25f * scr.y), "Purchase Item"))
+                        {
+                            //Attempts to add item to player
+                            if (playerInventory.AddItemAttempt(selectedItem))
+                            {
+                                //if successful, then pay for item and update stock.
+                                playerInventory.money -= (int)(selectedItem.Value * (1f + profitMarginHalved));
+                                Profit += (int)(selectedItem.Value * (1f + profitMarginHalved)) - selectedItem.Value;
+
+                                //remove from shop
+                                selectedItem.Amount--;
+                                if (selectedItem.Amount <= 0)
+                                {
+                                    shopInventory.Remove(selectedItem);
+                                    selectedItem = null;
+                                }
+                            }
+
+                        }
+                    }
+                }
+
+                //display players inv
+                playerInventory.showInventory = true;
+
+                if (GUI.Button(new Rect(30, 1020, 120, 60), "Exit Shop"))
+                {
+                    OpenShopToggle();
+                }
             }
+        
         }
     }
+
+    /// <summary>
+    /// Switch between displaying shop and NOT displaying shop.
+    /// </summary>
     public void OpenShopToggle()
     {
         if (showShop)
@@ -140,7 +155,7 @@ public class Shop : MonoBehaviour
         }
         else
         {
-            playerInventory.state = Inventory.State.Shop;
+            playerInventory.state = Inventory.State.Shop; //determines the buttons and what they do for selected item in player inventory.
             playerInventory.shop = this;
 
             showShop = true;
@@ -149,6 +164,10 @@ public class Shop : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Adding an item to shop inventory.
+    /// </summary>
+    /// <param name="item">The item to add.</param>
     public void AddItem(Item item)
     {
         Item foundItem = shopInventory.Find(findItem => findItem.Name == item.Name); //things on the left is paramater, lambda =>  right is expression, each itteration findItem will be the specific item that itteration and it will test it againt the item werre trying to find.

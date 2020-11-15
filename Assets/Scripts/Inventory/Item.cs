@@ -1,7 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
+/// <summary>
+/// Items are ONE of these. FOOD, WEAPON, QUEST, MONEY, ETC...
+/// </summary>
 public enum ItemType
 {
     Food,
@@ -30,16 +31,16 @@ public class Item
     [SerializeField]private int amount;
     [SerializeField]private Texture2D icon;
     //[SerializeField]private GameObject mesh;
-    public GameObject Mesh;
+    public GameObject Mesh; //not a property as that caused bug.
     [SerializeField]private ItemType type;
     [SerializeField] private int damage;// only ever need one of the 3, so could be replaced with effect amount and apply based on item type
     [SerializeField] private int armour;// only ever need one of the 3, so could be replaced with effect amount and apply based on item type
     [SerializeField] private int heal;// only ever need one of the 3, so could be replaced with effect amount and apply based on item type
     [SerializeField] private int stamina;
     [SerializeField] private int mana;
-    [SerializeField] private int effect; //FOR CUSTOM EFFECTS
-    [SerializeField] private int cooldown;
-    [SerializeField] private float timer;
+    [SerializeField] private int effect; //FOR CUSTOM EFFECTS besides the general ones listed above
+    [SerializeField] private int cooldown; //how long the cooldown lasts
+    [SerializeField] private float timer; //the remaining cooldown duration, may swap for gametime+cooldown.
     #endregion
 
     #region Public Properties

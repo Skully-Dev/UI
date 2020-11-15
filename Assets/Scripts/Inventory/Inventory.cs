@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using System;
 
@@ -9,6 +8,13 @@ public class Inventory : MonoBehaviour
 
     [Tooltip("Reference GameManager for common control toggle codes, called from Chest, Shop and Inventory, hence public.")]
     public GameManager gameManager;
+
+    /// <summary>
+    /// The various states of the inventory, determines what you can do with inventory items. USE/STORE/SELL etc.
+    /// </summary>
+    public enum State { Inventory, Chest, Shop }
+    [Tooltip("The current state the inventory should be.")]
+    public State state = State.Inventory;
 
     #region Inventory Variables
     [SerializeField, Tooltip("How many item SLOTS available till full")]
@@ -59,22 +65,13 @@ public class Inventory : MonoBehaviour
     public Equipment[] equipmentSlots;
     #endregion
 
-    /// <summary>
-    /// The various states of the inventory, determines what you can do with inventory items. USE/STORE/SELL etc.
-    /// </summary>
-    public enum State { Inventory, Chest, Shop }
-    [Tooltip("The current state the inventory should be.")]
-    public State state = State.Inventory;
-
     [SerializeField, Tooltip("A sphere as a game object for any items without a unique mesh")]
     private GameObject StandInMesh;
-
     [SerializeField, Tooltip("A game object in scene to store all spawned InWorldItem objects for Inspector organisation.")]
     private GameObject InWorldItemsGroup;
 
     [Tooltip("A place to reference a used chest")]
     public Chest chest;
-
     [Tooltip("A place to reference a used shop")]
     public Shop shop;
 
@@ -140,7 +137,6 @@ public class Inventory : MonoBehaviour
             }
             else //If unstackable
             {
-                
                 //Check if room to add
                 if (inventory.Count < capacity)
                 {
@@ -454,7 +450,7 @@ public class Inventory : MonoBehaviour
                 scr.x, 0.25f * scr.y), "Store"))
         {
             //Try adding item to chest
-            if (chest.AddItem(selectedItem))
+            if (chest.AddItemAttempt(selectedItem))
             {
                 //If successful, reduce amount of item
                 selectedItem.Amount--;

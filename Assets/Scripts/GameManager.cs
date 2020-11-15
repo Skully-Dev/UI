@@ -1,15 +1,19 @@
 ﻿using UnityEngine;
 using Cinemachine;
 
+/// <summary>
+/// General code.
+/// Currently has a few common bits of code relating to inventories
+/// </summary>
 public class GameManager : MonoBehaviour
 {
-    [Tooltip("is currently on a display of sorts")]
+    [Tooltip("is it currently on a display of sorts")]
     public static bool isDisplay = false;
 
-    [SerializeField]
+    [SerializeField, Tooltip("To disable/enable player movements")]
     private ThirdPersonMovement playerMovement;
 
-    [SerializeField]
+    [SerializeField, Tooltip("To change mouse position aim settings.")]
     private CinemachineFreeLook cineCam;
     
     /// <summary>
