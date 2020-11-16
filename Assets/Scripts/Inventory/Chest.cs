@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Chest : MonoBehaviour
 {
@@ -9,7 +11,7 @@ public class Chest : MonoBehaviour
     private int capacity = 10;
 
     [Tooltip("Items within the chest")]
-    public List<Item> chestInventory = new List<Item>();
+    public List<Item> inventory = new List<Item>();
     [Tooltip("Currently selected item to display info for")]
     private Item selectedItem;
 
@@ -19,6 +21,33 @@ public class Chest : MonoBehaviour
     //Display Chest
     [SerializeField, Tooltip("Display state of chest window")] private bool showChest = false;
     [Tooltip("Screen width and height divided by 16 and 9 (ratio 120:1)")] private Vector2 scr;
+
+    // TODO: these references can be the same for Chest AND Shop. Therefore could have a Base Class OtherInventory that chest and shop inherit from, that way there only needs to be one place to reference.
+    #region Canvas UI References and Variables
+    [SerializeField]
+    private Button[] inventoryButtons;
+
+    //selected item
+    [SerializeField]
+    private Image selectedIcon;
+    [SerializeField]
+    private Text selectedName;
+    [SerializeField]
+    private Text selectedDiscription;
+    [SerializeField]
+    private Button primaryButton;
+    [SerializeField]
+    private Button secondaryButton;
+
+    //Canvas groups
+    [SerializeField]
+    private GameObject chestInventoryGroup;
+    [SerializeField]
+    private GameObject selectedItemGroup;
+
+    #endregion
+
+
 
     private void Start()
     {
@@ -42,12 +71,12 @@ public class Chest : MonoBehaviour
             if (showChest)
             {
                 //for each item in chest inventory, add button to select item to Layout List
-                for (int i = 0; i < chestInventory.Count; i++)
+                for (int i = 0; i < inventory.Count; i++)
                 {
                     if (GUI.Button(new Rect(12.5f * scr.x, (0.25f * scr.y) + i * (0.25f * scr.y),
-                                             3 * scr.x, .25f * scr.y), chestInventory[i].Name))
+                                             3 * scr.x, .25f * scr.y), inventory[i].Name))
                     {
-                        selectedItem = chestInventory[i];
+                        selectedItem = inventory[i];
                     }
                 }
 
@@ -79,11 +108,10 @@ public class Chest : MonoBehaviour
                             selectedItem.Amount--;
                             if (selectedItem.Amount <= 0)
                             {
-                                chestInventory.Remove(selectedItem);
+                                inventory.Remove(selectedItem);
                                 selectedItem = null;
                             }
                         }
-
                     }
                 }
 
@@ -99,23 +127,218 @@ public class Chest : MonoBehaviour
     }
 
     /// <summary>
+    /// OnClick of Canvas UI Chest Items button
+    /// </summary>
+    /// <param name="i"></param>
+    public void SelectItem(int i)
+    {
+        if (i < inventory.Count) //item selected
+        {
+            selectedItemGroup.SetActive(true);//show selected item window
+
+            //get selected item
+            selectedItem = inventory[i];
+
+            //set up selected item icon
+            Sprite mySprite = Sprite.Create(inventory[i].Icon, selectedIcon.sprite.rect, selectedIcon.sprite.pivot);
+            selectedIcon.sprite = mySprite;
+
+            selectedName.text = inventory[i].Name;
+            //RefreshSelectedItemDescription() could replace
+            selectedDiscription.text = selectedItem.Description +
+                                        "\nValue: $" + selectedItem.Value +
+                                        "\nQuantity: " + selectedItem.Amount;
+
+            UpdateTakeButton();
+        }
+        else //otherwise no item selected
+        {
+            selectedItem = null;
+            selectedItemGroup.SetActive(false);//hide selected item window
+        }
+    }
+
+    /// <summary>
+    /// Refresh the names of the buttons.
+    /// </summary>
+    public void RefreshInventory()
+    {
+        Text buttonText;
+        int itemCount = inventory.Count;
+
+        if (playerInventory.sortType == "")
+        {
+            //DISPLAY ALL ITEMS and empty item slots
+
+            for (int i = 0; i < inventoryButtons.Length; i++)
+            {
+                //activate all inventory buttons
+                inventoryButtons[i].gameObject.SetActive(true);
+
+                //Update Inventory Button Text
+                buttonText = inventoryButtons[i].GetComponentInChildren<Text>();
+
+                if (i < itemCount)
+                {
+                    buttonText.text = inventory[i].Name;
+                }
+                else
+                {
+                    buttonText.text = "-Empty Slot-";
+                }
+            }
+        }
+        else //Otherwise only display items of type
+        {
+            ItemType type = (ItemType)Enum.Parse(typeof(ItemType), playerInventory.sortType);
+
+            for (int i = 0; i < inventoryButtons.Length; i++)
+            {
+                if (i < itemCount && inventory[i].Type == type)
+                {
+                    //activate relevant inventory buttons
+                    inventoryButtons[i].gameObject.SetActive(true);
+
+                    buttonText = inventoryButtons[i].GetComponentInChildren<Text>();
+                    buttonText.text = inventory[i].Name;
+                }
+                else
+                {
+                    //hides unrelated buttons
+                    inventoryButtons[i].gameObject.SetActive(false);
+                    //due to layout, will automatically move all active buttons to the top of the list
+                }
+            }
+        }
+
+        if (selectedItem == null)
+        {
+            selectedItemGroup.SetActive(false); //hide selected item window
+        }
+    }
+
+
+    /// <summary>
+    /// Determines what buttons are available and how they work based on selected item TYPE, and Equipt Status
+    /// </summary>
+    public void UpdateTakeButton()
+    {
+        secondaryButton.gameObject.SetActive(false);//no need for secondary in chest
+
+        if (selectedItem != null)
+        {
+            primaryButton.onClick.RemoveAllListeners();
+            primaryButton.gameObject.SetActive(true); //Basically true unless otherwise specified, saves me rewritting.
+            
+            primaryButton.onClick.AddListener(TakeItemEvent);
+            primaryButton.gameObject.GetComponentInChildren<Text>().text = "Take";
+            primaryButton.onClick.AddListener(RefreshInventory);
+
+            //attempt to add to player inventory
+            if (playerInventory.CanAddItem(selectedItem))
+            {
+                //If it is possible for player to take item
+                primaryButton.interactable = true;
+            }
+            else
+            {
+                primaryButton.interactable = false;
+            }
+        }
+        else
+        {
+            primaryButton.gameObject.SetActive(false); //Just to avoid taking null items.
+        }
+    }
+
+    /// <summary>
+    /// Take item, set up for canvas UI
+    /// </summary>
+    private void TakeItemEvent()
+    {
+        //attempt to add to player inventory, should always succeed anyways as already checked
+        if (playerInventory.AddItemAttempt(selectedItem))
+        {
+            //If taking the item was successful, remove from chest
+            selectedItem.Amount--;
+            if (selectedItem.Amount <= 0)
+            {
+                inventory.Remove(selectedItem);
+                selectedItem = null;
+                selectedItemGroup.SetActive(false);
+            }
+            else
+            {
+                RefreshSelectedItemDescription();
+            }
+
+            playerInventory.RefreshInventory(); //refresh the players items
+            playerInventory.RefreshSelectedItemDescription(); //refresh the players selected item description
+            playerInventory.UpdateUseSelectedItemButtons(); //if couldnt store item, then you take an item, must update the store item option. etc.
+        }
+    }
+
+    /// <summary>
+    /// Updates just the description of selected item window, handy for changing amount
+    /// </summary>
+    public void RefreshSelectedItemDescription()
+    {
+        if (selectedItem != null)
+        {
+            selectedDiscription.text = selectedItem.Description +
+                    "\nValue: $" + selectedItem.Value +
+                    "\nQuantity: " + selectedItem.Amount;
+        }
+    }
+
+    /// <summary>
+    /// Determines what buttons are available and how they work based on selected item TYPE, and Equipt Status
+    /// </summary>
+    private void UpdateUseSelectedItemButtons()
+    {
+        if (selectedItem != null) //if nothing selected, do nothing.
+        {
+            primaryButton.onClick.RemoveAllListeners();
+            primaryButton.gameObject.SetActive(true); //Basically true unless otherwise specified, saves me rewritting.
+            primaryButton.interactable = true; //Basically true unless otherwise specified, saves me rewritting.
+
+            #region Primary Button
+           
+
+            primaryButton.onClick.AddListener(UpdateUseSelectedItemButtons);
+            secondaryButton.onClick.AddListener(RefreshInventory);
+        }
+    }
+
+
+
+    /// <summary>
     /// Switch between displaying chest and NOT displaying chest.
     /// </summary>
     public void OpenChestToggle()
     {
         if (showChest)
         {
+            playerInventory.HideInventory();
             playerInventory.showInventory = false;
+
+            chestInventoryGroup.SetActive(false);
+            selectedItem = null;
             showChest = false;
 
             playerInventory.gameManager.EnableControls();
         }
         else
         {
+            playerInventory.ShowInventory();
+            //playerInventory.showInventory = true;
+
             playerInventory.state = Inventory.State.Chest; //determines the buttons and what they do for selected item in player inventory.
             playerInventory.chest = this;
 
             showChest = true;
+            chestInventoryGroup.SetActive(true);
+            RefreshInventory();
 
             playerInventory.gameManager.DisableControls(false);
         }
@@ -128,7 +351,7 @@ public class Chest : MonoBehaviour
     /// <returns>Returns true if successful at adding to Chest. Otherwise false.</returns>
     public bool AddItemAttempt(Item item)
     {
-        Item foundItem = chestInventory.Find(findItem => findItem.Name == item.Name); //things on the left is paramater, lambda =>  right is expression, each itteration findItem will be the specific item that itteration and it will test it againt the item werre trying to find.
+        Item foundItem = inventory.Find(findItem => findItem.Name == item.Name); //things on the left is paramater, lambda =>  right is expression, each itteration findItem will be the specific item that itteration and it will test it againt the item werre trying to find.
 
         //checks to see if it can stack with existing inventory items, weapons and apparel DONT STACK
         if ((item.Type != ItemType.Apparel && item.Type != ItemType.Weapon) && foundItem != null)
@@ -139,11 +362,11 @@ public class Chest : MonoBehaviour
         else //If unstackable
         {
             //Check if room to add
-            if (chestInventory.Count < capacity)
+            if (inventory.Count < capacity)
             {
                 //enough room, adds item
                 Item newItem = new Item(item, 1);
-                chestInventory.Add(newItem);
+                inventory.Add(newItem);
                 return true;
             }
             else
@@ -154,4 +377,42 @@ public class Chest : MonoBehaviour
             }
         }
     }
+
+    /// <summary>
+    /// Check if it would be possible to add item
+    /// </summary>
+    /// <param name="item">The item to test</param>
+    /// <returns>Returns true if it would be successful at adding to chest. Otherwise false.</returns>
+    public bool CanAddItem(Item item)
+    {
+        if (item.Type.ToString() == "Money")
+        {
+            return true;
+        }
+        else
+        {
+            Item foundItem = inventory.Find(findItem => findItem.Name == item.Name); //things on the left is paramater, lambda =>  right is expression, each itteration findItem will be the specific item that itteration and it will test it againt the item werre trying to find.
+
+            //checks to see if it can stack with existing chest items, weapons and apparel DONT STACK
+            if ((item.Type != ItemType.Apparel && item.Type != ItemType.Weapon) && foundItem != null)
+            {
+                return true;
+            }
+            else //If unstackable
+            {
+                //Check if room to add
+                if (inventory.Count < capacity)
+                {
+                    //enough room, adds item
+                    return true;
+                }
+                else
+                {
+                    //no room, item add fails.
+                    return false;
+                }
+            }
+        }
+    }
 }
+#endregion
