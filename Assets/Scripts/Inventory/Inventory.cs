@@ -96,20 +96,113 @@ public class Inventory : MonoBehaviour
     private Button secondaryButton;
     #endregion
 
+    public enum CurrentArmedState { Unarmed, Single, Duel, AlreadyEquipted };
+    public CurrentArmedState currentArmedState = CurrentArmedState.Unarmed;
+
+    [SerializeField]
+    private GameObject inventoryGroup;
+    [SerializeField]
+    private GameObject selectedItemGroup;
+
+    private void Update()
+    {
+        //if user presses I which attempts to open inventory window
+        if (Input.GetKeyDown(KeyCode.I)) //I for Inventory
+        {
+            if (!GameManager.isDisplay) //if not currently in any window displays
+            {
+                inventoryGroup.SetActive(true);
+                RefreshInventory();
+
+
+                //showInventory = true;
+                state = State.Inventory; //determines the available options for selected item.
+
+                gameManager.DisableControls(false);
+            }
+            else if (state == State.Inventory) //if inventory open and it is inventroy window
+            {
+                inventoryGroup.SetActive(false);
+
+                //showInventory = false; //Close the inventory
+                //selectedItem = null; //deselect item
+
+                gameManager.EnableControls();
+            }
+        }
+
+        /*
+        //if user presses I which attempts to open inventory window
+        if (Input.GetKeyDown(KeyCode.I)) //I for Inventory
+        {
+            if (!GameManager.isDisplay) //if not currently in any window displays
+            {
+                showInventory = true;
+                state = State.Inventory; //determines the available options for selected item.
+
+                gameManager.DisableControls(false);
+            }
+            else if (showInventory && state == State.Inventory) //if inventory open and it is inventroy window
+            {
+                showInventory = false; //Close the inventory
+                selectedItem = null; //deselect item
+
+                gameManager.EnableControls();
+            }
+        }
+        */
+
+    }
+
+    /// <summary>
+    /// sets sort type value
+    /// </summary>
+    /// <param name="typeIndex"></param>
+    public void ChangeSort(int typeIndex)
+    {
+        string[] itemTypes = Enum.GetNames(typeof(ItemType));   //a string array of item types
+        int CountOfItemTypes = itemTypes.Length;                //a count of item types
+
+        if (typeIndex < 0 || typeIndex >= itemTypes.Length) //Anything invalid options results in ALL 
+        {
+            sortType = "";
+        }
+        else
+        {
+            sortType = itemTypes[typeIndex];
+        }
+    }
+
+    #region Canvas UI Methods
+    /// <summary>
+    /// OnClick of Canvas UI inventory button
+    /// </summary>
+    /// <param name="i"></param>
     public void SelectItem(int i)
     {
-        //get selected item
-        selectedItem = inventory[i];
-        
-        //set up selected item icon
-        Sprite mySprite = Sprite.Create(inventory[i].Icon, selectedIcon.sprite.rect,selectedIcon.sprite.pivot);
-        selectedIcon.sprite = mySprite;
+        if (i < inventory.Count) //item selected
+        {
+            selectedItemGroup.SetActive(true);//show selected item window
 
-        selectedName.text = inventory[i].Name;
-        selectedDiscription.text = selectedItem.Description +
-                                    "\nValue: $" + selectedItem.Value +
-                                    "\nQuantity: " + selectedItem.Amount;
-        UpdateUseSelectedItemButtons();
+            //get selected item
+            selectedItem = inventory[i];
+
+            //set up selected item icon
+            Sprite mySprite = Sprite.Create(inventory[i].Icon, selectedIcon.sprite.rect, selectedIcon.sprite.pivot);
+            selectedIcon.sprite = mySprite;
+
+            selectedName.text = inventory[i].Name;
+            selectedDiscription.text = selectedItem.Description +
+                                        "\nValue: $" + selectedItem.Value +
+                                        "\nQuantity: " + selectedItem.Amount;
+
+            UpdateUseSelectedItemButtons();
+        }
+        else //otherwise no item selected
+        {
+            selectedItemGroup.SetActive(false);//hide selected item window
+            selectedItem = null;
+        }
     }
 
     /// <summary>
@@ -117,21 +210,59 @@ public class Inventory : MonoBehaviour
     /// </summary>
     public void RefreshInventory()
     {
+        Text buttonText;
+        int itemCount = inventory.Count;
+
         moneyText.text = "$" + money.ToString();
 
-        int itemCount = inventory.Count;
-        for (int i = 0; i < inventoryButtons.Length; i++)
+        if (sortType == "")
         {
-            //Update Inventory Button Text
-            Text buttonText = inventoryButtons[i].GetComponentInChildren<Text>();
-            if (i < itemCount)
+            //DISPLAY ALL ITEMS and empty item slots
+            
+            for (int i = 0; i < inventoryButtons.Length; i++)
             {
-                buttonText.text = inventory[i].Name;
+                //activate all inventory buttons
+                inventoryButtons[i].gameObject.SetActive(true);
+
+                //Update Inventory Button Text
+                buttonText = inventoryButtons[i].GetComponentInChildren<Text>();
+
+                if (i < itemCount)
+                {
+                    buttonText.text = inventory[i].Name;
+                }
+                else
+                {
+                    buttonText.text = "-Empty Slot-";
+                }
             }
-            else
+        }
+        else //Otherwise only display items of type
+        {
+            ItemType type = (ItemType)Enum.Parse(typeof(ItemType), sortType);
+
+            for (int i = 0; i < inventoryButtons.Length; i++)
             {
-                buttonText.text = "-Empty Slot-";
+                if (i < itemCount && inventory[i].Type == type)
+                {
+                    //activate relevant inventory buttons
+                    inventoryButtons[i].gameObject.SetActive(true);
+
+                    buttonText = inventoryButtons[i].GetComponentInChildren<Text>();
+                    buttonText.text = inventory[i].Name;
+                }
+                else
+                {
+                    //hides unrelated buttons
+                    inventoryButtons[i].gameObject.SetActive(false);
+                    //due to layout, will automatically move all active buttons to the top of the list
+                }
             }
+        }
+
+        if (selectedItem == null)
+        {
+            selectedItemGroup.SetActive(false); //hide selected item window
         }
     }
 
@@ -276,9 +407,6 @@ public class Inventory : MonoBehaviour
     }
     #endregion
 
-    public enum CurrentArmedState { Unarmed, Single, Duel, AlreadyEquipted };
-    public CurrentArmedState currentArmedState = CurrentArmedState.Unarmed;
-
     /// <summary>
     /// Display Selected item information. 
     /// Determines what buttons are available and how they work based on selected item TYPE, and Equipt Status
@@ -408,28 +536,7 @@ public class Inventory : MonoBehaviour
             selectedItem = null;
         }
     }
-
-    private void Update()
-    {
-        //if user presses I which attempts to open inventory window
-        if (Input.GetKeyDown(KeyCode.I)) //I for Inventory
-        {
-            if (!GameManager.isDisplay) //if not currently in any window displays
-            {
-                showInventory = true;
-                state = State.Inventory; //determines the available options for selected item.
-
-                gameManager.DisableControls(false);
-            }
-            else if (showInventory && state == State.Inventory) //if inventory open and it is inventroy window
-            {
-                showInventory = false; //Close the inventory
-                selectedItem = null; //deselect item
-
-                gameManager.EnableControls();
-            }
-        }
-    }
+    #endregion
 
     /// <summary>
     /// Checks inventory for item of same name.
