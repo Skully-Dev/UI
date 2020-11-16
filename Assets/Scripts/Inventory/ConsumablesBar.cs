@@ -42,6 +42,8 @@ public class ConsumablesBar : MonoBehaviour
 
     private void Update()
     {
+        //Redundant
+        /*
         //run item cooldowns.
         for (int i = 0; i < hotbar.Length; i++)
         {
@@ -50,6 +52,7 @@ public class ConsumablesBar : MonoBehaviour
                 hotbar[i].item.Timer -= Time.deltaTime;
             }
         }
+        */
     }
 
     private void OnGUI()
@@ -70,14 +73,17 @@ public class ConsumablesBar : MonoBehaviour
                     //if in inventory
                     if (playerInventory.showInventory)
                     {
-                        //if selected item is consumable
-                        if (playerInventory.selectedItem.Type == ItemType.Food || playerInventory.selectedItem.Type == ItemType.Potions)
+                        if (playerInventory.selectedItem != null)
                         {
-                            //add selected item as item to use for hotkey
-                            hotbar[i].item = playerInventory.selectedItem;
+                            //if selected item is consumable
+                            if (playerInventory.selectedItem.Type == ItemType.Food || playerInventory.selectedItem.Type == ItemType.Potions)
+                            {
+                                //add selected item as item to use for hotkey
+                                hotbar[i].item = playerInventory.selectedItem;
+                            }
                         }
                     }
-                    else if (!GameManager.isDisplay && hotbar[i].item.Amount > 0 && hotbar[i].item.Timer <= 0) //if no display windows open and have items in stock
+                    else if (!GameManager.isDisplay && hotbar[i].item.Amount > 0 && hotbar[i].item.CooldownTermination < Time.time) //if no display windows open and have items in stock && timer is up
                     {
                         //determine how to use the item
                         switch (hotbar[i].item.Type)
@@ -87,7 +93,7 @@ public class ConsumablesBar : MonoBehaviour
 
                                 player.Heal(hotbar[i].item.Heal);
 
-                                hotbar[i].item.Timer = hotbar[i].item.Cooldown;
+                                hotbar[i].item.CooldownTermination = Time.time + hotbar[i].item.Cooldown;
 
                                 if (hotbar[i].item.Amount <= 0)
                                 {
@@ -100,7 +106,7 @@ public class ConsumablesBar : MonoBehaviour
 
                                 player.RefillStat(hotbar[i].item.Heal, hotbar[i].item.Mana, hotbar[i].item.Stamina);
 
-                                hotbar[i].item.Timer = hotbar[i].item.Cooldown;
+                                hotbar[i].item.CooldownTermination = Time.time + hotbar[i].item.Cooldown;
 
                                 if (hotbar[i].item.Amount <= 0)
                                 {
@@ -114,10 +120,9 @@ public class ConsumablesBar : MonoBehaviour
                     }
                 }
 
-                if (hotbar[i].item.Timer > 0)
+                if (hotbar[i].item.CooldownTermination > Time.time)
                 {
-                    GUI.Box(new Rect(5 * scr.x + i * scr.x, 8 * scr.y, scr.x, scr.y), hotbar[i].item.Timer.ToString("0"));
-                    //hotbar[i].item.Timer -= Time.deltaTime;
+                    GUI.Box(new Rect(5 * scr.x + i * scr.x, 8 * scr.y, scr.x, scr.y), (hotbar[i].item.CooldownTermination - Time.time).ToString("0"));
                 }
                 else if (hotbar[i].item.Amount <= 0)
                 {

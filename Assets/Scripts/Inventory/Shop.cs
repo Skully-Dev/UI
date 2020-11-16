@@ -299,81 +299,6 @@ public class Shop : MonoBehaviour
         }
     }
 
-    private void OnGUI()
-    {
-        if (showOnGUI)
-        {
-            scr.x = Screen.width / 16;
-            scr.y = Screen.height / 9;
-
-            if (showShop)
-            {
-                //Display all shop inventory as buttons w text as name.
-                for (int i = 0; i < inventory.Count; i++)
-                {
-                    if (GUI.Button(new Rect(12.5f * scr.x, (0.25f * scr.y) + i * (0.25f * scr.y),
-                                             3 * scr.x, .25f * scr.y), inventory[i].Name))
-                    {
-                        selectedItem = inventory[i];
-                    }
-                }
-
-                //when item is selected
-                if (selectedItem != null)
-                {
-                    //DISPLAY SELECTED ITEM
-                    //backdrop
-                    GUI.Box(new Rect(8.5f * scr.x, 0.25f * scr.y,
-                                        3.5f * scr.x, 7 * scr.y), "");
-                    //Icon
-                    GUI.Box(new Rect(8.75f * scr.x, 0.5f * scr.y,
-                                        3 * scr.x, 3 * scr.y), selectedItem.Icon);
-                    //Name Title
-                    GUI.Box(new Rect(9.05f * scr.x, 3.5f * scr.y,
-                                        2.5f * scr.x, .5f * scr.y), selectedItem.Name);
-                    //Description, Price, Quantity
-                    GUI.Box(new Rect(8.75f * scr.x, 4 * scr.y, 3 * scr.x, 3 * scr.y),
-                                        selectedItem.Description +
-                                        "\nPrice: " + (int)(selectedItem.Value * (1f + profitMarginHalved)) +
-                                        "\nAmount: " + selectedItem.Amount);
-
-                    //Purchase option (only if you can afford)
-                    if (playerInventory.money >= (int)(selectedItem.Value * (1f + profitMarginHalved)))
-                    {
-                        if (GUI.Button(new Rect(10.5f * scr.x, 6.5f * scr.y, scr.x, 0.25f * scr.y), "Purchase Item"))
-                        {
-                            //Attempts to add item to player
-                            if (playerInventory.AddItemAttempt(selectedItem))
-                            {
-                                //if successful, then pay for item and update stock.
-                                playerInventory.money -= (int)(selectedItem.Value * (1f + profitMarginHalved));
-                                Profit += (int)(selectedItem.Value * (1f + profitMarginHalved)) - selectedItem.Value;
-
-                                //remove from shop
-                                selectedItem.Amount--;
-                                if (selectedItem.Amount <= 0)
-                                {
-                                    inventory.Remove(selectedItem);
-                                    selectedItem = null;
-                                }
-                            }
-
-                        }
-                    }
-                }
-
-                //display players inv
-                playerInventory.showInventory = true;
-
-                if (GUI.Button(new Rect(30, 1020, 120, 60), "Exit Shop"))
-                {
-                    OpenShopToggle();
-                }
-            }
-        
-        }
-    }
-
     /// <summary>
     /// Switch between displaying shop and NOT displaying shop.
     /// </summary>
@@ -456,6 +381,81 @@ public class Shop : MonoBehaviour
         {
             Item newItem = new Item(item, 1);
             inventory.Add(newItem);
+        }
+    }
+
+    private void OnGUI()
+    {
+        if (showOnGUI)
+        {
+            scr.x = Screen.width / 16;
+            scr.y = Screen.height / 9;
+
+            if (showShop)
+            {
+                //Display all shop inventory as buttons w text as name.
+                for (int i = 0; i < inventory.Count; i++)
+                {
+                    if (GUI.Button(new Rect(12.5f * scr.x, (0.25f * scr.y) + i * (0.25f * scr.y),
+                                             3 * scr.x, .25f * scr.y), inventory[i].Name))
+                    {
+                        selectedItem = inventory[i];
+                    }
+                }
+
+                //when item is selected
+                if (selectedItem != null)
+                {
+                    //DISPLAY SELECTED ITEM
+                    //backdrop
+                    GUI.Box(new Rect(8.5f * scr.x, 0.25f * scr.y,
+                                        3.5f * scr.x, 7 * scr.y), "");
+                    //Icon
+                    GUI.Box(new Rect(8.75f * scr.x, 0.5f * scr.y,
+                                        3 * scr.x, 3 * scr.y), selectedItem.Icon);
+                    //Name Title
+                    GUI.Box(new Rect(9.05f * scr.x, 3.5f * scr.y,
+                                        2.5f * scr.x, .5f * scr.y), selectedItem.Name);
+                    //Description, Price, Quantity
+                    GUI.Box(new Rect(8.75f * scr.x, 4 * scr.y, 3 * scr.x, 3 * scr.y),
+                                        selectedItem.Description +
+                                        "\nPrice: " + (int)(selectedItem.Value * (1f + profitMarginHalved)) +
+                                        "\nAmount: " + selectedItem.Amount);
+
+                    //Purchase option (only if you can afford)
+                    if (playerInventory.money >= (int)(selectedItem.Value * (1f + profitMarginHalved)))
+                    {
+                        if (GUI.Button(new Rect(10.5f * scr.x, 6.5f * scr.y, scr.x, 0.25f * scr.y), "Purchase Item"))
+                        {
+                            //Attempts to add item to player
+                            if (playerInventory.AddItemAttempt(selectedItem))
+                            {
+                                //if successful, then pay for item and update stock.
+                                playerInventory.money -= (int)(selectedItem.Value * (1f + profitMarginHalved));
+                                Profit += (int)(selectedItem.Value * (1f + profitMarginHalved)) - selectedItem.Value;
+
+                                //remove from shop
+                                selectedItem.Amount--;
+                                if (selectedItem.Amount <= 0)
+                                {
+                                    inventory.Remove(selectedItem);
+                                    selectedItem = null;
+                                }
+                            }
+
+                        }
+                    }
+                }
+
+                //display players inv
+                playerInventory.showInventory = true;
+
+                if (GUI.Button(new Rect(30, 1020, 120, 60), "Exit Shop"))
+                {
+                    OpenShopToggle();
+                }
+            }
+
         }
     }
 }

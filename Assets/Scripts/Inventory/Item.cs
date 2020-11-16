@@ -40,7 +40,7 @@ public class Item
     [SerializeField] private int mana;
     [SerializeField] private int effect; //FOR CUSTOM EFFECTS besides the general ones listed above
     [SerializeField] private int cooldown; //how long the cooldown lasts
-    [SerializeField] private float timer; //the remaining cooldown duration, may swap for gametime+cooldown.
+    [SerializeField] private float cooldownTermination = 0; //The time at which the cooldown is over gametime+cooldown.
     #endregion
 
     #region Public Properties
@@ -119,10 +119,10 @@ public class Item
         get { return cooldown; }
         set { cooldown = value; }
     }
-    public float Timer
+    public float CooldownTermination
     {
-        get { return timer; }
-        set { timer = value; }
+        get { return cooldownTermination; }
+        set { cooldownTermination = value;  }
     }
     #endregion
 
@@ -153,7 +153,7 @@ public class Item
         stamina = copyItem.Mana;
         mana = copyItem.Stamina;
         cooldown = copyItem.Cooldown;
-        timer = copyItem.Timer;
+        cooldownTermination = copyItem.CooldownTermination;
     }
     #endregion
 }

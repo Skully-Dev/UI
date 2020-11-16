@@ -80,19 +80,19 @@ public class Inventory : MonoBehaviour
     #region Canvas UI References and Variables
     [SerializeField]
     private Text moneyText;
-    [SerializeField]
+    [SerializeField, Tooltip("The buttons that will turn into items, TODO: may be used to find capacity later")]
     private Button[] inventoryButtons;
 
     //selected item
-    [SerializeField]
+    [SerializeField, Tooltip("The display icon for selected player inventory item")]
     private Image selectedIcon;
-    [SerializeField]
+    [SerializeField, Tooltip("The display name for selected player inventory item")]
     private Text selectedName;
-    [SerializeField]
+    [SerializeField, Tooltip("The display discription for selected player inventory item")]
     private Text selectedDiscription;
-    [SerializeField]
+    [SerializeField, Tooltip("The selected item of player inventory primary button")]
     private Button primaryButton;
-    [SerializeField]
+    [SerializeField, Tooltip("The selected item of player inventory secondary button")]
     private Button secondaryButton;
 
 
@@ -101,11 +101,10 @@ public class Inventory : MonoBehaviour
     public CurrentArmedState currentArmedState = CurrentArmedState.Unarmed;
 
     //Canvas groups
-    [SerializeField]
+    [SerializeField, Tooltip("The Canvas UI for Player Inventory")]
     public GameObject inventoryGroup;
-    [SerializeField]
+    [SerializeField, Tooltip("The Canvas UI for SPECIFICALLY for Player Inventory SELECTED ITEM")]
     public GameObject selectedItemGroup;
-
     #endregion
 
     private void Update()
@@ -158,15 +157,14 @@ public class Inventory : MonoBehaviour
         inventoryGroup.SetActive(false);
         selectedItem = null;
 
-        //showInventory = false; //Close the inventory
-        //selectedItem = null; //deselect item
+        showInventory = false; //Close the inventory
     }
 
     public void ShowInventory()
     {
         inventoryGroup.SetActive(true);
         RefreshInventory();
-        //showInventory = true;
+        showInventory = true;
     }
 
     #region Canvas UI Methods
