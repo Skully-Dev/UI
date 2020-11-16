@@ -485,6 +485,10 @@ public class Player : MonoBehaviour
                 {
                     chest.OpenChestToggle();
                 }
+                else if (playerInventory.state == Inventory.State.Shop)
+                {
+                    shop.OpenShopToggle();
+                }
             }
         }
         

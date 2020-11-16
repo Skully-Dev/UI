@@ -154,6 +154,7 @@ public class Inventory : MonoBehaviour
 
     public void HideInventory()
     {
+        selectedItemGroup.SetActive(false);
         inventoryGroup.SetActive(false);
         selectedItem = null;
 
@@ -221,7 +222,7 @@ public class Inventory : MonoBehaviour
                                         "\nValue: $" + selectedItem.Value +
                                         "\nQuantity: " + selectedItem.Amount;
 
-            UpdateUseSelectedItemButtons();
+            UpdateButtons();
         }
         else //otherwise no item selected
         {
@@ -491,10 +492,9 @@ public class Inventory : MonoBehaviour
     #endregion
 
     /// <summary>
-    /// Display Selected item information. 
     /// Determines what buttons are available and how they work based on selected item TYPE, and Equipt Status
     /// </summary>
-    public void UpdateUseSelectedItemButtons()
+    public void UpdateButtons()
     {
         if (selectedItem != null) //if nothing selected, do nothing.
         {
@@ -594,7 +594,7 @@ public class Inventory : MonoBehaviour
                 }
                 #endregion
 
-                primaryButton.onClick.AddListener(UpdateUseSelectedItemButtons);
+                primaryButton.onClick.AddListener(UpdateButtons);
                 secondaryButton.onClick.AddListener(RefreshInventory);
             }
             else if (state == State.Chest)
@@ -626,9 +626,83 @@ public class Inventory : MonoBehaviour
                     primaryButton.gameObject.SetActive(false); //Just to avoid depositing null items.
                 }
             }
+            else if (state == State.Shop)
+            {
+                secondaryButton.gameObject.SetActive(false);//no need for secondary in shop
+
+                if (selectedItem != null && !IsEquipt())
+                {
+                    if (selectedItem.Type != ItemType.Quest)
+                    {
+                        primaryButton.onClick.RemoveAllListeners();
+                        primaryButton.gameObject.SetActive(true); //Basically true unless otherwise specified, saves me rewritting.
+
+                        primaryButton.onClick.AddListener(SellItemEvent);
+                        primaryButton.gameObject.GetComponentInChildren<Text>().text = "Sell";
+                        primaryButton.onClick.AddListener(RefreshInventory);
+
+                        //attempt to add to player inventory
+                        if (shop.CanAddItem(selectedItem))
+                        {
+                            //If it is possible for player to take item
+                            primaryButton.interactable = true;
+                        }
+                        else
+                        {
+                            primaryButton.interactable = false;
+                        }
+                    }
+                    else
+                    {
+                        //QUEST ITEM or CURRENTLY EQUIPT
+                        primaryButton.gameObject.SetActive(false); //Cant sell quest items or equipt items
+
+                    }
+
+                }
+                else
+                {
+                    primaryButton.gameObject.SetActive(false); //Just to avoid depositing null items.
+                }
+            }
         }
     }
     #endregion
+
+    public void SellItemEvent()
+    {
+        //attempt to add to shop, should always succeed anyways as already checked
+        if (shop.AddItemAttempt(selectedItem))
+        {
+            //If selling the item was successful
+
+            //adjust money stuff
+            int sellPrice = (int)(selectedItem.Value * (1f - shop.profitMarginHalved));
+            money += sellPrice;
+            shop.Profit += selectedItem.Value - sellPrice; //shop profit determines your discount
+
+
+            //remove from player inventory
+            selectedItem.Amount--;
+            shop.AddItem(selectedItem);
+
+            if (selectedItem.Amount <= 0)
+            {
+                inventory.Remove(selectedItem);
+                selectedItem = null;
+                selectedItemGroup.SetActive(false);
+            }
+            else
+            {
+                RefreshSelectedItemDescription();
+            }
+
+            shop.RefreshInventory(); //refresh the shop items
+            shop.RefreshSelectedItemDescription(); //refresh the chest selected item description
+            UpdateButtons(); //Incase conditions have now changed.
+            shop.UpdateButtons(); //Incase conditions have now changed.
+        }
+    }
 
     /// <summary>
     /// Deposite item, set up for canvas UI
@@ -651,9 +725,9 @@ public class Inventory : MonoBehaviour
                 RefreshSelectedItemDescription();
             }
 
-            chest.RefreshInventory(); //refresh the players items
-            chest.RefreshSelectedItemDescription(); //refresh the players selected item description
-            chest.UpdateTakeButton(); //if couldnt take an item, then you store an item, must update the take item option. etc.
+            chest.RefreshInventory(); //refresh the chest items
+            chest.RefreshSelectedItemDescription(); //refresh the chest selected item description
+            chest.UpdateButtons(); //if couldnt take an item, then you store an item, must update the take item option. etc.
         }
     }
 
@@ -753,7 +827,28 @@ public class Inventory : MonoBehaviour
     }
 
 
-
+    /// <summary>
+    /// Checks if the selected item is currently equipted in ANY of the equipment slots.
+    /// </summary>
+    /// <returns>Returns true if item is currently equpt. Otherwise false.</returns>
+    public bool IsEquipt()
+    {
+        foreach (var equipmentSlot in equipmentSlots)
+        {
+            // TODO: Make paramater for item rather than using selected item.
+            if (selectedItem != null)//fixed odd error, will attempt to remove later.
+            {
+                if (equipmentSlot.currentItem != null)
+                {
+                    if (selectedItem.Name == equipmentSlot.item.Name)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
     #region Converted OnGUI
     /// <summary>
@@ -1013,29 +1108,6 @@ public class Inventory : MonoBehaviour
     }
 
     /// <summary>
-    /// Checks if the selected item is currently equipted in ANY of the equipment slots.
-    /// </summary>
-    /// <returns>Returns true if item is currently equpt. Otherwise false.</returns>
-    public bool IsEquipt()
-    {
-        foreach (var equipmentSlot in equipmentSlots)
-        {
-            if (selectedItem != null)//fixed odd error, will attempt to remove later.
-            {
-                if (equipmentSlot.currentItem != null)
-                {
-                    if (selectedItem.Name == equipmentSlot.item.Name)
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-    #endregion
-
-    /// <summary>
     /// A button for putting inventory items into a chest.
     /// </summary>
     private void DepositeItemOnGUI()
@@ -1065,9 +1137,10 @@ public class Inventory : MonoBehaviour
             }
         }
     }
+    #endregion
 
     /// <summary>
-    /// A button for putting selling items to a shop.
+    /// A button for selling items to a shop.
     /// </summary>
     private void SellItemOnGUI()
     {
