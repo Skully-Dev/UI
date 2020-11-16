@@ -195,7 +195,7 @@ public class Inventory : MonoBehaviour
         }
         else if (state == State.Shop)
         {
-            //shop.RefreshInventory();
+            shop.RefreshInventory();
         }
     }
 
@@ -217,10 +217,8 @@ public class Inventory : MonoBehaviour
             selectedIcon.sprite = mySprite;
 
             selectedName.text = inventory[i].Name;
-            //RefreshSelectedItemDescription() could replace
-            selectedDiscription.text = selectedItem.Description +
-                                        "\nValue: $" + selectedItem.Value +
-                                        "\nQuantity: " + selectedItem.Amount;
+            RefreshSelectedItemDescription();
+
 
             UpdateButtons();
         }
@@ -238,9 +236,20 @@ public class Inventory : MonoBehaviour
     {
         if (selectedItem != null)
         {
-            selectedDiscription.text = selectedItem.Description +
-                    "\nValue: $" + selectedItem.Value +
-                    "\nQuantity: " + selectedItem.Amount;
+            if (state == State.Shop)
+            {
+                //Description, value, amount
+                selectedDiscription.text = selectedItem.Description +
+                "\nTrade value: $" + (int)(selectedItem.Value * (1f - shop.profitMarginHalved)) +
+                "\nAmount: " + selectedItem.Amount;
+            }
+            else
+            {
+                selectedDiscription.text = selectedItem.Description +
+                "\nValue: $" + selectedItem.Value +
+                "\nQuantity: " + selectedItem.Amount;
+            }
+
         }
     }
 
