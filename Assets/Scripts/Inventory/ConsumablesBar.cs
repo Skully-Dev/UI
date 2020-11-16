@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ConsumablesBar : MonoBehaviour
 {
@@ -27,6 +28,17 @@ public class ConsumablesBar : MonoBehaviour
     };
     [Tooltip("All Quick buttons information")]
     public QuickItem[] hotbar;
+
+    #region Canvas References and Variables
+    [SerializeField]
+    private Button[] buttons;
+    [SerializeField]
+    private GameObject[] buttonIcons;
+    [SerializeField]
+    private GameObject[] CooldownObjects;
+    [SerializeField]
+    private Text[] CooldownTexts;
+    #endregion
 
     // Start is called before the first frame update
     void Start()

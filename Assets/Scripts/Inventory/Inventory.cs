@@ -127,28 +127,6 @@ public class Inventory : MonoBehaviour
                 gameManager.EnableControls();
             }
         }
-
-        /*
-        //if user presses I which attempts to open inventory window
-        if (Input.GetKeyDown(KeyCode.I)) //I for Inventory
-        {
-            if (!GameManager.isDisplay) //if not currently in any window displays
-            {
-                showInventory = true;
-                state = State.Inventory; //determines the available options for selected item.
-
-                gameManager.DisableControls(false);
-            }
-            else if (showInventory && state == State.Inventory) //if inventory open and it is inventroy window
-            {
-                showInventory = false; //Close the inventory
-                selectedItem = null; //deselect item
-
-                gameManager.EnableControls();
-            }
-        }
-        */
-
     }
 
     public void HideInventory()
