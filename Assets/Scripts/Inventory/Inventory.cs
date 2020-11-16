@@ -142,6 +142,8 @@ public class Inventory : MonoBehaviour
     {
         inventoryGroup.SetActive(true);
         RefreshInventory();
+        selectedItem = null;
+
         showInventory = true;
     }
 
