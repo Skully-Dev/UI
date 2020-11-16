@@ -94,15 +94,19 @@ public class Inventory : MonoBehaviour
     private Button primaryButton;
     [SerializeField]
     private Button secondaryButton;
-    #endregion
 
+
+    //Weapon states
     public enum CurrentArmedState { Unarmed, Single, Duel, AlreadyEquipted };
     public CurrentArmedState currentArmedState = CurrentArmedState.Unarmed;
 
+    //Canvas groups
     [SerializeField]
     private GameObject inventoryGroup;
     [SerializeField]
     private GameObject selectedItemGroup;
+
+    #endregion
 
     private void Update()
     {
@@ -277,6 +281,8 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    #region Inventory Buttons Events Methods
+
     private void EatEvent()
     {
         selectedItem.Amount--;
@@ -428,6 +434,39 @@ public class Inventory : MonoBehaviour
     }
     #endregion
 
+    public void DiscardEvent()
+    {
+        selectedItem.Amount--;
+        if (selectedItem.Mesh == null)
+        {
+            selectedItem.Mesh = StandInMesh; //adds a default mesh for objects without a unique one.
+        }
+        if (selectedItem.Mesh != null)
+        {
+            //  TODO: do a ray cast, sky down, for ground layer, so item doesnt get droped through the surface of the earth! //^^^^ if done, may need to rearrage code to make (selectedItem.Amount--;) happen AFTER a successful drop.
+            //drops items within a random circle infront of player
+            GameObject spawn = Instantiate(selectedItem.Mesh, player.transform.position + player.transform.forward * 2 + Vector3.up + UnityEngine.Random.insideUnitSphere * 1.8f + player.transform.forward, Quaternion.identity);
+            spawn.GetComponent<InWorldItem>().item = new Item(selectedItem, 1); // Creates a NEW reference, w same info but behaves independently.
+            spawn.GetComponent<Rigidbody>().isKinematic = false; // Allows gravity
+            spawn.layer = LayerMask.NameToLayer("Interactable"); // Allows interaction (to pick up)
+            spawn.transform.parent = InWorldItemsGroup.transform; //puts the item into a group as to keep inspector tidy.
+        }
+
+        //Checks to see if item slot should be free'd up.
+        if (selectedItem.Amount <= 0)
+        {
+            inventory.Remove(selectedItem);
+            selectedItem = null;
+            selectedItemGroup.SetActive(false);//hide selected item window
+        }
+        else
+        {
+            RefreshSelectedItemDescription();
+        }
+    }
+
+    #endregion
+
     /// <summary>
     /// Display Selected item information. 
     /// Determines what buttons are available and how they work based on selected item TYPE, and Equipt Status
@@ -534,37 +573,6 @@ public class Inventory : MonoBehaviour
             secondaryButton.onClick.AddListener(RefreshInventory);
         }
     }
-
-    public void DiscardEvent()
-    {
-        selectedItem.Amount--;
-        if (selectedItem.Mesh == null)
-        {
-            selectedItem.Mesh = StandInMesh; //adds a default mesh for objects without a unique one.
-        }
-        if (selectedItem.Mesh != null)
-        {
-            //  TODO: do a ray cast, sky down, for ground layer, so item doesnt get droped through the surface of the earth! //^^^^ if done, may need to rearrage code to make (selectedItem.Amount--;) happen AFTER a successful drop.
-            //drops items within a random circle infront of player
-            GameObject spawn = Instantiate(selectedItem.Mesh, player.transform.position + player.transform.forward * 2 + Vector3.up + UnityEngine.Random.insideUnitSphere * 1.8f + player.transform.forward, Quaternion.identity);
-            spawn.GetComponent<InWorldItem>().item = new Item(selectedItem, 1); // Creates a NEW reference, w same info but behaves independently.
-            spawn.GetComponent<Rigidbody>().isKinematic = false; // Allows gravity
-            spawn.layer = LayerMask.NameToLayer("Interactable"); // Allows interaction (to pick up)
-            spawn.transform.parent = InWorldItemsGroup.transform; //puts the item into a group as to keep inspector tidy.
-        }
-
-        //Checks to see if item slot should be free'd up.
-        if (selectedItem.Amount <= 0)
-        {
-            inventory.Remove(selectedItem);
-            selectedItem = null;
-            selectedItemGroup.SetActive(false);//hide selected item window
-        }
-        else
-        {
-            RefreshSelectedItemDescription();
-        }
-    }
     #endregion
 
     /// <summary>
@@ -625,6 +633,9 @@ public class Inventory : MonoBehaviour
         }
     }
 
+
+
+    #region Converted OnGUI
     /// <summary>
     /// Shows inventory items as buttons w name. Stacked vertically.
     /// Only shows items of current sort type.
@@ -668,7 +679,6 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    #region Converted OnGUI
     /// <summary>
     /// Display Selected item information. 
     /// Determines what buttons are available and how they work based on selected item TYPE, and Equipt Status
