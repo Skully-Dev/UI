@@ -14,7 +14,7 @@ public class PauseMenu : MonoBehaviour
 
     [Header("Bool Conditionals")]
     [Tooltip("is the game currently paused.")]
-    private bool gameIsPaused = false;
+    public static bool gameIsPaused = false; //Was private, made public static for Inventory I to open conditionals, TODO:  may make Inventory State cover ALL possible windows like this.
     [Tooltip("is options currently open.")]
     private bool isOptions = false; //Dont want player resuming from options
     #endregion
