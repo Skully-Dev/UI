@@ -106,35 +106,87 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b464dabc313c852438a25a15975c4e89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chestInventory:
-  - name: Meat
-    description: heals
-    value: 50
-    amount: 2
-    icon: {fileID: 2800000, guid: b021cdb5329fd904a8fa3b39119ab423, type: 3}
-    mesh: {fileID: 0}
-    type: 0
+  showOnGUI: 1
+  capacity: 12
+  inventory:
+  - name: HP Potion
+    description: Bought from Mr Pirelli. Tastes like piss.
+    value: 15
+    amount: 3
+    icon: {fileID: 2800000, guid: b6498b5bec05d7840b10aaa871809286, type: 3}
+    Mesh: {fileID: 0}
+    type: 5
     damage: 0
     armour: 0
-    heal: 15
-  - name: HP Potion
-    description: heals
-    value: 20
+    heal: 0
+    stamina: 0
+    mana: 0
+    effect: 0
+    cooldown: 25
+    cooldownTermination: 0
+  - name: Apple
+    description: Can eat, may be poison...
+    value: 2
     amount: 5
-    icon: {fileID: 2800000, guid: b6498b5bec05d7840b10aaa871809286, type: 3}
-    mesh: {fileID: 0}
+    icon: {fileID: 2800000, guid: b7a0552e94ecc25438f43e89b2ea9a48, type: 3}
+    Mesh: {fileID: 0}
     type: 0
     damage: 0
     armour: 0
     heal: 100
-  - name: Coins
-    description: Buy the things.
-    value: 50
+    stamina: 0
+    mana: 0
+    effect: 0
+    cooldown: 15
+    cooldownTermination: 0
+  - name: Bag of coins
+    description: Money
+    value: 56
     amount: 1
     icon: {fileID: 2800000, guid: 7ad62efd801839f4ca742e58dd7a17f7, type: 3}
-    mesh: {fileID: 0}
+    Mesh: {fileID: 0}
     type: 8
     damage: 0
     armour: 0
     heal: 0
+    stamina: 0
+    mana: 0
+    effect: 0
+    cooldown: 0
+    cooldownTermination: 0
+  - name: TEST ITEM
+    description: a
+    value: 56
+    amount: 1
+    icon: {fileID: 2800000, guid: 7ad62efd801839f4ca742e58dd7a17f7, type: 3}
+    Mesh: {fileID: 0}
+    type: 7
+    damage: 0
+    armour: 0
+    heal: 0
+    stamina: 0
+    mana: 0
+    effect: 0
+    cooldown: 0
+    cooldownTermination: 0
   showChest: 0
+  inventoryButtons:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  selectedIcon: {fileID: 0}
+  selectedName: {fileID: 0}
+  selectedDiscription: {fileID: 0}
+  primaryButton: {fileID: 0}
+  secondaryButton: {fileID: 0}
+  chestInventoryGroup: {fileID: 0}
+  selectedItemGroup: {fileID: 0}

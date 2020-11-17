@@ -3,14 +3,18 @@ using UnityEngine.UI;
 
 public class ConsumablesBar : MonoBehaviour
 {
+    [Header("GUI Variabels")]
+
     public bool showOnGUI;
+    [Tooltip("Screen width and height divided by 16 and 9 (ratio 120:1)")]
+    private Vector2 scr;
+
+    [Header("External References")]
 
     [SerializeField, Tooltip("Reference to player for stats.")]
     private Player player;
     [SerializeField, Tooltip("Reference to player inventory to access items")]
     private Inventory playerInventory;
-
-    [Tooltip("Screen width and height divided by 16 and 9 (ratio 120:1)")] private Vector2 scr;
 
     /// <summary>
     /// Quick button settings
@@ -25,16 +29,17 @@ public class ConsumablesBar : MonoBehaviour
         [Tooltip("a Reference of the bound item")]
         /*[NonSerialized]*/ public Item item;
     };
-    [Tooltip("All Quick buttons information")]
+    [Header("Button Settings"), Tooltip("All Quick buttons information")]
     public QuickItem[] hotbar;
 
     #region Canvas References and Variables
-    [SerializeField] private GameObject[] buttonGroups;
+    [Header("Canvas UI Button References")]
+    [SerializeField, Tooltip("Reference the button groups, used to automatically Set the other required references")] private GameObject[] buttonGroups;
     [Header("Set Automatically in Script")]
     private Button[] buttons = new Button[6];
-    private Image[] buttonIcons = new Image[6];
-    private GameObject[] cooldownObjects = new GameObject[6];
-    private Text[] cooldownTexts = new Text[6];
+    private Image[] buttonIcons = new Image[6]; //for icon of bound item
+    private GameObject[] cooldownObjects = new GameObject[6]; //for cooldown visuals
+    private Text[] cooldownTexts = new Text[6]; //for cooldown timer
     #endregion
 
     // Start is called before the first frame update
@@ -49,6 +54,7 @@ public class ConsumablesBar : MonoBehaviour
 
         for (int i = 0; i < buttonGroups.Length; i++)
         {
+            #region Get References
             //GET REFERENCES
             //Initialize button references
             buttons[i] = buttonGroups[i].GetComponentInChildren<Button>();
@@ -58,7 +64,9 @@ public class ConsumablesBar : MonoBehaviour
             cooldownObjects[i] = buttonGroups[i].transform.GetChild(1).gameObject;
             //Initialize Cooldown text References
             cooldownTexts[i] = cooldownObjects[i].GetComponentInChildren<Text>();
+            #endregion
 
+            #region Set Reference Values
             //rename button text to button numbers
             buttons[i].GetComponentInChildren<Text>().text = (i + 1).ToString();
 
@@ -76,8 +84,9 @@ public class ConsumablesBar : MonoBehaviour
                 buttonIcons[i].gameObject.SetActive(false);
             }
             
-            //Cooldowns
+            //Cooldowns off
             cooldownObjects[i].SetActive(false);
+            #endregion
         }
     }
 
@@ -92,75 +101,36 @@ public class ConsumablesBar : MonoBehaviour
 
             CooldownUpdate(i);
         }
-
-        //Redundant
-        /*
-        //run item cooldowns.
-        for (int i = 0; i < hotbar.Length; i++)
-        {
-            if (hotbar[i].item.Timer > 0)
-            {
-                hotbar[i].item.Timer -= Time.deltaTime;
-            }
-        }
-        */
-    }
-
-    public void CooldownUpdate(int index)
-    {
-        if (hotbar[index].item != null) //if item bound
-        {
-            if (hotbar[index].item.Amount > 0) //if stock of item
-            {
-                if (cooldownObjects[index].activeSelf) //if cooldown active
-                {
-                    ///----
-                    cooldownTexts[index].text = (hotbar[index].item.CooldownTermination - Time.time).ToString("0");
-                    if (Time.time >= hotbar[index].item.CooldownTermination)
-                    {
-                        cooldownObjects[index].SetActive(false);
-                    }
-                }
-            }
-            else //if out of stock
-            {
-                //Unbind
-                buttonIcons[index].gameObject.SetActive(false);
-                cooldownObjects[index].SetActive(false);
-
-                hotbar[index].item = null;
-            }
-        }
     }
 
     public void UseButton(int index)
     {
-        //if in inventory
+        //if inventory open
         if (playerInventory.showInventory)
         {
-            if (playerInventory.selectedItem != null)
+            if (playerInventory.selectedItem != null) //if item is selected
             {
                 //if selected item is consumable
                 if (playerInventory.selectedItem.Type == ItemType.Food || playerInventory.selectedItem.Type == ItemType.Potions)
                 {
-                    //add selected item as item to use for hotkey
+                    //add selected item as item to use, for hotkey
                     hotbar[index].item = playerInventory.selectedItem;
 
-                    ///-----
-                    //When item assigned to hotbar, associated button icon updated to item sprite.
+                    //apply icon to associated button
                     buttonIcons[index].gameObject.SetActive(true);
                     Sprite sprite = Sprite.Create(hotbar[index].item.Icon, buttonIcons[index].sprite.rect, buttonIcons[index].sprite.pivot);
                     buttonIcons[index].sprite = sprite;
 
-                    if (hotbar[index].item.CooldownTermination > Time.time)
+                    if (hotbar[index].item.CooldownTermination > Time.time) //if a cooldown was active
                     {
+                        //display cooldown information visuals
                         cooldownObjects[index].SetActive(true);
                         cooldownTexts[index].text = (hotbar[index].item.CooldownTermination - Time.time).ToString("0");
                     }
                 }
             }
         }
-        else if (!GameManager.isDisplay && hotbar[index].item.Amount > 0 && hotbar[index].item.CooldownTermination < Time.time) //if no display windows open and have items in stock && timer is up
+        else if (!GameManager.isDisplay && hotbar[index].item != null && hotbar[index].item.Amount > 0 && hotbar[index].item.CooldownTermination < Time.time) //if no display windows open AND item isnt null AND have items in stock AND timer is up
         {
             //determine how to use the item
             switch (hotbar[index].item.Type)
@@ -181,16 +151,20 @@ public class ConsumablesBar : MonoBehaviour
 
     private void UseConsumableGenerics(int index)
     {
+        //reduce quantity of item ledft
         hotbar[index].item.Amount--;
-        if (hotbar[index].item.Amount <= 0)
+
+        if (hotbar[index].item.Amount <= 0) //if no more of that item left
         {
+            //remove from player inventory
             playerInventory.inventory.Remove(hotbar[index].item);
 
+            //Unbind from button
             buttonIcons[index].gameObject.SetActive(false);
             cooldownObjects[index].SetActive(false);
             hotbar[index].item = null;
         }
-        else
+        else //If more of that item left
         {
             //Set Cooldown stuff
             hotbar[index].item.CooldownTermination = Time.time + hotbar[index].item.Cooldown;
@@ -202,6 +176,40 @@ public class ConsumablesBar : MonoBehaviour
                 {
                     cooldownObjects[ii].SetActive(true);
                 }
+            }
+        }
+    }
+
+    public void CooldownUpdate(int index)
+    {
+        if (hotbar[index].item != null) //if item bound
+        {
+            if (hotbar[index].item.Amount > 0) //if stock of item
+            {
+                if (cooldownObjects[index].activeSelf) //if cooldown was still active
+                {
+                    if (Time.time < hotbar[index].item.CooldownTermination) //if countdown still not up
+                    {
+                        //update countdown timer text
+                        cooldownTexts[index].text = (hotbar[index].item.CooldownTermination - Time.time).ToString("0");
+                    }
+                    else
+                    {
+                        //Otherwise timer up, make visuals normal again.
+                        cooldownObjects[index].SetActive(false);
+                    }
+                }
+            }
+            else //if out of stock
+            {
+                //Unbind item
+
+                //hide icon
+                buttonIcons[index].gameObject.SetActive(false);
+                //hide cooldown visuals
+                cooldownObjects[index].SetActive(false);
+                //remove reference
+                hotbar[index].item = null;
             }
         }
     }

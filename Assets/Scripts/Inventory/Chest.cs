@@ -5,28 +5,33 @@ using UnityEngine.UI;
 
 public class Chest : MonoBehaviour
 {
+    #region References AND Variables
     public bool showOnGUI;
 
+    [Header("External Reference")]
+    [Tooltip("reference to the players inventory")]
+    private Inventory playerInventory;
+
+    [Header("Chest Settings")]
     [SerializeField, Tooltip("How many items the chest can store.")]
     private int capacity = 10;
-
     [Tooltip("Items within the chest")]
     public List<Item> inventory = new List<Item>();
     [Tooltip("Currently selected item to display info for")]
     private Item selectedItem;
 
-    [Tooltip("reference to the players inventory")]
-    private Inventory playerInventory;
-
-    //Display Chest
+    #region Display Shop References and Variables
+    // DISPLAY CHEST
+    [Header("Display Settings")]
     [SerializeField, Tooltip("Display state of chest window")] private bool showChest = false;
     [Tooltip("Screen width and height divided by 16 and 9 (ratio 120:1)")] private Vector2 scr;
 
     // TODO: these references can be the same for Chest AND Shop. Therefore could have a Base Class OtherInventory that chest and shop inherit from, that way there only needs to be one place to reference.
-    #region Canvas UI References and Variables
+    #region Canvas UI References
     [SerializeField, Tooltip("The buttons that will turn into items, TODO: may be used to find capacity later")]
     private Button[] inventoryButtons;
 
+    [Header("Selected Item Display References")]
     //selected item
     [SerializeField, Tooltip("The display icon for selected Chest item")]
     private Image selectedIcon;
@@ -39,15 +44,17 @@ public class Chest : MonoBehaviour
     [SerializeField, Tooltip("The selected item of chest secondary button, NOT USED but may use in future.")]
     private Button secondaryButton;
 
+    [Header("Canvas Group References")]
     //Canvas groups
     [SerializeField, Tooltip("The Canvas UI for Chest")]
     private GameObject chestInventoryGroup;
     [SerializeField, Tooltip("The Canvas UI for SPECIFICALLY for Chest SELECTED ITEM")]
     private GameObject selectedItemGroup;
+    #endregion
 
     #endregion
 
-
+    #endregion
 
     private void Start()
     {
@@ -61,6 +68,7 @@ public class Chest : MonoBehaviour
         }
     }
 
+    #region Select Item, Refresh Description, Update Buttons Methods
     /// <summary>
     /// OnClick of Canvas UI Chest Items button
     /// </summary>
@@ -93,6 +101,54 @@ public class Chest : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Updates just the description of selected item window, handy for changing amount
+    /// </summary>
+    public void RefreshSelectedItemDescription()
+    {
+        if (selectedItem != null)
+        {
+            selectedDiscription.text = selectedItem.Description +
+                    "\nValue: $" + selectedItem.Value +
+                    "\nQuantity: " + selectedItem.Amount;
+        }
+    }
+
+    /// <summary>
+    /// Determines what buttons are available and how they work.
+    /// </summary>
+    public void UpdateButtons()
+    {
+        secondaryButton.gameObject.SetActive(false);//no need for secondary in chest
+
+        if (selectedItem != null)
+        {
+            primaryButton.onClick.RemoveAllListeners();
+            primaryButton.gameObject.SetActive(true); //Basically true unless otherwise specified, saves me rewritting.
+
+            primaryButton.onClick.AddListener(TakeItemEvent);
+            primaryButton.gameObject.GetComponentInChildren<Text>().text = "Take";
+            primaryButton.onClick.AddListener(RefreshInventory);
+
+            //attempt to add to player inventory
+            if (playerInventory.CanAddItem(selectedItem))
+            {
+                //If it is possible for player to take item
+                primaryButton.interactable = true;
+            }
+            else
+            {
+                primaryButton.interactable = false;
+            }
+        }
+        else
+        {
+            primaryButton.gameObject.SetActive(false); //Just to avoid taking null items.
+        }
+    }
+    #endregion
+
+    #region Refresh Inventory Method
     /// <summary>
     /// Refresh the names of the buttons.
     /// </summary>
@@ -151,41 +207,9 @@ public class Chest : MonoBehaviour
             selectedItemGroup.SetActive(false); //hide selected item window
         }
     }
+    #endregion
 
-
-    /// <summary>
-    /// Determines what buttons are available and how they work.
-    /// </summary>
-    public void UpdateButtons()
-    {
-        secondaryButton.gameObject.SetActive(false);//no need for secondary in chest
-
-        if (selectedItem != null)
-        {
-            primaryButton.onClick.RemoveAllListeners();
-            primaryButton.gameObject.SetActive(true); //Basically true unless otherwise specified, saves me rewritting.
-            
-            primaryButton.onClick.AddListener(TakeItemEvent);
-            primaryButton.gameObject.GetComponentInChildren<Text>().text = "Take";
-            primaryButton.onClick.AddListener(RefreshInventory);
-
-            //attempt to add to player inventory
-            if (playerInventory.CanAddItem(selectedItem))
-            {
-                //If it is possible for player to take item
-                primaryButton.interactable = true;
-            }
-            else
-            {
-                primaryButton.interactable = false;
-            }
-        }
-        else
-        {
-            primaryButton.gameObject.SetActive(false); //Just to avoid taking null items.
-        }
-    }
-
+    #region Take Item Button Event Method
     /// <summary>
     /// Take item, set up for canvas UI
     /// </summary>
@@ -212,20 +236,9 @@ public class Chest : MonoBehaviour
             playerInventory.UpdateButtons(); //if couldnt store item, then you take an item, must update the store item option. etc.
         }
     }
+    #endregion
 
-    /// <summary>
-    /// Updates just the description of selected item window, handy for changing amount
-    /// </summary>
-    public void RefreshSelectedItemDescription()
-    {
-        if (selectedItem != null)
-        {
-            selectedDiscription.text = selectedItem.Description +
-                    "\nValue: $" + selectedItem.Value +
-                    "\nQuantity: " + selectedItem.Amount;
-        }
-    }
-
+    #region Open Chest Toggle Method
     /// <summary>
     /// Switch between displaying chest and NOT displaying chest.
     /// </summary>
@@ -255,6 +268,38 @@ public class Chest : MonoBehaviour
             RefreshInventory();
 
             playerInventory.gameManager.DisableControls(false);
+        }
+    }
+    #endregion
+
+    #region CanAddItem, AttemptAddItem, Methods
+    /// <summary>
+    /// Check if it would be possible to add item
+    /// </summary>
+    /// <param name="item">The item to test</param>
+    /// <returns>Returns true if it would be successful at adding to chest. Otherwise false.</returns>
+    public bool CanAddItem(Item item)
+    {
+        Item foundItem = inventory.Find(findItem => findItem.Name == item.Name); //things on the left is paramater, lambda =>  right is expression, each itteration findItem will be the specific item that itteration and it will test it againt the item werre trying to find.
+
+        //checks to see if it can stack with existing chest items, weapons and apparel DONT STACK
+        if ((item.Type != ItemType.Apparel && item.Type != ItemType.Weapon) && foundItem != null)
+        {
+            return true;
+        }
+        else //If unstackable
+        {
+            //Check if room to add
+            if (inventory.Count < capacity)
+            {
+                //enough room, adds item
+                return true;
+            }
+            else
+            {
+                //no room, item add fails.
+                return false;
+            }
         }
     }
 
@@ -291,38 +336,9 @@ public class Chest : MonoBehaviour
             }
         }
     }
+    #endregion
 
-    /// <summary>
-    /// Check if it would be possible to add item
-    /// </summary>
-    /// <param name="item">The item to test</param>
-    /// <returns>Returns true if it would be successful at adding to chest. Otherwise false.</returns>
-    public bool CanAddItem(Item item)
-    {
-        Item foundItem = inventory.Find(findItem => findItem.Name == item.Name); //things on the left is paramater, lambda =>  right is expression, each itteration findItem will be the specific item that itteration and it will test it againt the item werre trying to find.
-
-        //checks to see if it can stack with existing chest items, weapons and apparel DONT STACK
-        if ((item.Type != ItemType.Apparel && item.Type != ItemType.Weapon) && foundItem != null)
-        {
-            return true;
-        }
-        else //If unstackable
-        {
-            //Check if room to add
-            if (inventory.Count < capacity)
-            {
-                //enough room, adds item
-                return true;
-            }
-            else
-            {
-                //no room, item add fails.
-                return false;
-            }
-        }
-    }
-
-
+    #region OnGUI IMGUI Redundant
     private void OnGUI()
     {
         if (showOnGUI)
@@ -387,4 +403,5 @@ public class Chest : MonoBehaviour
             }
         }
     }
+    #endregion
 }

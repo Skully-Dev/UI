@@ -1,47 +1,27 @@
 ﻿using System.Collections.Generic;
-using System.Collections;
 using UnityEngine;
 using System;
 using UnityEngine.UI;
 
 public class Inventory : MonoBehaviour
 {
+    #region References, Variables, Enums, ETC...
+
     public bool showOnGUI;
 
-    [Tooltip("Reference GameManager for common control toggle codes, called from Chest, Shop and Inventory, hence public.")]
-    public GameManager gameManager;
-
-    /// <summary>
-    /// The various states of the inventory, determines what you can do with inventory items. USE/STORE/SELL etc.
-    /// </summary>
-    public enum State { Inventory, Chest, Shop, Other }
-    [Tooltip("The current state the inventory should be.")]
-    public State state = State.Inventory;
-
     #region Inventory Variables
-    [SerializeField, Tooltip("How many item SLOTS available till full")]
-    private int capacity = 11;
-
-    [Tooltip("The list of player held items.")]
-    public List<Item> inventory = new List<Item>(); //was [SerializeField] private, made public for ConsumablesBar
-    [Tooltip("The currently selected item.")]
-    public Item selectedItem; //was private, made public for ConsumablesBar
-    [SerializeField, Tooltip("Reference to player script")]
-    private Player player;
+    [Header("Inventory Settings")]
+    [SerializeField, Tooltip("Is the inventory window open")]
+    public bool showInventory = false;
+    [Tooltip("Current selected sort option, \"\" is sort to ALL")]
+    public string sortType = "";
 
     [Tooltip("The amount of money the player has.")]
     public int money = 100;
-    #endregion
-
-    #region Display Inv Variables
-    [SerializeField, Tooltip("Is the inventory window open")]
-    public bool showInventory = false;
-    [Tooltip("Screen width and height divided by 16 and 9 (ratio 120:1)")]
-    private Vector2 scr;
-    [Tooltip("The scroll bar thingy position")]
-    private Vector2 scrollPosition;
-    [Tooltip("Current selected sort option, \"\" is sort to ALL")]
-    public string sortType = "";
+    [SerializeField, Tooltip("How many item SLOTS available till full")]
+    private int capacity = 11;
+    [Tooltip("The list of player held items.")]
+    public List<Item> inventory = new List<Item>(); //was [SerializeField] private, made public for ConsumablesBar
     #endregion
 
     #region Equipment
@@ -57,9 +37,11 @@ public class Inventory : MonoBehaviour
         public Transform equipLocation;
         //nonSerialized means public but NOT in the inspector.
         [Tooltip("The Game Object Spawn of the equipt item")]
-        /*[NonSerialized]*/ public GameObject currentItem; //the actual item
+        /*[NonSerialized]*/
+        public GameObject currentItem; //the actual item
         [Tooltip("The typical item information like in inventory, stored w equipment.")]
-        /*[NonSerialized]*/ public Item item; 
+        /*[NonSerialized]*/
+        public Item item;
     };
     /// <summary>
     /// The array of various equiptment slots, check inspector for available slots.
@@ -67,22 +49,47 @@ public class Inventory : MonoBehaviour
     public Equipment[] equipmentSlots;
     #endregion
 
-    [SerializeField, Tooltip("A sphere as a game object for any items without a unique mesh")]
-    private GameObject StandInMesh;
-    [SerializeField, Tooltip("A game object in scene to store all spawned InWorldItem objects for Inspector organisation.")]
-    private GameObject InWorldItemsGroup;
+    #region States AND Selected Item settings
+    /// <summary>
+    /// The various states of the inventory, determines what you can do with inventory items. USE/STORE/SELL etc.
+    /// </summary>
+    public enum State { Inventory, Chest, Shop, Other }
+    [Header("Selected Item Settings")]
+    [Tooltip("The current state the inventory should be.")]
+    public State state = State.Inventory;
 
-    [Tooltip("A place to reference a used chest")]
-    public Chest chest;
-    [Tooltip("A place to reference a used shop")]
-    public Shop shop;
+    /// <summary>
+    /// Determines the state of selected weapon and player equipted weapons to determine the button options.
+    /// </summary>
+    public enum CurrentArmedState { Unarmed, Single, Duel, AlreadyEquipted };
+    public CurrentArmedState currentArmedState = CurrentArmedState.Unarmed;
 
-    #region Canvas UI References and Variables
+    [Tooltip("The currently selected item.")]
+    public Item selectedItem; //was private, made public for ConsumablesBar
+    #endregion
+
+    #region IMGUI Variables
+    [Tooltip("Screen width and height divided by 16 and 9 (ratio 120:1)")]
+    private Vector2 scr;
+    [Tooltip("The scroll bar thingy position")]
+    private Vector2 scrollPosition;
+    #endregion
+
+    #region Canvas UI References
+    [Header("Canvas Group References")]
+    //Canvas groups
+    [SerializeField, Tooltip("The Canvas UI for Player Inventory")]
+    public GameObject inventoryGroup;
+    [SerializeField, Tooltip("The Canvas UI for SPECIFICALLY for Player Inventory SELECTED ITEM")]
+    public GameObject selectedItemGroup;
+
+    [Header("Inventory Canvas References")]
     [SerializeField]
     private Text moneyText;
     [SerializeField, Tooltip("The buttons that will turn into items, TODO: may be used to find capacity later")]
     private Button[] inventoryButtons;
 
+    [Header("Selected Item Canvas References")]
     //selected item
     [SerializeField, Tooltip("The display icon for selected player inventory item")]
     private Image selectedIcon;
@@ -94,17 +101,27 @@ public class Inventory : MonoBehaviour
     private Button primaryButton;
     [SerializeField, Tooltip("The selected item of player inventory secondary button")]
     private Button secondaryButton;
+    #endregion
 
+    #region External References
+    //EXTERNAL REFERENCES
+    [Header("External References")]
+    [Tooltip("Reference GameManager for common control toggle codes, called from Chest, Shop and Inventory, hence public.")]
+    public GameManager gameManager;
+    [SerializeField, Tooltip("Reference to player script")]
+    private Player player;
+    [SerializeField, Tooltip("A game object in scene to store all spawned InWorldItem objects for Inspector organisation.")]
+    private GameObject InWorldItemsGroup;
+    [SerializeField, Tooltip("A sphere as a game object for any items without a unique mesh")]
+    private GameObject StandInMesh;
 
-    //Weapon states
-    public enum CurrentArmedState { Unarmed, Single, Duel, AlreadyEquipted };
-    public CurrentArmedState currentArmedState = CurrentArmedState.Unarmed;
+    //Reference to last used.
+    [NonSerialized, Tooltip("A place to reference a used chest")]
+    public Chest chest;
+    [NonSerialized, Tooltip("A place to reference a used shop")]
+    public Shop shop;
+    #endregion
 
-    //Canvas groups
-    [SerializeField, Tooltip("The Canvas UI for Player Inventory")]
-    public GameObject inventoryGroup;
-    [SerializeField, Tooltip("The Canvas UI for SPECIFICALLY for Player Inventory SELECTED ITEM")]
-    public GameObject selectedItemGroup;
     #endregion
 
     private void Update()
@@ -129,15 +146,7 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    public void HideInventory()
-    {
-        selectedItemGroup.SetActive(false);
-        inventoryGroup.SetActive(false);
-        selectedItem = null;
-
-        showInventory = false; //Close the inventory
-    }
-
+    #region Show/Hide Inventory Methods
     public void ShowInventory()
     {
         inventoryGroup.SetActive(true);
@@ -147,7 +156,19 @@ public class Inventory : MonoBehaviour
         showInventory = true;
     }
 
+    public void HideInventory()
+    {
+        selectedItemGroup.SetActive(false);
+        inventoryGroup.SetActive(false);
+        selectedItem = null;
+
+        showInventory = false; //Close the inventory
+    }
+    #endregion
+
     #region Canvas UI Methods
+
+    #region Change Sort Method
     /// <summary>
     /// sets sort type value
     /// </summary>
@@ -176,60 +197,9 @@ public class Inventory : MonoBehaviour
             shop.RefreshInventory();
         }
     }
+    #endregion
 
-    /// <summary>
-    /// OnClick of Canvas UI inventory button
-    /// </summary>
-    /// <param name="i"></param>
-    public void SelectItem(int i)
-    {
-        if (i < inventory.Count) //item selected
-        {
-            selectedItemGroup.SetActive(true);//show selected item window
-
-            //get selected item
-            selectedItem = inventory[i];
-
-            //set up selected item icon
-            Sprite mySprite = Sprite.Create(inventory[i].Icon, selectedIcon.sprite.rect, selectedIcon.sprite.pivot);
-            selectedIcon.sprite = mySprite;
-
-            selectedName.text = inventory[i].Name;
-            RefreshSelectedItemDescription();
-
-
-            UpdateButtons();
-        }
-        else //otherwise no item selected
-        {
-            selectedItem = null;
-            selectedItemGroup.SetActive(false);//hide selected item window
-        }
-    }
-
-    /// <summary>
-    /// Updates just the description of selected item window, handy for changing amount
-    /// </summary>
-    public void RefreshSelectedItemDescription()
-    {
-        if (selectedItem != null)
-        {
-            if (state == State.Shop)
-            {
-                //Description, value, amount
-                selectedDiscription.text = selectedItem.Description +
-                "\nTrade value: $" + (int)(selectedItem.Value * (1f - shop.profitMarginHalved)) +
-                "\nAmount: " + selectedItem.Amount;
-            }
-            else
-            {
-                selectedDiscription.text = selectedItem.Description +
-                "\nValue: $" + selectedItem.Value +
-                "\nQuantity: " + selectedItem.Amount;
-            }
-
-        }
-    }
+    #region Refresh Inventory Method
 
     /// <summary>
     /// Refresh the names of the buttons.
@@ -244,7 +214,7 @@ public class Inventory : MonoBehaviour
         if (sortType == "")
         {
             //DISPLAY ALL ITEMS and empty item slots
-            
+
             for (int i = 0; i < inventoryButtons.Length; i++)
             {
                 //activate all inventory buttons
@@ -291,12 +261,350 @@ public class Inventory : MonoBehaviour
             selectedItemGroup.SetActive(false); //hide selected item window
         }
     }
+    #endregion
 
-    #region Inventory Buttons Events Methods
+    #region Select Item, Refresh Description, Update Buttons Methods
+    /// <summary>
+    /// OnClick of Canvas UI inventory button
+    /// </summary>
+    /// <param name="i"></param>
+    public void SelectItem(int i)
+    {
+        if (i < inventory.Count) //item selected
+        {
+            selectedItemGroup.SetActive(true);//show selected item window
 
+            //get selected item
+            selectedItem = inventory[i];
+
+            //set up selected item icon
+            Sprite mySprite = Sprite.Create(inventory[i].Icon, selectedIcon.sprite.rect, selectedIcon.sprite.pivot);
+            selectedIcon.sprite = mySprite;
+
+            selectedName.text = inventory[i].Name;
+            RefreshSelectedItemDescription();
+
+
+            UpdateButtons();
+        }
+        else //otherwise no item selected
+        {
+            selectedItem = null;
+            selectedItemGroup.SetActive(false);//hide selected item window
+        }
+    }
+
+    /// <summary>
+    /// Updates just the description of selected item window, handy for changing amount
+    /// </summary>
+    public void RefreshSelectedItemDescription()
+    {
+        if (selectedItem != null)
+        {
+            if (state == State.Inventory)
+            {
+                if (selectedItem.Type == ItemType.Food || selectedItem.Type == ItemType.Potions)
+                {
+                    if (selectedItem.CooldownTermination > Time.time)
+                    {
+                        selectedDiscription.text = selectedItem.Description +
+                        "\nValue: $" + selectedItem.Value +
+                        "\nQuantity: " + selectedItem.Amount +
+                        "\nCooldown: " + (selectedItem.CooldownTermination - Time.time).ToString("0") + " seconds...";
+                    }
+                    else
+                    {
+                        selectedDiscription.text = selectedItem.Description +
+                        "\nValue: $" + selectedItem.Value +
+                        "\nQuantity: " + selectedItem.Amount;
+                    }
+                }
+                else
+                {
+                    selectedDiscription.text = selectedItem.Description +
+                    "\nValue: $" + selectedItem.Value +
+                    "\nQuantity: " + selectedItem.Amount;
+                }
+            }
+            else if (state == State.Shop)
+            {
+                //Description, value, amount
+                selectedDiscription.text = selectedItem.Description +
+                "\nTrade value: $" + (int)(selectedItem.Value * (1f - shop.profitMarginHalved)) +
+                "\nAmount: " + selectedItem.Amount;
+            }
+            else
+            {
+                selectedDiscription.text = selectedItem.Description +
+                "\nValue: $" + selectedItem.Value +
+                "\nQuantity: " + selectedItem.Amount;
+            }
+
+        }
+    }
+
+    #region Update Buttons Method
+    /// <summary>
+    /// Determines what buttons are available and how they work based on selected item TYPE, and Equipt Status
+    /// </summary>
+    public void UpdateButtons()
+    {
+        if (selectedItem != null) //if nothing selected, do nothing.
+        {
+            if (state == State.Inventory)
+            {
+                primaryButton.onClick.RemoveAllListeners();
+                primaryButton.gameObject.SetActive(true); //Basically true unless otherwise specified, saves me rewritting.
+                primaryButton.interactable = true; //Basically true unless otherwise specified, saves me rewritting.
+
+                secondaryButton.onClick.RemoveAllListeners();
+                secondaryButton.gameObject.SetActive(true);
+                secondaryButton.interactable = true;
+                secondaryButton.GetComponentInChildren<Text>().text = "Discard";
+                secondaryButton.onClick.AddListener(DiscardEvent);
+
+                #region Primary Button
+                switch (selectedItem.Type) //using switch TAB to auto fill, when you type (selectedItem.Type) and press enter it will auto fill the cases.
+                {
+                    case ItemType.Food:
+                        primaryButton.GetComponentInChildren<Text>().text = "Eat";
+                        primaryButton.onClick.AddListener(EatEvent);
+
+                        if (player.playerStats.CurrentHealth < player.playerStats.stats.maxHealth && selectedItem.CooldownTermination <= Time.time)
+                        {
+                            primaryButton.enabled = true;
+                        }
+                        else
+                        {
+                            primaryButton.interactable = false;
+                        }
+                        break;
+                    case ItemType.Weapon:
+                        if (equipmentSlots[2].currentItem == null) //if primary slot empty
+                        {
+                            currentArmedState = CurrentArmedState.Unarmed;
+                            primaryButton.GetComponentInChildren<Text>().text = "Equip";
+                            primaryButton.onClick.AddListener(EquipWeaponEvent);
+                        }
+                        else if (equipmentSlots[3].currentItem == null && selectedItem.Name != equipmentSlots[2].item.Name) //if not already equpited AND secondary slot empty
+                        {
+                            currentArmedState = CurrentArmedState.Single;
+                            primaryButton.GetComponentInChildren<Text>().text = "Equip";
+                            primaryButton.onClick.AddListener(EquipWeaponEvent);
+                        }
+                        else if (selectedItem.Name != equipmentSlots[2].item.Name && selectedItem.Name != equipmentSlots[3].item.Name) //if not already equipted but BOTH hands are full
+                        {
+                            currentArmedState = CurrentArmedState.Duel;
+                            primaryButton.GetComponentInChildren<Text>().text = "Equip";
+                            primaryButton.onClick.AddListener(EquipWeaponEvent);
+                        }
+                        else //otherwise you already have one of this weapon equipted
+                        {
+                            currentArmedState = CurrentArmedState.AlreadyEquipted;
+                            primaryButton.GetComponentInChildren<Text>().text = "Unequip";
+                            primaryButton.onClick.AddListener(UnequipWeaponEvent);
+
+                            secondaryButton.interactable = false; //cant drop while equipt
+                        }
+                        break;
+                    case ItemType.Apparel:
+                        if (equipmentSlots[0].currentItem == null || selectedItem.Name != equipmentSlots[0].item.Name) //If no apparel equipt or selected item is different to equipt item.
+                        {
+                            primaryButton.GetComponentInChildren<Text>().text = "Equip";
+                            primaryButton.onClick.AddListener(EquipHatEvent);
+                        }
+                        else
+                        {
+                            primaryButton.GetComponentInChildren<Text>().text = "Unequip";
+                            primaryButton.onClick.AddListener(UnequipHatEvent);
+
+                            secondaryButton.interactable = false; //cant drop while equipt
+                        }
+                        break;
+                    case ItemType.Crafting:
+                        primaryButton.gameObject.SetActive(false); //no option, hide button
+                        break;
+                    case ItemType.Ingredients:
+                        primaryButton.gameObject.SetActive(false); //no option, hide button
+                        break;
+                    case ItemType.Potions:
+                        primaryButton.GetComponentInChildren<Text>().text = "Drink";
+                        primaryButton.onClick.AddListener(DrinkEvent);
+
+                        if (selectedItem.CooldownTermination <= Time.time)
+                        {
+                            primaryButton.interactable = true;
+                        }
+                        else
+                        {
+                            primaryButton.interactable = false;
+                        }
+                        break;
+                    case ItemType.Scrolls:
+                        primaryButton.gameObject.SetActive(false); //no option, hide button
+                        break;
+                    case ItemType.Quest:
+                        primaryButton.gameObject.SetActive(false); //no option, hide button
+                        secondaryButton.gameObject.SetActive(false); //cant drop quest items
+                        break;
+                    case ItemType.Money:  //Is auto converted and added into money float variables
+                        break;
+                    default:
+                        primaryButton.gameObject.SetActive(false); //no option, hide button
+                        secondaryButton.gameObject.SetActive(false); //no option, hide button
+                        break;
+                }
+                #endregion
+
+                primaryButton.onClick.AddListener(UpdateButtons);
+                secondaryButton.onClick.AddListener(RefreshInventory);
+            }
+            else if (state == State.Chest)
+            {
+                secondaryButton.gameObject.SetActive(false);//no need for secondary in chest
+
+                if (selectedItem != null)
+                {
+                    primaryButton.onClick.RemoveAllListeners();
+                    primaryButton.gameObject.SetActive(true); //Basically true unless otherwise specified, saves me rewritting.
+
+                    primaryButton.onClick.AddListener(DepositeItemEvent);
+                    primaryButton.gameObject.GetComponentInChildren<Text>().text = "Deposite";
+                    primaryButton.onClick.AddListener(RefreshInventory);
+
+                    //attempt to add to player inventory
+                    if (chest.CanAddItem(selectedItem))
+                    {
+                        //If it is possible for player to take item
+                        primaryButton.interactable = true;
+                    }
+                    else
+                    {
+                        primaryButton.interactable = false;
+                    }
+                }
+                else
+                {
+                    primaryButton.gameObject.SetActive(false); //Just to avoid depositing null items.
+                }
+            }
+            else if (state == State.Shop)
+            {
+                secondaryButton.gameObject.SetActive(false);//no need for secondary in shop
+
+                if (selectedItem != null && !IsEquipt())
+                {
+                    if (selectedItem.Type != ItemType.Quest)
+                    {
+                        primaryButton.onClick.RemoveAllListeners();
+                        primaryButton.gameObject.SetActive(true); //Basically true unless otherwise specified, saves me rewritting.
+
+                        primaryButton.onClick.AddListener(SellItemEvent);
+                        primaryButton.gameObject.GetComponentInChildren<Text>().text = "Sell";
+                        primaryButton.onClick.AddListener(RefreshInventory);
+
+                        //attempt to add to player inventory
+                        if (shop.CanAddItem(selectedItem))
+                        {
+                            //If it is possible for player to take item
+                            primaryButton.interactable = true;
+                        }
+                        else
+                        {
+                            primaryButton.interactable = false;
+                        }
+                    }
+                    else
+                    {
+                        //QUEST ITEM or CURRENTLY EQUIPT
+                        primaryButton.gameObject.SetActive(false); //Cant sell quest items or equipt items
+
+                    }
+
+                }
+                else
+                {
+                    primaryButton.gameObject.SetActive(false); //Just to avoid depositing null items.
+                }
+            }
+        }
+    }
+    #endregion
+
+    #endregion
+
+    #region Inventory Item Buttons Events Methods
+
+    #region Sell AND Deposite Event Methods
+    public void SellItemEvent()
+    {
+        //attempt to add to shop, should always succeed anyways as already checked
+        if (shop.AddItemAttempt(selectedItem))
+        {
+            //If selling the item was successful
+
+            //adjust money stuff
+            int sellPrice = (int)(selectedItem.Value * (1f - shop.profitMarginHalved));
+            money += sellPrice;
+            shop.Profit += selectedItem.Value - sellPrice; //shop profit determines your discount
+
+
+            //remove from player inventory
+            selectedItem.Amount--;
+            shop.AddItem(selectedItem);
+
+            if (selectedItem.Amount <= 0)
+            {
+                inventory.Remove(selectedItem);
+                selectedItem = null;
+                selectedItemGroup.SetActive(false);
+            }
+            else
+            {
+                RefreshSelectedItemDescription();
+            }
+
+            shop.RefreshInventory(); //refresh the shop items
+            shop.RefreshSelectedItemDescription(); //refresh the chest selected item description
+            UpdateButtons(); //Incase conditions have now changed.
+            shop.UpdateButtons(); //Incase conditions have now changed.
+        }
+    }
+
+    /// <summary>
+    /// Deposite item, set up for canvas UI
+    /// </summary>
+    public void DepositeItemEvent()
+    {
+        //attempt to add to chest, should always succeed anyways as already checked
+        if (chest.AddItemAttempt(selectedItem))
+        {
+            //If depositing the item was successful, remove from player inventory
+            selectedItem.Amount--;
+            if (selectedItem.Amount <= 0)
+            {
+                inventory.Remove(selectedItem);
+                selectedItem = null;
+                selectedItemGroup.SetActive(false);
+            }
+            else
+            {
+                RefreshSelectedItemDescription();
+            }
+
+            chest.RefreshInventory(); //refresh the chest items
+            chest.RefreshSelectedItemDescription(); //refresh the chest selected item description
+            chest.UpdateButtons(); //if couldnt take an item, then you store an item, must update the take item option. etc.
+        }
+    }
+    #endregion
+
+    #region Eat AND Drink Event Methods
     private void EatEvent()
     {
         selectedItem.Amount--;
+
+        selectedItem.CooldownTermination = Time.time + selectedItem.Cooldown; //set cooldown
 
         player.Heal(selectedItem.Heal);
 
@@ -316,6 +624,8 @@ public class Inventory : MonoBehaviour
     {
         selectedItem.Amount--; //reduce item count
 
+        selectedItem.CooldownTermination = Time.time + selectedItem.Cooldown; //set cooldown
+
         player.RefillStat(selectedItem.Heal, selectedItem.Mana, selectedItem.Stamina); //apply effects
 
         if (selectedItem.Amount <= 0) //check if no more of item.
@@ -329,7 +639,7 @@ public class Inventory : MonoBehaviour
             RefreshSelectedItemDescription();
         }
     }
-
+    #endregion
 
     #region Hat Equip Methods
     private void EquipHatEvent()
@@ -445,6 +755,7 @@ public class Inventory : MonoBehaviour
     }
     #endregion
 
+    #region Discard Event Method
     public void DiscardEvent()
     {
         selectedItem.Amount--;
@@ -475,249 +786,13 @@ public class Inventory : MonoBehaviour
             RefreshSelectedItemDescription();
         }
     }
-
     #endregion
 
-    /// <summary>
-    /// Determines what buttons are available and how they work based on selected item TYPE, and Equipt Status
-    /// </summary>
-    public void UpdateButtons()
-    {
-        if (selectedItem != null) //if nothing selected, do nothing.
-        {
-            if (state == State.Inventory)
-            {
-                primaryButton.onClick.RemoveAllListeners();
-                primaryButton.gameObject.SetActive(true); //Basically true unless otherwise specified, saves me rewritting.
-                primaryButton.interactable = true; //Basically true unless otherwise specified, saves me rewritting.
-
-                secondaryButton.onClick.RemoveAllListeners();
-                secondaryButton.gameObject.SetActive(true);
-                secondaryButton.interactable = true;
-                secondaryButton.GetComponentInChildren<Text>().text = "Discard";
-                secondaryButton.onClick.AddListener(DiscardEvent);
-
-                #region Primary Button
-                switch (selectedItem.Type) //using switch TAB to auto fill, when you type (selectedItem.Type) and press enter it will auto fill the cases.
-                {
-                    case ItemType.Food:
-                        primaryButton.GetComponentInChildren<Text>().text = "Eat";
-                        primaryButton.onClick.AddListener(EatEvent);
-
-                        if (player.playerStats.CurrentHealth < player.playerStats.stats.maxHealth)
-                        {
-                            primaryButton.enabled = true;
-                        }
-                        else
-                        {
-                            primaryButton.interactable = false;
-                        }
-                        break;
-                    case ItemType.Weapon:
-                        if (equipmentSlots[2].currentItem == null) //if primary slot empty
-                        {
-                            currentArmedState = CurrentArmedState.Unarmed;
-                            primaryButton.GetComponentInChildren<Text>().text = "Equip";
-                            primaryButton.onClick.AddListener(EquipWeaponEvent);
-                        }
-                        else if (equipmentSlots[3].currentItem == null && selectedItem.Name != equipmentSlots[2].item.Name) //if not already equpited AND secondary slot empty
-                        {
-                            currentArmedState = CurrentArmedState.Single;
-                            primaryButton.GetComponentInChildren<Text>().text = "Equip";
-                            primaryButton.onClick.AddListener(EquipWeaponEvent);
-                        }
-                        else if (selectedItem.Name != equipmentSlots[2].item.Name && selectedItem.Name != equipmentSlots[3].item.Name) //if not already equipted but BOTH hands are full
-                        {
-                            currentArmedState = CurrentArmedState.Duel;
-                            primaryButton.GetComponentInChildren<Text>().text = "Equip";
-                            primaryButton.onClick.AddListener(EquipWeaponEvent);
-                        }
-                        else //otherwise you already have one of this weapon equipted
-                        {
-                            currentArmedState = CurrentArmedState.AlreadyEquipted;
-                            primaryButton.GetComponentInChildren<Text>().text = "Unequip";
-                            primaryButton.onClick.AddListener(UnequipWeaponEvent);
-
-                            secondaryButton.interactable = false; //cant drop while equipt
-                        }
-                        break;
-                    case ItemType.Apparel:
-                        if (equipmentSlots[0].currentItem == null || selectedItem.Name != equipmentSlots[0].item.Name) //If no apparel equipt or selected item is different to equipt item.
-                        {
-                            primaryButton.GetComponentInChildren<Text>().text = "Equip";
-                            primaryButton.onClick.AddListener(EquipHatEvent);
-                        }
-                        else
-                        {
-                            primaryButton.GetComponentInChildren<Text>().text = "Unequip";
-                            primaryButton.onClick.AddListener(UnequipHatEvent);
-
-                            secondaryButton.interactable = false; //cant drop while equipt
-                        }
-                        break;
-                    case ItemType.Crafting:
-                        primaryButton.gameObject.SetActive(false); //no option, hide button
-                        break;
-                    case ItemType.Ingredients:
-                        primaryButton.gameObject.SetActive(false); //no option, hide button
-                        break;
-                    case ItemType.Potions:
-                        primaryButton.GetComponentInChildren<Text>().text = "Drink";
-                        primaryButton.onClick.AddListener(DrinkEvent);
-                        break;
-                    case ItemType.Scrolls:
-                        primaryButton.gameObject.SetActive(false); //no option, hide button
-                        break;
-                    case ItemType.Quest:
-                        primaryButton.gameObject.SetActive(false); //no option, hide button
-                        secondaryButton.gameObject.SetActive(false); //cant drop quest items
-                        break;
-                    case ItemType.Money:  //Is auto converted and added into money float variables
-                        break;
-                    default:
-                        primaryButton.gameObject.SetActive(false); //no option, hide button
-                        secondaryButton.gameObject.SetActive(false); //no option, hide button
-                        break;
-                }
-                #endregion
-
-                primaryButton.onClick.AddListener(UpdateButtons);
-                secondaryButton.onClick.AddListener(RefreshInventory);
-            }
-            else if (state == State.Chest)
-            {
-                secondaryButton.gameObject.SetActive(false);//no need for secondary in chest
-
-                if (selectedItem != null)
-                {
-                    primaryButton.onClick.RemoveAllListeners();
-                    primaryButton.gameObject.SetActive(true); //Basically true unless otherwise specified, saves me rewritting.
-
-                    primaryButton.onClick.AddListener(DepositeItemEvent);
-                    primaryButton.gameObject.GetComponentInChildren<Text>().text = "Deposite";
-                    primaryButton.onClick.AddListener(RefreshInventory);
-
-                    //attempt to add to player inventory
-                    if (chest.CanAddItem(selectedItem))
-                    {
-                        //If it is possible for player to take item
-                        primaryButton.interactable = true;
-                    }
-                    else
-                    {
-                        primaryButton.interactable = false;
-                    }
-                }
-                else
-                {
-                    primaryButton.gameObject.SetActive(false); //Just to avoid depositing null items.
-                }
-            }
-            else if (state == State.Shop)
-            {
-                secondaryButton.gameObject.SetActive(false);//no need for secondary in shop
-
-                if (selectedItem != null && !IsEquipt())
-                {
-                    if (selectedItem.Type != ItemType.Quest)
-                    {
-                        primaryButton.onClick.RemoveAllListeners();
-                        primaryButton.gameObject.SetActive(true); //Basically true unless otherwise specified, saves me rewritting.
-
-                        primaryButton.onClick.AddListener(SellItemEvent);
-                        primaryButton.gameObject.GetComponentInChildren<Text>().text = "Sell";
-                        primaryButton.onClick.AddListener(RefreshInventory);
-
-                        //attempt to add to player inventory
-                        if (shop.CanAddItem(selectedItem))
-                        {
-                            //If it is possible for player to take item
-                            primaryButton.interactable = true;
-                        }
-                        else
-                        {
-                            primaryButton.interactable = false;
-                        }
-                    }
-                    else
-                    {
-                        //QUEST ITEM or CURRENTLY EQUIPT
-                        primaryButton.gameObject.SetActive(false); //Cant sell quest items or equipt items
-
-                    }
-
-                }
-                else
-                {
-                    primaryButton.gameObject.SetActive(false); //Just to avoid depositing null items.
-                }
-            }
-        }
-    }
+    #endregion
+    
     #endregion
 
-    public void SellItemEvent()
-    {
-        //attempt to add to shop, should always succeed anyways as already checked
-        if (shop.AddItemAttempt(selectedItem))
-        {
-            //If selling the item was successful
-
-            //adjust money stuff
-            int sellPrice = (int)(selectedItem.Value * (1f - shop.profitMarginHalved));
-            money += sellPrice;
-            shop.Profit += selectedItem.Value - sellPrice; //shop profit determines your discount
-
-
-            //remove from player inventory
-            selectedItem.Amount--;
-            shop.AddItem(selectedItem);
-
-            if (selectedItem.Amount <= 0)
-            {
-                inventory.Remove(selectedItem);
-                selectedItem = null;
-                selectedItemGroup.SetActive(false);
-            }
-            else
-            {
-                RefreshSelectedItemDescription();
-            }
-
-            shop.RefreshInventory(); //refresh the shop items
-            shop.RefreshSelectedItemDescription(); //refresh the chest selected item description
-            UpdateButtons(); //Incase conditions have now changed.
-            shop.UpdateButtons(); //Incase conditions have now changed.
-        }
-    }
-
-    /// <summary>
-    /// Deposite item, set up for canvas UI
-    /// </summary>
-    public void DepositeItemEvent()
-    {
-        //attempt to add to chest, should always succeed anyways as already checked
-        if (chest.AddItemAttempt(selectedItem))
-        {
-            //If depositing the item was successful, remove from player inventory
-            selectedItem.Amount--;
-            if (selectedItem.Amount <= 0)
-            {
-                inventory.Remove(selectedItem);
-                selectedItem = null;
-                selectedItemGroup.SetActive(false);
-            }
-            else
-            {
-                RefreshSelectedItemDescription();
-            }
-
-            chest.RefreshInventory(); //refresh the chest items
-            chest.RefreshSelectedItemDescription(); //refresh the chest selected item description
-            chest.UpdateButtons(); //if couldnt take an item, then you store an item, must update the take item option. etc.
-        }
-    }
-
+    #region Find Item, Can Add Item, Attempt Add Item, Is Equipt Methods
     /// <summary>
     /// Checks inventory for item of same name.
     /// </summary>
@@ -731,6 +806,43 @@ public class Inventory : MonoBehaviour
         Item foundItem = inventory.Find(findItem => findItem.Name == itemName); //things on the left is paramater, lambda =>  right is expression, each itteration findItem will be the specific item that itteration and it will test it againt the item werre trying to find.
 
         return foundItem;
+    }
+
+    /// <summary>
+    /// Check if it would be possible to add item
+    /// </summary>
+    /// <param name="item">The item to test</param>
+    /// <returns>Returns true if it would be successful at adding to inventory. Otherwise false.</returns>
+    public bool CanAddItem(Item item)
+    {
+        if (item.Type.ToString() == "Money")
+        {
+            return true;
+        }
+        else
+        {
+            Item foundItem = inventory.Find(findItem => findItem.Name == item.Name); //things on the left is paramater, lambda =>  right is expression, each itteration findItem will be the specific item that itteration and it will test it againt the item werre trying to find.
+
+            //checks to see if it can stack with existing inventory items, weapons and apparel DONT STACK
+            if ((item.Type != ItemType.Apparel && item.Type != ItemType.Weapon) && foundItem != null)
+            {
+                return true;
+            }
+            else //If unstackable
+            {
+                //Check if room to add
+                if (inventory.Count < capacity)
+                {
+                    //enough room, adds item
+                    return true;
+                }
+                else
+                {
+                    //no room, item add fails.
+                    return false;
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -777,44 +889,6 @@ public class Inventory : MonoBehaviour
     }
 
     /// <summary>
-    /// Check if it would be possible to add item
-    /// </summary>
-    /// <param name="item">The item to test</param>
-    /// <returns>Returns true if it would be successful at adding to inventory. Otherwise false.</returns>
-    public bool CanAddItem(Item item)
-    {
-        if (item.Type.ToString() == "Money")
-        {
-            return true;
-        }
-        else
-        {
-            Item foundItem = inventory.Find(findItem => findItem.Name == item.Name); //things on the left is paramater, lambda =>  right is expression, each itteration findItem will be the specific item that itteration and it will test it againt the item werre trying to find.
-
-            //checks to see if it can stack with existing inventory items, weapons and apparel DONT STACK
-            if ((item.Type != ItemType.Apparel && item.Type != ItemType.Weapon) && foundItem != null)
-            {
-                return true;
-            }
-            else //If unstackable
-            {
-                //Check if room to add
-                if (inventory.Count < capacity)
-                {
-                    //enough room, adds item
-                    return true;
-                }
-                else
-                {
-                    //no room, item add fails.
-                    return false;
-                }
-            }
-        }
-    }
-
-
-    /// <summary>
     /// Checks if the selected item is currently equipted in ANY of the equipment slots.
     /// </summary>
     /// <returns>Returns true if item is currently equpt. Otherwise false.</returns>
@@ -836,8 +910,9 @@ public class Inventory : MonoBehaviour
         }
         return false;
     }
+    #endregion
 
-    #region Converted OnGUI
+    #region old OnGUI methods
     /// <summary>
     /// Shows inventory items as buttons w name. Stacked vertically.
     /// Only shows items of current sort type.
@@ -1124,7 +1199,6 @@ public class Inventory : MonoBehaviour
             }
         }
     }
-    #endregion
 
     /// <summary>
     /// A button for selling items to a shop.
@@ -1134,12 +1208,12 @@ public class Inventory : MonoBehaviour
         //Description, value, amount
         GUI.Box(new Rect(4.25f * scr.x, 4 * scr.y,
                          3 * scr.x,
-                         3 * scr.y), 
+                         3 * scr.y),
                          selectedItem.Description +
                          "\nAmount: " + selectedItem.Amount +
                          "\nTrade value: " + (int)(selectedItem.Value * (1f - shop.profitMarginHalved)));
 
-        
+
         if (selectedItem.Type != ItemType.Quest) // can't sell quest items.
         {
             if (GUI.Button(new Rect(4.5f * scr.x, 6.5f * scr.y, scr.x, 0.25f * scr.y), "Sell"))
@@ -1168,6 +1242,9 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    #endregion
+
+    #region OnGUI Redundant
     private void OnGUI()
     {
         if (showOnGUI)
@@ -1243,4 +1320,5 @@ public class Inventory : MonoBehaviour
             }
         }
     }
+    #endregion
 }

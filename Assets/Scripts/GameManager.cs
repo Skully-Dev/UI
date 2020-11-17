@@ -7,6 +7,7 @@ using Cinemachine;
 /// </summary>
 public class GameManager : MonoBehaviour
 {
+    [Header("Common Stuff for various game UI windows")]
     [Tooltip("is it currently on a display of sorts")]
     public static bool isDisplay = false;
 

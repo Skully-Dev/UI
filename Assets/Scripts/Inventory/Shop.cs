@@ -5,18 +5,27 @@ using UnityEngine.UI;
 
 public class Shop : MonoBehaviour
 {
+    #region References AND Variables
     public bool showOnGUI;
+
+    [Header("External Reference")]
+    [Tooltip("reference to the players inventory")]
+    private Inventory playerInventory;
+
+    [Header("Shop Settings")]
 
     [SerializeField, Tooltip("How many items the shop can hold, May make infinite later.")]
     private int capacity = 12;
-
     [Tooltip("Stock of the shop")]
     public List<Item> inventory = new List<Item>();
     [Tooltip("Currently selected item to display info for")]
     private Item selectedItem;
 
+    #region Price and Profit related Variables
     [Tooltip("The current mark-up, undercut value of the shop.")]
     public float profitMarginHalved = 0.2f;
+
+    private int selectedItemStorePrice;
 
     [SerializeField, Tooltip("The total amount of money the shop is better off thanks to you. Influences prices.")]
     private float profit;
@@ -49,21 +58,21 @@ public class Shop : MonoBehaviour
             }
         }
     }
+    #endregion
 
-    [Tooltip("reference to the players inventory")]
-    private Inventory playerInventory;
-
-    #region Display shop Variables
+    #region Display Shop References and Variables
+    // DISPLAY SHOP
+    [Header("Display Settings")]
     [SerializeField, Tooltip("Display state of shop window")] private bool showShop = false;
     [Tooltip("Screen width and height divided by 16 and 9 (ratio 120:1)")] private Vector2 scr;
     //There might be some Dialogue
-    #endregion
 
     // TODO: these references can be the same for Chest AND Shop. Therefore could have a Base Class OtherInventory that chest and shop inherit from, that way there only needs to be one place to reference.
-    #region Canvas UI References and Variables
+    #region Canvas UI References
     [SerializeField, Tooltip("The buttons that will turn into items, TODO: may be used to find capacity later")]
     private Button[] inventoryButtons;
 
+    [Header("Selected Item Display References")]
     //selected item
     [SerializeField, Tooltip("The display icon for selected Shop item")]
     private Image selectedIcon;
@@ -76,13 +85,16 @@ public class Shop : MonoBehaviour
     [SerializeField, Tooltip("The selected item of Shop secondary button, NOT USED but may use in future.")]
     private Button secondaryButton;
 
+    [Header("Canvas Group References")]
     //Canvas groups
     [SerializeField, Tooltip("The Canvas UI for Shop")]
     private GameObject shopInventoryGroup;
     [SerializeField, Tooltip("The Canvas UI for SPECIFICALLY for Shop SELECTED ITEM")]
     private GameObject selectedItemGroup;
+    #endregion
 
-    private int selectedItemStorePrice;
+    #endregion
+
     #endregion
 
     private void Start()
@@ -90,14 +102,14 @@ public class Shop : MonoBehaviour
         //Initialize player inventory reference
 
         // TODO: maybe get the player inventory stright from the player, rather than search the scene for an inventroy.
-        playerInventory = (Inventory) FindObjectOfType<Inventory>();
+        playerInventory = (Inventory)FindObjectOfType<Inventory>();
         if (playerInventory == null)
         {
             Debug.LogError("There is no player with an inventory in this scene");
         }
     }
 
-
+    #region Select Item, Refresh Description, Update Buttons Methods
     /// <summary>
     /// OnClick of Canvas UI Chest Items button
     /// </summary>
@@ -176,7 +188,9 @@ public class Shop : MonoBehaviour
             primaryButton.gameObject.SetActive(false); //Just to avoid taking null items.
         }
     }
+    #endregion
 
+    #region Purchase Item Button Event Method
     /// <summary>
     /// Buy items, set up for canvas UI
     /// </summary>
@@ -209,7 +223,9 @@ public class Shop : MonoBehaviour
 
         }
     }
+    #endregion
 
+    #region Refresh Inventory Method
     /// <summary>
     /// Refresh the names of the buttons.
     /// </summary>
@@ -268,37 +284,9 @@ public class Shop : MonoBehaviour
             selectedItemGroup.SetActive(false); //hide selected item window
         }
     }
+    #endregion
 
-    /// <summary>
-    /// Check if it would be possible to add item
-    /// </summary>
-    /// <param name="item">The item to test</param>
-    /// <returns>Returns true if it would be successful at stocking item in shop. Otherwise false.</returns>
-    public bool CanAddItem(Item item)
-    {
-        Item foundItem = inventory.Find(findItem => findItem.Name == item.Name); //things on the left is paramater, lambda =>  right is expression, each itteration findItem will be the specific item that itteration and it will test it againt the item werre trying to find.
-
-        //checks to see if it can stack with existing shop items, weapons and apparel DONT STACK
-        if ((item.Type != ItemType.Apparel && item.Type != ItemType.Weapon) && foundItem != null)
-        {
-            return true;
-        }
-        else //If unstackable
-        {
-            //Check if room to add
-            if (inventory.Count < capacity)
-            {
-                //enough room, adds item
-                return true;
-            }
-            else
-            {
-                //no room, item add fails.
-                return false;
-            }
-        }
-    }
-
+    #region Open Shop Toggle Method
     /// <summary>
     /// Switch between displaying shop and NOT displaying shop.
     /// </summary>
@@ -328,6 +316,39 @@ public class Shop : MonoBehaviour
             RefreshInventory();
 
             playerInventory.gameManager.DisableControls(false);
+        }
+    }
+    #endregion
+
+    #region CanAddItem, AttemptAddItem, AddItem, Methods
+
+    /// <summary>
+    /// Check if it would be possible to add item
+    /// </summary>
+    /// <param name="item">The item to test</param>
+    /// <returns>Returns true if it would be successful at stocking item in shop. Otherwise false.</returns>
+    public bool CanAddItem(Item item)
+    {
+        Item foundItem = inventory.Find(findItem => findItem.Name == item.Name); //things on the left is paramater, lambda =>  right is expression, each itteration findItem will be the specific item that itteration and it will test it againt the item werre trying to find.
+
+        //checks to see if it can stack with existing shop items, weapons and apparel DONT STACK
+        if ((item.Type != ItemType.Apparel && item.Type != ItemType.Weapon) && foundItem != null)
+        {
+            return true;
+        }
+        else //If unstackable
+        {
+            //Check if room to add
+            if (inventory.Count < capacity)
+            {
+                //enough room, adds item
+                return true;
+            }
+            else
+            {
+                //no room, item add fails.
+                return false;
+            }
         }
     }
 
@@ -383,7 +404,9 @@ public class Shop : MonoBehaviour
             inventory.Add(newItem);
         }
     }
+    #endregion
 
+    #region OnGUI IMGUI Redundant
     private void OnGUI()
     {
         if (showOnGUI)
@@ -458,4 +481,5 @@ public class Shop : MonoBehaviour
 
         }
     }
+    #endregion
 }
