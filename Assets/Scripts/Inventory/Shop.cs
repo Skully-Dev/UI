@@ -137,6 +137,8 @@ public class Shop : MonoBehaviour
             selectedItem = null;
             selectedItemGroup.SetActive(false);//hide selected item window
         }
+
+        playerInventory.gameManager.PlayButtonSound();
     }
 
 
@@ -187,6 +189,8 @@ public class Shop : MonoBehaviour
         {
             primaryButton.gameObject.SetActive(false); //Just to avoid taking null items.
         }
+
+        primaryButton.onClick.AddListener(playerInventory.gameManager.PlayButtonSound);
     }
     #endregion
 

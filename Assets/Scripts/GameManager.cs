@@ -16,7 +16,15 @@ public class GameManager : MonoBehaviour
 
     [SerializeField, Tooltip("To change mouse position aim settings.")]
     private CinemachineFreeLook cineCam;
-    
+
+    [SerializeField, Tooltip("Reference Button Sound, easier to add to on events via script")]
+    private AudioSource buttonSound;
+
+    public void PlayButtonSound()
+    {
+        buttonSound.Play();
+    }
+
     /// <summary>
     /// Disable player movements, Enable Cursor, sets isDisplay as true.
     /// </summary>

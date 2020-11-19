@@ -127,6 +127,8 @@ public class ConsumablesBar : MonoBehaviour
                         cooldownObjects[index].SetActive(true);
                         cooldownTexts[index].text = (hotbar[index].item.CooldownTermination - Time.time).ToString("0");
                     }
+
+                    playerInventory.gameManager.PlayButtonSound();
                 }
             }
         }

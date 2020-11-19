@@ -44,7 +44,7 @@ public class Inventory : MonoBehaviour
         public Item item;
     };
     /// <summary>
-    /// The array of various equiptment slots, check inspector for available slots.
+    /// The array of various equipment slots, check inspector for available slots.
     /// </summary>
     public Equipment[] equipmentSlots;
     #endregion
@@ -59,9 +59,9 @@ public class Inventory : MonoBehaviour
     public State state = State.Inventory;
 
     /// <summary>
-    /// Determines the state of selected weapon and player equipted weapons to determine the button options.
+    /// Determines the state of selected weapon and player equipped weapons to determine the button options.
     /// </summary>
-    public enum CurrentArmedState { Unarmed, Single, Duel, AlreadyEquipted };
+    public enum CurrentArmedState { Unarmed, Single, Duel, AlreadyEquipped };
     public CurrentArmedState currentArmedState = CurrentArmedState.Unarmed;
 
     [Tooltip("The currently selected item.")]
@@ -132,8 +132,6 @@ public class Inventory : MonoBehaviour
             if (!GameManager.isDisplay) //if not currently in any window displays
             {
                 ShowInventory();
-                
-                state = State.Inventory; //determines the available options for selected item.
 
                 gameManager.DisableControls(false);
             }
@@ -149,6 +147,8 @@ public class Inventory : MonoBehaviour
     #region Show/Hide Inventory Methods
     public void ShowInventory()
     {
+        state = State.Inventory; //determines the available options for selected item.
+
         inventoryGroup.SetActive(true);
         RefreshInventory();
         selectedItem = null;
@@ -196,6 +196,8 @@ public class Inventory : MonoBehaviour
         {
             shop.RefreshInventory();
         }
+
+        gameManager.PlayButtonSound();
     }
     #endregion
 
@@ -292,6 +294,8 @@ public class Inventory : MonoBehaviour
             selectedItem = null;
             selectedItemGroup.SetActive(false);//hide selected item window
         }
+
+        gameManager.PlayButtonSound();
     }
 
     /// <summary>
@@ -372,7 +376,7 @@ public class Inventory : MonoBehaviour
 
                         if (player.playerStats.CurrentHealth < player.playerStats.stats.maxHealth && selectedItem.CooldownTermination <= Time.time)
                         {
-                            primaryButton.enabled = true;
+                            primaryButton.interactable = true;
                         }
                         else
                         {
@@ -392,15 +396,15 @@ public class Inventory : MonoBehaviour
                             primaryButton.GetComponentInChildren<Text>().text = "Equip";
                             primaryButton.onClick.AddListener(EquipWeaponEvent);
                         }
-                        else if (selectedItem.Name != equipmentSlots[2].item.Name && selectedItem.Name != equipmentSlots[3].item.Name) //if not already equipted but BOTH hands are full
+                        else if (selectedItem.Name != equipmentSlots[2].item.Name && selectedItem.Name != equipmentSlots[3].item.Name) //if not already equipped but BOTH hands are full
                         {
                             currentArmedState = CurrentArmedState.Duel;
                             primaryButton.GetComponentInChildren<Text>().text = "Equip";
                             primaryButton.onClick.AddListener(EquipWeaponEvent);
                         }
-                        else //otherwise you already have one of this weapon equipted
+                        else //otherwise you already have one of this weapon equipped
                         {
-                            currentArmedState = CurrentArmedState.AlreadyEquipted;
+                            currentArmedState = CurrentArmedState.AlreadyEquipped;
                             primaryButton.GetComponentInChildren<Text>().text = "Unequip";
                             primaryButton.onClick.AddListener(UnequipWeaponEvent);
 
@@ -468,8 +472,8 @@ public class Inventory : MonoBehaviour
                     primaryButton.onClick.RemoveAllListeners();
                     primaryButton.gameObject.SetActive(true); //Basically true unless otherwise specified, saves me rewritting.
 
-                    primaryButton.onClick.AddListener(DepositeItemEvent);
-                    primaryButton.gameObject.GetComponentInChildren<Text>().text = "Deposite";
+                    primaryButton.onClick.AddListener(DepositItemEvent);
+                    primaryButton.gameObject.GetComponentInChildren<Text>().text = "Deposit";
                     primaryButton.onClick.AddListener(RefreshInventory);
 
                     //attempt to add to player inventory
@@ -492,7 +496,7 @@ public class Inventory : MonoBehaviour
             {
                 secondaryButton.gameObject.SetActive(false);//no need for secondary in shop
 
-                if (selectedItem != null && !IsEquipt())
+                if (selectedItem != null && !IsEquipped())
                 {
                     if (selectedItem.Type != ItemType.Quest)
                     {
@@ -528,6 +532,9 @@ public class Inventory : MonoBehaviour
                 }
             }
         }
+
+        primaryButton.onClick.AddListener(gameManager.PlayButtonSound);
+        secondaryButton.onClick.AddListener(gameManager.PlayButtonSound);
     }
     #endregion
 
@@ -574,7 +581,7 @@ public class Inventory : MonoBehaviour
     /// <summary>
     /// Deposite item, set up for canvas UI
     /// </summary>
-    public void DepositeItemEvent()
+    public void DepositItemEvent()
     {
         //attempt to add to chest, should always succeed anyways as already checked
         if (chest.AddItemAttempt(selectedItem))
@@ -661,7 +668,7 @@ public class Inventory : MonoBehaviour
     {
         GameObject currentItem = Instantiate(selectedItem.Mesh, equipmentSlots[0].equipLocation); //spawn selected item into appropriate location on character
         equipmentSlots[0].currentItem = currentItem; //reference the spawn
-        equipmentSlots[0].item = selectedItem; //copy the item info into the equiptment slot
+        equipmentSlots[0].item = selectedItem; //copy the item info into the equipment slot
     }
 
     private void UnequipHat()
@@ -683,7 +690,7 @@ public class Inventory : MonoBehaviour
         {
             currentArmedState = CurrentArmedState.Single;
         }
-        else if (selectedItem.Name != equipmentSlots[2].item.Name && selectedItem.Name != equipmentSlots[3].item.Name) //if not already equipted but BOTH hands are full
+        else if (selectedItem.Name != equipmentSlots[2].item.Name && selectedItem.Name != equipmentSlots[3].item.Name) //if not already equipped but BOTH hands are full
         {
             currentArmedState = CurrentArmedState.Duel;
         }
@@ -724,13 +731,13 @@ public class Inventory : MonoBehaviour
     {
         GameObject currentItem = Instantiate(selectedItem.Mesh, equipmentSlots[2].equipLocation); //the spawn of the item
         equipmentSlots[2].currentItem = currentItem; //reference to instance of the spawned object
-        equipmentSlots[2].item = selectedItem; //copy the info of the new equipted weapon
+        equipmentSlots[2].item = selectedItem; //copy the info of the new equipped weapon
     }
     private void EquipSecondaryHand()
     {
         GameObject currentItem = Instantiate(selectedItem.Mesh, equipmentSlots[3].equipLocation); //the spawn of the item
         equipmentSlots[3].currentItem = currentItem; //reference to instance of the spawned object
-        equipmentSlots[3].item = selectedItem; //copy the info of the new equipted weapon
+        equipmentSlots[3].item = selectedItem; //copy the info of the new equipped weapon
     }
 
     private void UnequipPrimaryHand()
@@ -889,10 +896,10 @@ public class Inventory : MonoBehaviour
     }
 
     /// <summary>
-    /// Checks if the selected item is currently equipted in ANY of the equipment slots.
+    /// Checks if the selected item is currently equipped in ANY of the equipment slots.
     /// </summary>
     /// <returns>Returns true if item is currently equpt. Otherwise false.</returns>
-    public bool IsEquipt()
+    public bool IsEquipped()
     {
         foreach (var equipmentSlot in equipmentSlots)
         {
@@ -999,7 +1006,7 @@ public class Inventory : MonoBehaviour
                     {
                         GameObject currentItem = Instantiate(selectedItem.Mesh, equipmentSlots[2].equipLocation); //the spawn of the item
                         equipmentSlots[2].currentItem = currentItem; //reference to instance of the spawned object
-                        equipmentSlots[2].item = selectedItem; //copy the info of the new equipted weapon
+                        equipmentSlots[2].item = selectedItem; //copy the info of the new equipped weapon
                     }
                 }
                 else if (equipmentSlots[3].currentItem == null && selectedItem.Name != equipmentSlots[2].item.Name) //if holding 1 weapon and selected item is different
@@ -1008,7 +1015,7 @@ public class Inventory : MonoBehaviour
                     {
                         GameObject currentItem = Instantiate(selectedItem.Mesh, equipmentSlots[3].equipLocation); //the spawn of the item
                         equipmentSlots[3].currentItem = currentItem; //reference to instance of the spawned object
-                        equipmentSlots[3].item = selectedItem; //copy the info of the new equipted weapon
+                        equipmentSlots[3].item = selectedItem; //copy the info of the new equipped weapon
                     }
                 }
                 else if (selectedItem.Name != equipmentSlots[2].item.Name && selectedItem.Name != equipmentSlots[3].item.Name) //if holding 2 weapons but both are different to selected one.
@@ -1021,10 +1028,10 @@ public class Inventory : MonoBehaviour
                         }
                         GameObject currentItem = Instantiate(selectedItem.Mesh, equipmentSlots[3].equipLocation); //spawn the new one
                         equipmentSlots[3].currentItem = currentItem; //replace reference to instance of the spawned object
-                        equipmentSlots[3].item = selectedItem; //copy the info of the new equipted weapon
+                        equipmentSlots[3].item = selectedItem; //copy the info of the new equipped weapon
                     }
                 }
-                else //otherwise you already have one of this weapon equipted
+                else //otherwise you already have one of this weapon equipped
                 {
                     if (GUI.Button(new Rect(4.75f * scr.x, 6.5f * scr.y, scr.x, 0.25f * scr.y), "Unequip"))
                     {
@@ -1086,7 +1093,7 @@ public class Inventory : MonoBehaviour
                         }
                         GameObject currentItem = Instantiate(selectedItem.Mesh, equipmentSlots[0].equipLocation); //spawn selected item into appropriate location on character
                         equipmentSlots[0].currentItem = currentItem; //reference the spawn
-                        equipmentSlots[0].item = selectedItem; //copy the item info into the equiptment slot
+                        equipmentSlots[0].item = selectedItem; //copy the item info into the equipment slot
                     }
                 }
                 else
@@ -1134,7 +1141,7 @@ public class Inventory : MonoBehaviour
         {
             if (GUI.Button(new Rect(6f * scr.x, 6.5f * scr.y, scr.x, 0.25f * scr.y), "Discard"))
             {
-                if (IsEquipt()) //no discarding equipted items, this could happen before like quest items check, therefore it won't show discard for equipt items, but this also makes the check happen continuiously instead of just on button press...
+                if (IsEquipped()) //no discarding equipped items, this could happen before like quest items check, therefore it won't show discard for equipt items, but this also makes the check happen continuiously instead of just on button press...
                 {
                     Debug.Log("You must unequipt first");
                 }
@@ -1218,7 +1225,7 @@ public class Inventory : MonoBehaviour
         {
             if (GUI.Button(new Rect(4.5f * scr.x, 6.5f * scr.y, scr.x, 0.25f * scr.y), "Sell"))
             {
-                if (IsEquipt())
+                if (IsEquipped())
                 {
                     Debug.Log("You must unequip first");
                 }

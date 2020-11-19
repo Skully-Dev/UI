@@ -8279,6 +8279,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerMovement: {fileID: 465187085}
   cineCam: {fileID: 1030685930}
+  buttonSound: {fileID: 1471812029}
 --- !u!4 &409030520
 Transform:
   m_ObjectHideFlags: 0

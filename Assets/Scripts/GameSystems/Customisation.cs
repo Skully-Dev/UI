@@ -85,7 +85,7 @@ public class Customisation : MonoBehaviour
 
     private void Start()
     {
-        #region Initialize the array with a List for each texture part with all available textures added to the corrisponding lists.
+        #region Initialize the array with a List for each texture part with all available textures added to the corresponding lists.
         int partCount = 0;
         foreach (string part in Enum.GetNames(typeof(CustomiseParts))) //loop through our array of parts
         {
@@ -93,7 +93,7 @@ public class Customisation : MonoBehaviour
             Texture2D tempTexture;
 
             partsTexture[partCount] = new List<Texture2D>(); //create a list for the part skin/hair/eyes etc.
-            do //loop through rach texture and add it to this list
+            do //loop through ach texture and add it to this list
             {
                 //tempTexture = Resources.Load(TextureLocation + part + "_" + count) as Texture; //same thing
                 tempTexture = (Texture2D)Resources.Load(TextureLocation + part + "_" + textureCount); //gets the texture file from the computer.
@@ -345,7 +345,7 @@ public class Customisation : MonoBehaviour
 
         GUI.Box(new Rect(10, 10, 120, 210), "Visuals"); //a box/pannel for us to put GUI in, the first two numbers are pixels from the top left followed by width and height
 
-        #region Loop create buttons for Customise Appearacne
+        #region Loop create buttons for Customise Appearance
         string[] names = { "Skin", "Hair", "Eyes", "Mouth", "Clothes", "Armour" };
 
         float curLoopHeight = 40f; //height of first button

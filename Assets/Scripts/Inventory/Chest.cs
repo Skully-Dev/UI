@@ -99,6 +99,8 @@ public class Chest : MonoBehaviour
             selectedItem = null;
             selectedItemGroup.SetActive(false);//hide selected item window
         }
+
+        playerInventory.gameManager.PlayButtonSound();
     }
 
     /// <summary>
@@ -145,6 +147,8 @@ public class Chest : MonoBehaviour
         {
             primaryButton.gameObject.SetActive(false); //Just to avoid taking null items.
         }
+
+        primaryButton.onClick.AddListener(playerInventory.gameManager.PlayButtonSound);
     }
     #endregion
 
