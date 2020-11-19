@@ -23,6 +23,8 @@ public class PauseMenu : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked; //stops cursor from going off window
         Cursor.visible = false;  //hides the cursor from view
+
+        gameIsPaused = false;
     }
 
     // Update is called once per frame

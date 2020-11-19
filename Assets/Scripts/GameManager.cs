@@ -20,6 +20,11 @@ public class GameManager : MonoBehaviour
     [SerializeField, Tooltip("Reference Button Sound, easier to add to on events via script")]
     private AudioSource buttonSound;
 
+    private void Start()
+    {
+        isDisplay = false;
+    }
+
     public void PlayButtonSound()
     {
         buttonSound.Play();
