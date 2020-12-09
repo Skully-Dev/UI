@@ -5,15 +5,19 @@ using UnityEngine;
 public class QuestNPC : NPC
 {
     //reference to quest manager
-    protected QuestManager questManager;
+    private QuestManager questManager;
 
     [SerializeField]
-    protected Quest NPCsQuest;
+    private QuestGoal questGoal;
 
     [SerializeField]
-    protected QuestDialogue dialogue;
-
-    [SerializeField] protected string[] dialogueText;
+    private QuestDialogue availableDialogue;
+    [SerializeField]
+    private Dialogue activeDialogue;
+    [SerializeField]
+    private ClaimDialogue claimDialogue;
+    [SerializeField]
+    private Dialogue claimedDialogue;
 
     private void Start()
     {
@@ -24,43 +28,52 @@ public class QuestNPC : NPC
             Debug.LogError("There is no QuestManager in the scene");
         }
 
-        if (dialogue == null)
+        if (availableDialogue == null)
         {
-            Debug.LogError("Don't forget to include Quest Dialoge");
+            Debug.LogError("Don't forget to include Available Quest Dialoge");
         }
     }
 
     //depending on state of quest do different things
     public override void Interact() //override replaces Interact base code //abstract requires override
     {
-        switch (NPCsQuest.goal.questState)
+        if (questGoal.questState == QuestState.Active)
+        {
+            if (questGoal.isCompleted())
+            {
+                questGoal.questState = QuestState.Completed;
+            }
+        }
+
+
+        switch (questGoal.questState)
         {
             case QuestState.Available:
-                // TODO: have accept quest at END of dialogue
-                dialogue.npcName = name;
-                dialogue.dialogueText = dialogueText;
-                dialogue.quest = NPCsQuest;
-                dialogue.showDialogue = true;
+                availableDialogue.showDialogue = true;
                 break;
             case QuestState.Active:
-                if (NPCsQuest.goal.isCompleted())
-                {
-                    Debug.Log("Quest Claimed");
-                    questManager.ClaimQuest();
-                }
-                else
-                {
-                    Debug.Log("Quest Not Claimed");
-                }
+                activeDialogue.showDialogue = true;
                 break;
             case QuestState.Completed:
+                claimDialogue.showDialogue = true;
                 break;
             case QuestState.Claimed:
-                //Some dialogue
-                //you have already done enough for me
+                claimedDialogue.showDialogue = true;
                 break;
             default:
                 break;
         }
     }
 }
+
+/*
+    if (questGoal.isCompleted())
+    {
+        Debug.Log("Quest Claimed");
+        questManager.ClaimQuest();
+    }
+    else
+    {
+        Debug.Log("Quest Not Claimed");
+    } 
+ */

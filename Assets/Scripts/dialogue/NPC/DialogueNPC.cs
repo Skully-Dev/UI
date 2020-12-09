@@ -5,18 +5,19 @@ using UnityEngine;
 public class DialogueNPC : NPC
 {
     [SerializeField]
-    Dialogue dialogue;
+    private Dialogue dialogue;
 
-    [SerializeField]
-    protected string[] dialogueText;
+    private void Start()
+    {
+        if (dialogue == null)
+        {
+            Debug.LogError("Don't forget to include Dialoge");
+        }
+    }
 
     public override void Interact()
     {
-        dialogue.npcName = name;
-        dialogue.dialogueText = dialogueText;
-
         // set up dialogue
         dialogue.showDialogue = true;
     }
-
 }

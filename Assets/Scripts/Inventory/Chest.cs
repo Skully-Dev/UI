@@ -253,6 +253,8 @@ public class Chest : MonoBehaviour
             playerInventory.HideInventory();
             playerInventory.showInventory = false;
 
+            playerInventory.state = Inventory.State.Other; //other is used when not in an inventory state
+
             chestInventoryGroup.SetActive(false);
             selectedItem = null;
             showChest = false;

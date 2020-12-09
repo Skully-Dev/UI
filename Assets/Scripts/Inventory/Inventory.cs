@@ -558,7 +558,9 @@ public class Inventory : MonoBehaviour
 
             //remove from player inventory
             selectedItem.Amount--;
-            shop.AddItem(selectedItem);
+
+            //AddItemAttempt adds the item when successful, this was double adding
+            //shop.AddItem(selectedItem);
 
             if (selectedItem.Amount <= 0)
             {

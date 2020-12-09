@@ -68,6 +68,11 @@ public class Player : MonoBehaviour
     }
     #endregion
 
+    public int Level
+    {
+        get { return playerStats.stats.level; }
+    }
+
     #region Death/Respawn Reference Variables
     [Header("Death/Respawn references")]
     [SerializeField, Tooltip("Reference player damaged sound FX")]
@@ -250,7 +255,8 @@ public class Player : MonoBehaviour
     /// </summary>
     public void LevelUp()
     {
-        //playerStats.
+        playerStats.stats.level++;
+
         //increase stats every level
         playerStats.stats.baseStatPoints += 3; //3 additional points in point poll to use
 
@@ -445,6 +451,12 @@ public class Player : MonoBehaviour
                         if (npc != null)
                         {
                             npc.Interact();
+
+                            ShopNPC shopNPC = npc as ShopNPC;
+                            if (shopNPC != null)
+                            {
+                                shop = shopNPC.shop;
+                            }
                         }
 
                         InWorldItem inWorldItem = hitInfo.collider.GetComponent<InWorldItem>(); //trys to store it as InWorldItem
@@ -457,12 +469,14 @@ public class Player : MonoBehaviour
                                 Destroy(inWorldItem.gameObject);
                             }
                         }
-
+                        
+                        /*
                         shop = hitInfo.collider.GetComponent<Shop>();
                         if (shop != null)
                         {
                             shop.OpenShopToggle();
                         }
+                        */
 
                         chest = hitInfo.collider.GetComponent<Chest>();
                         if (chest != null)
@@ -479,7 +493,7 @@ public class Player : MonoBehaviour
                     }
                 }
             }
-            else
+            else if (playerInventory.state != Inventory.State.Other)
             {
                 if (playerInventory.state == Inventory.State.Chest)
                 {

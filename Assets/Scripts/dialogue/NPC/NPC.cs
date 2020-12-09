@@ -5,8 +5,7 @@ using UnityEngine;
 //base class for NPCs
 public abstract class NPC : MonoBehaviour
 {   
-    [SerializeField] protected string name;
+    public new string name;
 
     public abstract void Interact();
-
 }

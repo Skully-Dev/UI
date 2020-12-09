@@ -53,7 +53,7 @@ public class Stats
 
     [Header("Current Stats")]
     [Tooltip("What is the players level")]
-    public int level;
+    public int level = 1;
     [Tooltip("Scales stat points effectiveness")]
     public float levelModifier = 1f;
     [Tooltip("Additional health determined by stat points")]

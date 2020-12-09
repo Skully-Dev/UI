@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable] //make visable in inspector
-public class Quest
+//[System.Serializable] //make visable in inspector when NOT derived from MonoBehaviour
+public class Quest : MonoBehaviour
 {
     public string title;
     public string description;

@@ -2,29 +2,43 @@
 
 public class Dialogue : MonoBehaviour
 {
-    public GameManager gameManager;
+    protected GameManager gameManager;
 
     #region Variables
     [Header("References")]
+    [System.NonSerialized]
     public bool showDialogue;
     //index for the current line of dialogue.
-    public int currentLineIndex;
+    protected int currentLineIndex;
 
     //screen
-    public Vector2 scr;
+    protected Vector2 scr;
 
     [Header("NPC Name and Dialogue")]
-    //name of the specific NPC talking
-    public string npcName;
+    //used to get name of the specific NPC talking
+    public NPC npc;
+
     //array for text of the dialogue
-    public string[] dialogueText;
+    [SerializeField]
+    protected string[] dialogueText;
     #endregion
 
-    protected virtual void OnGUI() //virtual allows us to override OnGUI
+    protected virtual void Start()
+    {
+        gameManager = FindObjectOfType<GameManager>();
+
+        if (gameManager == null)
+        {
+            Debug.LogError("There is no game manager in scene");
+        }
+    }
+
+    protected virtual void OnGUI() //virtual allows us to override OnGUI in derived classes
     {
         if (showDialogue)
         {
-            gameManager.DisableControls(true);
+            gameManager.DisableControls(false);
+            //gameManager.DisableControls(true);
 
             //set up our ratio for 16:9
             scr.x = Screen.width / 16;
@@ -33,7 +47,7 @@ public class Dialogue : MonoBehaviour
             //The dialigue box takes up the whole bottom 3rd of the screen and displays the NPC's name and current dialogue line
             GUI.Box(new Rect(0, 6 * scr.y,
                              Screen.width, scr.y * 3),
-                             npcName + " : " + dialogueText[currentLineIndex]);
+                             npc.name + " : " + dialogueText[currentLineIndex]);
 
             //if not at the end of the dialogue
             if (currentLineIndex < dialogueText.Length - 1)

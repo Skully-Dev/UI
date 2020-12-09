@@ -9,12 +9,17 @@ using UnityEngine;
 /// </summary>
 public class QuestDialogue : Dialogue
 {
-    QuestManager questManager;
+    [System.NonSerialized]
+    public QuestManager questManager;
 
     public Quest quest;
 
-    private void Start()
+    public Player player;
+
+    protected override void Start()
     {
+        base.Start();
+
         questManager = FindObjectOfType<QuestManager>();
 
         if (questManager == null)
@@ -25,15 +30,18 @@ public class QuestDialogue : Dialogue
 
     protected override void EndDialogue()
     {
-        if (GUI.Button(new Rect(15 * scr.x, 8.5f * scr.y,
-                        scr.x, scr.y * 0.5f), "Accept"))
+        if (player.Level >= quest.requiredLevel) //Can't accept quest if not of level yet.
         {
-            questManager.AcceptQuest(quest);
+            if (GUI.Button(new Rect(15 * scr.x, 8.5f * scr.y,
+                scr.x, scr.y * 0.5f), "Accept"))
+            {
+                questManager.AcceptQuest(quest);
 
-            showDialogue = false;
-            currentLineIndex = 0;
+                showDialogue = false;
+                currentLineIndex = 0;
 
-            gameManager.EnableControls();
+                gameManager.EnableControls();
+            }
         }
 
         if (GUI.Button(new Rect(13 * scr.x, 8.5f * scr.y,
