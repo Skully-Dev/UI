@@ -11,7 +11,8 @@ public class Quest : MonoBehaviour
     public int requiredLevel;
 
     #region Rewards Variables
-    public int experienceReward;
+    //public int experienceReward;
+    public int levelGained;
     public int goldReward;
     #endregion
 

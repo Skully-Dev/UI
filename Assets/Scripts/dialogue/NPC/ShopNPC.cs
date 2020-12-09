@@ -43,12 +43,15 @@ public class ShopNPC : NPC
         {
             case ApprovalState.Dislike:
                 strangerDialogue.showDialogue = true;
+                strangerDialogue.ShowDialogue();
                 break;
             case ApprovalState.Neutral:
                 regularDialogue.showDialogue = true;
+                regularDialogue.ShowDialogue();
                 break;
             case ApprovalState.Like:
                 friendDialogue.showDialogue = true;
+                friendDialogue.ShowDialogue();
                 break;
             default:
                 break;

@@ -45,20 +45,23 @@ public class QuestNPC : NPC
             }
         }
 
-
         switch (questGoal.questState)
         {
             case QuestState.Available:
                 availableDialogue.showDialogue = true;
+                availableDialogue.ShowDialogue();
                 break;
             case QuestState.Active:
                 activeDialogue.showDialogue = true;
+                activeDialogue.ShowDialogue();
                 break;
             case QuestState.Completed:
                 claimDialogue.showDialogue = true;
+                claimDialogue.ShowDialogue();
                 break;
             case QuestState.Claimed:
                 claimedDialogue.showDialogue = true;
+                claimedDialogue.ShowDialogue();
                 break;
             default:
                 break;

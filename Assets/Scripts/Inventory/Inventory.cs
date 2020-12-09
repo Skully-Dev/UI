@@ -127,7 +127,7 @@ public class Inventory : MonoBehaviour
     private void Update()
     {
         //if user presses I which attempts to open inventory window
-        if (Input.GetKeyDown(KeyCode.I) && !PauseMenu.gameIsPaused) //I for Inventory
+        if (Input.GetKeyDown(KeyCode.I) && !PauseMenu.gameIsPaused && !DialogueManager.isDialogue) //I for Inventory
         {
             if (!GameManager.isDisplay) //if not currently in any window displays
             {

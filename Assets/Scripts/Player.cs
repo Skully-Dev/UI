@@ -406,7 +406,7 @@ public class Player : MonoBehaviour
     /// </summary>
     private void Interact()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E) && !DialogueManager.isDialogue)
         {
             if (!GameManager.isDisplay)
             {

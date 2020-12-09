@@ -19,5 +19,6 @@ public class DialogueNPC : NPC
     {
         // set up dialogue
         dialogue.showDialogue = true;
+        dialogue.ShowDialogue();
     }
 }
