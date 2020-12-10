@@ -1,12 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-/// <summary>
-/// Used to make dialogue options appropriate to QUESTS like accept and decline at end of quest offer.
-/// Only need one in scene, to be referenced by QUEST-NPC.
-/// Be sure to attach player cam and controls though!
-/// </summary>
 public class QuestDialogue : Dialogue
 {
     [System.NonSerialized]

@@ -31696,7 +31696,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1260640875}
-  m_LocalRotation: {x: 0.104107186, y: 0.007242157, z: -0.0007581001, w: 0.99453944}
+  m_LocalRotation: {x: 0.104107186, y: 0.0072420887, z: -0.0007580929, w: 0.99453944}
   m_LocalPosition: {x: 425.70837, y: 3.5, z: 454.57608}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -42827,6 +42827,21 @@ MonoBehaviour:
     mana: 25
     effect: 0
     cooldown: 5
+    cooldownTermination: 0
+  - name: HP Potion
+    description: Bought from Mr Pirelli. Tastes like piss.
+    value: 15
+    amount: 5
+    icon: {fileID: 2800000, guid: b6498b5bec05d7840b10aaa871809286, type: 3}
+    Mesh: {fileID: 0}
+    type: 5
+    damage: 0
+    armour: 0
+    heal: 0
+    stamina: 0
+    mana: 0
+    effect: 0
+    cooldown: 25
     cooldownTermination: 0
   profitMarginHalved: 0.2
   profit: 0
@@ -54087,12 +54102,12 @@ PrefabInstance:
     - target: {fileID: 6619308516894048877, guid: 5386e0427fce3684abe890b86c7386e7,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.0007580983
+      value: -0.0007580947
       objectReference: {fileID: 0}
     - target: {fileID: 6619308516894048877, guid: 5386e0427fce3684abe890b86c7386e7,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.0072421394
+      value: 0.007242105
       objectReference: {fileID: 0}
     - target: {fileID: 6619308516894048877, guid: 5386e0427fce3684abe890b86c7386e7,
         type: 3}

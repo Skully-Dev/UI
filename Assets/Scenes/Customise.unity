@@ -2131,6 +2131,11 @@ PrefabInstance:
       propertyPath: playerStats.stats.baseStats.Array.data[5].baseStatName
       value: Charisma
       objectReference: {fileID: 0}
+    - target: {fileID: 6619308518281503211, guid: 5386e0427fce3684abe890b86c7386e7,
+        type: 3}
+      propertyPath: playerStats.stats.level
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6619308518281503220, guid: 5386e0427fce3684abe890b86c7386e7,
         type: 3}
       propertyPath: m_Enabled

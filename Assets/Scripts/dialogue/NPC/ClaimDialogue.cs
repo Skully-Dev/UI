@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ClaimDialogue : Dialogue
 {
@@ -9,13 +7,10 @@ public class ClaimDialogue : Dialogue
 
     protected override void RefreshDialogue()
     {
-        dialogueManager.dialogueText.text = npc.name + ": " + dialogueText[currentLineIndex];
-
+        base.RefreshDialogue();
         if (currentLineIndex >= dialogueText.Length - 1)
         {
             dialogueManager.buttonsText[0].text = "Claim";
-            dialogueManager.buttons[0].onClick.RemoveAllListeners();
-            dialogueManager.buttons[0].onClick.AddListener(EndDialogue);
         }
     }
 

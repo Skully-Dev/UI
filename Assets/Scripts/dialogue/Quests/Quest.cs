@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 //[System.Serializable] //make visable in inspector when NOT derived from MonoBehaviour
 public class Quest : MonoBehaviour

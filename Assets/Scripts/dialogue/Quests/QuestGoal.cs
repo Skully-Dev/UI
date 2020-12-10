@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 //Enums outside class so accessable by other scripts in same namespace (DEFAULT NAMESPACE CURRENTLY)
 public enum QuestState
